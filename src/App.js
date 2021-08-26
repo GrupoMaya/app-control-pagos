@@ -1,6 +1,5 @@
 import './Styles/index.scss'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import 'components/CardProyectos'
 
 import Dashboard from 'views/Dashboard'
 import Proyecto from 'views/Proyecto'
