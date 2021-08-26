@@ -10,7 +10,7 @@ import ClienteDataForm from 'views/ClienteDataForm'
 import { MayaAppMachineProvider } from 'context/MayaMachine'
 import AppContextProvider from 'context/AppContextProvider'
 
-// import MenuMaya from 'components/MenuMaya'
+import MenuMaya from 'Components/MenuMaya'
 
 function App () {
   return (
@@ -24,7 +24,7 @@ function App () {
               <a href="/" >
               <span></span>
               </a>
-              {/* <MenuMaya /> */}
+              <MenuMaya />
             </header>
       <div className="App-container">
           <Route path="/" exact={true}>

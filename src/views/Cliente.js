@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
 
-import TablaClienteInfo from 'components/TablaClienteInfo'
+import TablaClienteInfo from 'Components/TablaClienteInfo'
 
 const Cliente = ({ match }) => {
 
