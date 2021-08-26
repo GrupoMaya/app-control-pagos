@@ -1,5 +1,3 @@
-import './style.scss'
-
 const Notify = ({ errorType, msg } = {}) => {
 
   let classError

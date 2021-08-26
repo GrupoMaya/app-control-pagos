@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import Notify from 'utils/Notify'
 import SelectorBanco from 'utils/SelectorBanco'
 
-const ModalEstatus = ({ pagos }) => {
+const ModalEstatus = () => {
 
   const [state, send] = useMachine(ClienteMachine)
   const { idPago, modalPago, setModalPago } = useContext(AppContext)

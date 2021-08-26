@@ -1,6 +1,6 @@
 import './Styles/index.scss'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import 'Components/CardProyectos'
+import 'components/CardProyectos'
 
 import Dashboard from 'views/Dashboard'
 import Proyecto from 'views/Proyecto'
@@ -11,7 +11,7 @@ import ClienteDataForm from 'views/ClienteDataForm'
 import { MayaAppMachineProvider } from 'context/MayaMachine'
 import AppContextProvider from 'context/AppContextProvider'
 
-import HamburgerButton from 'Components/HamburgerButton'
+import HamburgerButton from 'components/HamburgerButton'
 
 function App () {
   return (

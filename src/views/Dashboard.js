@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import CardProyectos from 'Components/CardProyectos'
+import CardProyectos from 'components/CardProyectos'
 
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 

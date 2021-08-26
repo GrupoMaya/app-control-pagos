@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 
 import { AppContext } from 'context/AppContextProvider'
-import ModalPagosClient from 'Components/ModalPagosClient'
+import ModalPagosClient from 'components/ModalPagosClient'
 
 import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
@@ -9,7 +9,7 @@ import BuscadorMachine from 'context/BuscadorMachine'
 import ModalExpediente from 'Modales/ModalExpediente'
 import NumberFormat from 'utils/NumberFormat'
 
-import TablaPagosClient from 'Components/TablaPagosClient'
+import TablaPagosClient from 'components/TablaPagosClient'
 
 const ClienteFluid = ({ match, location }) => {
 
