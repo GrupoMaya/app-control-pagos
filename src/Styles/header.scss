@@ -1,0 +1,28 @@
+.App{
+    height: 100vh;
+    overflow-y: hidden;
+}
+
+.App-header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 5rem;
+    background-color: #34495e;
+    padding: 0.25rem 0.65rem;    
+}
+
+.App-header span{
+        display: block;
+        width: auto;
+        height: 100%;
+        content: url("../assets/img/logo_blanco.png");
+        background-position: center;
+        background-repeat: no-repeat;
+}
+
+.App-container{
+    height: 100%;
+    overflow-y: scroll;
+    padding-bottom: 150px;
+}

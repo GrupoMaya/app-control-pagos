@@ -1,0 +1,226 @@
+.ico{
+  
+
+  &__add__user{
+    content: "";
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    bottom: 0;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+
+    &::before{
+      content: url('../assets/icons/user-plus.svg');
+    }
+
+    &::after{
+      content: "Nuevo Cliente";
+      font-weight: normal;
+      color: white;
+      font-size: small;
+      text-align: center;
+    }
+
+    &:hover{
+      border: 2px solid transparent;
+    }
+
+  }
+}
+
+.button__acordeon{
+  background-color: var(--esmeralda);
+  border: none;
+  width: 36px;
+  height: 36px;
+  display: inline;
+    
+
+  &::before{
+    content: url("../assets/icons/angle-down.svg");
+    
+  }
+
+}
+
+
+.hamburger_btn{
+      visibility: visible;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 2rem;
+      height: 2rem;
+      margin: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 10;
+
+
+      div{
+          width: 2rem;
+          height: 0.25rem;
+          background: white;
+          border-radius: 10px;
+          transition: all 0.3s linear;
+          position: relative;
+          transform-origin: 5px;
+      }
+
+}
+
+.hamburger_btn_open{
+  position: relative;
+
+  div{
+      width: 2rem;
+      height: 0.25rem;
+      background: white;
+      border-radius: 10px;
+      transition: all 0.3s linear;
+      position: relative;
+      transform-origin: 1px;
+
+      &:first-child{
+          transform: rotate(45deg);
+      }
+
+      &:nth-child(2){
+          opacity: 0;
+          transform: translate(20px)
+      }
+
+      &:nth-child(3){
+          transform: rotate(-45deg);                
+      }
+    }
+  }
+
+.menu__hamburger{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  h4{
+    color: white;
+    align-self: flex-start;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  button{
+    font-family: var(--normalFont);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border: none;
+    padding: 1rem;
+    color: white;
+    border-radius:  4px;
+    cursor: pointer;
+    width: 90%;
+    height: 56px;
+    margin: 10px;
+    font-size: 15px;
+
+    &:hover{
+      opacity: 0.65;
+    }
+  }
+
+  &__btn__red{
+    background-color: #e74c3c;
+  }
+}
+
+.btn__esmeralda{
+  background-color: var(--esmeralda);
+}
+
+.ico__proyecto{
+  display: block;
+  content: url('../assets/icons/estate.svg');
+  width: 60px;
+  height: 56px;    
+  padding: 0.25rem;
+}
+
+.ico__editar{
+  display: block;
+  content: url('../assets/icons/brush-alt.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
+.ico__user{
+  display: block;
+  content: url('../assets/icons/user-plus.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
+.ico__user__morosos{
+  display: block;
+  content: url('../assets/icons/user-exclamation.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
+.ico__user__normal{
+  display: block;
+  content: url('../assets/icons/user.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
+.invoice__ico{
+  display: block;
+  content: url('../assets/icons/invoice.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
+
+.menu__hiden__hamburger{
+    position: absolute;
+    height: 140px;
+    width: 180px;
+    top: 4rem;
+    right: 0;
+    background-color: var(--white-bg);
+    z-index: 1000;
+
+    nav{
+      position: fixed;
+      background-color: #2c3e50;
+       top: 5rem;
+       left: 0;
+       height: 100%;
+       width: 25%;
+       transition: all 0.3s linear;
+    }
+
+    nav *{
+      margin: 10px;
+    }
+
+}
+
+@media (max-width: 60rem){
+  .menu__hiden__hamburger{
+    nav{
+      width: 90%;
+    }
+  }
+}
+
+

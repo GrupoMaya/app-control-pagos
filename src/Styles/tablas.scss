@@ -1,0 +1,134 @@
+.proyecto__table{
+  
+  padding: 0;
+  margin-top: 2rem;
+
+  td,th{
+    padding: 0.65rem;
+    height: 49px;
+  }
+
+
+  table{
+    width: 100%;
+    overflow-x: hidden;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+  }
+  
+  td{
+    text-transform: uppercase;
+  }
+
+}
+
+.proyecto__input{
+  display: flex;
+  width: 100%;
+  padding: 0 0.65rem;
+  
+  input,
+  button{
+    border: 0;
+    margin: 0;
+    border-radius: 0;
+  };
+
+  input{
+    width: 100%;
+    padding-left: 0.65rem;
+    font-size: large;
+  }
+
+  button{
+    background-color: var(--esmeralda);
+    color: #ffff;
+    width: 4rem;
+    cursor: pointer;
+
+    &:hover{
+      opacity: 0.75;
+    }
+  }
+}
+
+.tabla__data{
+  width: 100%;
+  text-align: center;
+
+  button{
+    background-color: var(--esmeralda);
+    border: none;
+    padding: 0.50rem;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover{
+      opacity: 0.65;
+    }
+  }
+
+  &__pendding{
+    color: var(--rojo);
+    font-weight: bold;
+  }
+  
+  &__pagado{
+    color: var(--esmeralda);
+    font-weight: bold;
+  }
+
+}
+
+.tag__normal{
+  background-color: var(--esmeralda);
+  color: white;
+  padding: 0.25rem;
+}
+
+.tag__extra{
+  background-color: #f39c12;
+  color: white;
+  padding: 0.25rem;
+}
+
+.tag__acreditado{
+  background-color: #9b59b6;
+  padding: 0.25rem;
+  color: white;
+}
+
+
+.tabla__data td {
+  padding: 4px;
+}
+
+.tabla__data:nth-child(2n + 1){
+  background-color: #dbdfe2;
+}
+
+// .tabla__data:hover{
+//   background-color: var(--esmeralda_light);
+//   color: white;
+// }
+
+.head__data__table{
+  background-color: var(--esmeralda);
+  font-size: medium;
+  color: white;
+}
+
+.cliente__App__pagos{
+  margin: 1rem;
+}
+
+@media (max-width:60rem){
+  
+  .proyecto__table table{
+    width: 850px;
+    overflow-x: auto;
+  }
+
+}

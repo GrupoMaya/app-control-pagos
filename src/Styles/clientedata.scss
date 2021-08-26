@@ -1,0 +1,95 @@
+.cliente__App__container{
+  width: 100%;
+}
+
+.cliente__App__header{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  background-image: linear-gradient(60deg, #96deda 0%, #50c9c3 100%);
+  text-align: center;
+
+  h4{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    text-transform: capitalize;
+    font-size: x-large;  
+  }
+  
+}
+
+.expediente__data{
+  font-size: large;
+  section{
+    margin: 10px;
+  }
+
+  p{
+    margin: 0;
+    color: var(--black);
+    font-weight: bold;
+  }
+
+}
+
+.cliente__App_body {
+    display: flex;
+    justify-content: center;
+
+    form{
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      
+    }
+
+    p{
+      color: var(--rojo)
+    }
+    
+
+    form fieldset{
+      display: flex;
+      flex-direction: column;
+      margin: 20px;
+      width: 500px;
+
+    }
+
+    fieldset legend{
+      text-transform: capitalize;
+      background-color: var(--esmeralda);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.25rem;
+      border-radius: 2px;
+    }
+
+    label{
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      font-size: medium;
+    }
+
+    label input {
+      border: none;
+      pad: 0.65rem;
+      height: 36px;
+      border-radius: 4px;
+    }
+    
+}
+
+@media (max-width: 60rem){
+  .cliente__App__container{
+    margin: 0;
+    padding: 4px;
+  }
+}

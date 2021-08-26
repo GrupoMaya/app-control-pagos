@@ -1,0 +1,25 @@
+.notify{
+  position: fixed;
+  top: 30%;
+  width: fit-content;
+
+  span{
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    width: 20rem;
+    height: 80px;
+    color: white;
+  }  
+}
+
+
+.ntf__error{
+  background-color: var(--rojo);
+}
+
+.ntf__success{
+  background-color: var(--esmeralda);
+}
