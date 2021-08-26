@@ -24,7 +24,7 @@ function App () {
               <a href="/" >
               <span></span>
               </a>
-              <HamburgerButton></HamburgerButton>
+              <HamburgerButton />
             </header>
       <div className="App-container">
           <Route path="/" exact={true}>
