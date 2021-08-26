@@ -10,7 +10,7 @@ import ModalAddUserProject from 'Modales/ModalAddUserProject'
 
 import ModalRemoveClient from 'Modales/ModalRemoveClient'
 
-const HamburgerButton = () => {
+const MenuMaya = () => {
 
   const { handleModalPago } = useContext(AppContext)
 
@@ -147,4 +147,4 @@ const HamburgerButton = () => {
   )
 }
 
-export default HamburgerButton
+export default MenuMaya

@@ -10,7 +10,7 @@ import ClienteDataForm from 'views/ClienteDataForm'
 import { MayaAppMachineProvider } from 'context/MayaMachine'
 import AppContextProvider from 'context/AppContextProvider'
 
-import HamburgerButton from 'components/HamburgerButton'
+import HamburgerButton from 'components/MenuMaya'
 
 function App () {
   return (
