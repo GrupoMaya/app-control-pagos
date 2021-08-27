@@ -31,7 +31,6 @@ code {
 }
 
 #Dashboard{
-  
   min-height: 50vh;
   margin-bottom: 250px;
 
@@ -39,23 +38,27 @@ code {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    
+    justify-content: center;        
   }
 
   .dashboard__header{
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4rem;
-    padding-right: 10px;
+    justify-content: flex-start;
+    padding:  0.25rem 2rem;
+    background-color: white;
 
+    h1{
+      color: #2E2C2F;
+      font-weight: bold;
+      font-size: 30px;
+    }
+        
     span{
       margin: 4px;
     }
 
     button{
       margin: 2px;
-      background-color: white;
       color: var(--esmeralda);
       border: 1px solid var(--esmeralda);
       padding: 0.65rem;

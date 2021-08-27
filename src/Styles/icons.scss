@@ -46,6 +46,8 @@
 }
 
 
+
+
 .hamburger_btn{
       visibility: visible;
       display: flex;
@@ -187,6 +189,23 @@
   width: 60px;
   height: 56px;  
   padding: 0.25rem;
+}
+
+.logo__loader__await{
+  content: url('../assets/img/logo_blanco.png');
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  background-color: #2c3e50;
+  clip-path: circle();
+  animation: infinite opacity 4s ease-in-out;
+}
+
+@keyframes opacity {
+  0% { opacity: 0.25; }
+  25% { opacity: 0.75; }
+  50% { opacity: 1; }
+  100% { opacity: 0.25;}
 }
 
 

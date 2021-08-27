@@ -17,6 +17,7 @@ const Dashboard = () => {
   return (
         <div id="Dashboard">
             <section className="dashboard__header">
+              <h1>Proyectos Activos</h1>
             </section>
             <section className="cards">
                 {
@@ -27,6 +28,12 @@ const Dashboard = () => {
                       </Link>
                     )
                   })
+                }
+                {
+                  
+                }
+                {
+                  state.matches('getProyectos') && <span className="logo__loader__await" />
                 }
             </section>
         </div>
