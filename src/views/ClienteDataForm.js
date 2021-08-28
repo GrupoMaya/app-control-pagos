@@ -237,9 +237,6 @@ const ClienteDataForm = ({ match, location }) => {
               </form>
 
       </section>
-      <div className="cliente_App_footer">
-      </div>
-
     </div>
   )
 }

@@ -29,6 +29,14 @@ const Proyecto = ({ match }) => {
         <section className="proyecto__data__info">
             {/* INFORMACION ESTATISTICO DEL PROYECTO */}
         </section>
+    <div className="ntf__results">
+      {
+        state.matches('getProyectoByID') && <span className="logo__loader__await" />
+      }
+      {
+        state.matches('success') && Object.values(proyecto).length === 0 && <span>No hay Elementos para mostrar</span>
+      }
+  </div>
     </section>
     <section className="proyecto__table">  
       <table>
@@ -39,6 +47,7 @@ const Proyecto = ({ match }) => {
           <th>Cliente</th>
           <th>Acciones</th>
         </tr>
+        
         {
           state.matches('success') &&
           Object.values(proyecto)
@@ -80,7 +89,7 @@ const Proyecto = ({ match }) => {
             })
         }
       </table>
-    </section>
+    </section>    
     </div>
   )
 }

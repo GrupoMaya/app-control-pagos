@@ -76,6 +76,30 @@ const useSearch = async (ctx, { keyword }) => {
 
 }
 
+const getSettingsApp = async () => {
+
+  const query = await fetch(`${baseURL}/settingsapp/get`)
+    .then(res => res.json())
+    .then(res => res.message[0])
+
+  return query
+}
+
+const patchSettingsData = async (ctx, { data }) => {
+
+  const query = await fetch(`${baseURL}/settingsapp/dataInfo`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json())
+    .then(res => res)
+
+  return query
+}
+
 const BuscadorMachine = createMachine({
   id: 'buscador',
   initial: 'iddle',
@@ -85,6 +109,7 @@ const BuscadorMachine = createMachine({
     lotes: [],
     pagos: [],
     pago: [],
+    appData: [],
     clientId: undefined
   },
   states: {
@@ -175,6 +200,31 @@ const BuscadorMachine = createMachine({
         }
       }
     },
+    getSettingsApp: {
+      invoke: {
+        src: getSettingsApp,
+        onDone: {
+          target: 'success',
+          actions: assign({
+            appData: (ctx, evt) => evt.data 
+          })
+        },
+        onError: {
+          target: 'error'
+        }
+      }
+    },
+    patchSettingsData: {
+      invoke: {
+        src: patchSettingsData,
+        onDone: {
+          target: 'getSettingsApp'
+        },
+        onError: {
+          target: 'error'
+        }
+      }
+    },
     removeUserLote: () => {
       
     }
@@ -193,7 +243,9 @@ const BuscadorMachine = createMachine({
     GET_PAGOS_INFO: 'getPagosInfo',
     USER_SEARCH: 'userSearch',
     GET_INFO_PAGO: 'getInfoPago',
-    REMOVE_USER_LOTE: 'removeUserLote'
+    REMOVE_USER_LOTE: 'removeUserLote',
+    GET_SETTINGS_APP: 'getSettingsApp',
+    PATCH_SETTINGS_DATA: 'patchSettingsData'
   }
   
 })

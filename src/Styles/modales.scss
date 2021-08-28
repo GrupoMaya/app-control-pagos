@@ -51,6 +51,7 @@
   }
 
   input{
+    outline: none;
     width: 100%;
     padding: 0.65rem;
     border: transparent 1px solid;
@@ -141,6 +142,7 @@
   }
 
   input{
+    outline: none;
     padding: 0.65rem;
     margin: 3px;
     border: 0;
@@ -231,6 +233,7 @@
   justify-content: space-around;
 
   input{
+    outline: none;
     font-size: large;
     width: 80%;
     padding: 0.25rem 0.65rem;
@@ -316,6 +319,7 @@
   }
 
   input{
+    outline: none;
     width: 100%;
     border: none;
     padding: 0.65rem;    
@@ -346,7 +350,8 @@
       color: #bdc3c7;
     }
 
-    input{      
+    input{  
+      outline: none;    
       width: 100%;
       padding: 0.65rem;
       border: none;
@@ -389,6 +394,7 @@
     font-weight: bold;
 
     input{
+      outline: none;
       border: none;
       box-shadow: var(--shadow);
       padding: 0.65rem;
@@ -422,6 +428,56 @@
 
 .ntf__success{
   background-color: var(--esmeralda);
+}
+
+.modal__settings{
+  display: flex;
+  flex-direction: column;
+    
+  label{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    border-bottom: 2px solid var(--esmeralda);
+    font-weight: bold;
+
+
+    input{
+      background-color: var(--white-bg);
+      color: var(--black);
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 4px;
+      font-size: large;
+    }
+    
+    div{
+      display: flex; 
+    }
+  }
+
+  button{
+    margin: 2px;
+    width: 8rem;
+    background-color: white;
+    color: var(--esmeralda);
+    border: 1px solid var(--esmeralda);
+    padding: 0.65rem;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover{
+      background-color: var(--esmeralda);
+      color: white;
+    }  
+  }
+
+  .footer__form{
+    display: flex;
+    justify-content: center;
+  }
+
 }
 
 // MEDIAS //

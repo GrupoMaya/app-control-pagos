@@ -7,6 +7,7 @@ import Buscador from './Buscador'
 // contexto
 import { AppContext } from 'context/AppContextProvider'
 import ModalAddUserProject from 'Modales/ModalAddUserProject'
+import ModalSettings from 'Modales/ModalSettings'
 
 import ModalRemoveClient from 'Modales/ModalRemoveClient'
 
@@ -56,6 +57,12 @@ const MenuMaya = () => {
     toggleHaburger()
   }
 
+  const [settingsModal, setSettingsModal] = useState(false)
+  const toogleSettingsModal = () => {
+    setSettingsModal(!settingsModal)
+    toggleHaburger()
+  }  
+
   return (
     <>
       <div 
@@ -69,28 +76,30 @@ const MenuMaya = () => {
     <div hidden={openHamburger} className="menu__hiden__hamburger">
 
       <nav className="menu__hamburger">
-
-        <h4>Buscar usuario</h4>
+        <div className="separacion__menu" />
         <Buscador></Buscador>
         <hr/>
         { location.pathname === '/' &&
         <>
+          <button
+            className="bg__blue"
+            onClick={() => toogleSettingsModal()}
+            >
+            <div className="ico__settings"></div>
+            Configuración
+          </button>
+
           <button className="menu__hamburger__btn__red">
           <div className="ico__user__morosos"></div>
             Usuarios Morosos
           </button>
+
           <div className="separacion__menu" />
           <button 
             className="btn__esmeralda"
             onClick={() => handleProjectModal()}>
               <div className="ico__proyecto" ></div>
               Añadir Proyecto
-          </button>
-          <button
-            className="btn__esmeralda"
-            >
-            <div className="ico__editar"></div>
-            Editar Proyecto
           </button>        
         </>
         }
@@ -143,6 +152,7 @@ const MenuMaya = () => {
     <NuevoPoject visible={openProject} onCancel={handleProjectModal} />
     <ModalAddUserProject visible={handleAddUser} onCancel={setHandledAddUser} />
     <ModalRemoveClient visible={removeModal} onCancel={handleRemoveUser} />
+    <ModalSettings visible={settingsModal} onCancel={toogleSettingsModal} />
   </>
   )
 }

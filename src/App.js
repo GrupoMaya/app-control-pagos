@@ -59,11 +59,14 @@ function App () {
             >
           </Route>
 
-      </div>
+      <div className="cliente_App_footer"></div>
+      </div> 
+      
           </AppContextProvider>
           </MayaAppMachineProvider>
         </Switch>
       </Router>
+    
     </div>
   )
 }

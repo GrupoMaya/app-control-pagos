@@ -22,7 +22,6 @@
 }
 
 .App-container{
-    height: 100%;
+    min-height: 50vh;
     overflow-y: scroll;
-    padding-bottom: 150px;
 }
