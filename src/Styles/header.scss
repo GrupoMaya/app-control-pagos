@@ -5,7 +5,9 @@
 
 .App-header{
     display: flex;
+    position: relative;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     height: 5rem;
     background-color: #34495e;
@@ -14,14 +16,20 @@
 
 .App-header span{
         display: block;
+        position: absolute;
         width: auto;
-        height: 100%;
+        height: 80px;
         content: url("../assets/img/logo_blanco.png");
         background-position: center;
         background-repeat: no-repeat;
+        left: 5rem;
+        right: 0;
+        bottom: 0;
+        transform: translate3d(10px 50px);
 }
 
 .App-container{
-    min-height: 50vh;
-    overflow-y: scroll;
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 15rem;
 }

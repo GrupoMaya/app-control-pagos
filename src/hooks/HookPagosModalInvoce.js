@@ -38,8 +38,6 @@ const HookPagosModalInvoce = ({ lote }) => {
       folio: data.folio 
     }
 
-    console.log(data, lote)
-
     send('ADD_PAGO_LOTE', { data: payload })
     setNotify()
   }

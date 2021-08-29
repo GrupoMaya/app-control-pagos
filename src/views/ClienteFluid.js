@@ -11,6 +11,8 @@ import NumberFormat from 'utils/NumberFormat'
 
 import TablaPagosClient from 'Components/TablaPagosClient'
 
+import ModalStatusProjectDetails from 'Components/ModalStatusProjectDetails'
+
 const ClienteFluid = ({ match, location }) => {
 
   const [openExpediente, setOpenExpediente] = useState(false)
@@ -18,6 +20,9 @@ const ClienteFluid = ({ match, location }) => {
 
   const [state, send] = useMachine(BuscadorMachine)
   const { openModalPago, handleModalPago } = useContext(AppContext)
+
+  const [modalPagoDetalles, setModalPagoDetalles] = useState(false)
+  const tooglePagoDetalles = () => setModalPagoDetalles(!modalPagoDetalles)
 
   const dataQuery = location.state
   useEffect(() => {
@@ -46,7 +51,11 @@ const ClienteFluid = ({ match, location }) => {
           </button>
         <div>
           <section className="proyecto__table">
-          <h3>Información del lote</h3>
+          <a
+            onClick={() => tooglePagoDetalles()}
+            >
+            <h3>Información del lote</h3>
+          </a>
         <table>
           <thead>
           <tr className="head__data__table">
@@ -100,6 +109,11 @@ const ClienteFluid = ({ match, location }) => {
           handledOpen={handleModalPago}
           lotes={dataQuery} 
         />
+      <ModalStatusProjectDetails 
+        openModal={modalPagoDetalles} 
+        handledModal={tooglePagoDetalles}
+        loteid={pagos}
+      />
     </div>
   )
 }

@@ -6,6 +6,8 @@ import NumberFormat from 'utils/NumberFormat'
 
 const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
 
+  const idLote = loteid.length > 0 && loteid[0].lote.toString()
+
   const [estatus, setEstus] = useState([])
   const [loading, setLoading] = useState(false)
   
@@ -47,7 +49,7 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
   const financiamento = financiamientoPendiente(estatus)
     
   useEffect(() => {
-    fetch(`${baseURL}/status/payment/lote/${loteid}`)
+    fetch(`${baseURL}/status/payment/lote/${idLote}`)
       .then(res => res.json())
       .then(res => setEstus(res.message))
       .finally(() => setLoading(true))
