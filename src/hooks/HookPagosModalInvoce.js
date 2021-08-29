@@ -34,8 +34,12 @@ const HookPagosModalInvoce = ({ lote }) => {
       mes: new Date(data.mes),
       refPago: data.refPago,
       mensualidad: data.mensualidad,     
-      tipoPago: data.tipoPago 
+      tipoPago: data.tipoPago,
+      folio: data.folio 
     }
+
+    console.log(data, lote)
+
     send('ADD_PAGO_LOTE', { data: payload })
     setNotify()
   }

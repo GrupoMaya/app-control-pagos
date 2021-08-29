@@ -21,7 +21,6 @@ const ClienteFluid = ({ match, location }) => {
 
   const dataQuery = location.state
   useEffect(() => {
-
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString()
@@ -31,7 +30,7 @@ const ClienteFluid = ({ match, location }) => {
 
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context
-    
+      
   return (
     <div className="cliente__App__container">
       <section className="cliente__App__header">

@@ -21,10 +21,10 @@ function App () {
           <AppContextProvider>
 
           <header className="App-header">
+              <MenuMaya />
               <a href="/" >
               <span></span>
               </a>
-              <MenuMaya />
             </header>
       <div className="App-container">
           <Route path="/" exact={true}>

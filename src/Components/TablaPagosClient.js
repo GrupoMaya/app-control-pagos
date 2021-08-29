@@ -21,7 +21,8 @@ const TablaPagosClient = ({ pagos, lote }) => {
       <table>
         <thead>
         <tr className="head__data__table">
-          <th>Mes</th>
+          <th>Folio</th>
+          <th>Fecha</th>
           <th>Estatus</th>
           <th>Poyecto</th>
           <th>Lote</th>

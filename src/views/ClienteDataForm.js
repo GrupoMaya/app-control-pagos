@@ -139,11 +139,11 @@ const ClienteDataForm = ({ match, location }) => {
                   <label htmlFor="inicioControl">
                     Inicio de Contrato
                     <input 
-                      id="inicioControl"
+                      id="inicioContrato"
                       type="date"
                       min={0}
-                      aria-invalid={errors.inicioControl ? 'true' : 'false' }
-                      { ...register('inicioControl', { required: true })}          
+                      aria-invalid={errors.inicioContrato ? 'true' : 'false' }
+                      { ...register('inicioContrato', { required: true })}          
                       />
                   </label> 
 
@@ -164,7 +164,7 @@ const ClienteDataForm = ({ match, location }) => {
                       Número de Manzana
                       <input 
                         id="manzana"
-                        type="number"
+                        type="text"
                         min={0}
                         aria-invalid={errors.manzana ? 'true' : 'false' }
                         { ...register('manzana')}          
