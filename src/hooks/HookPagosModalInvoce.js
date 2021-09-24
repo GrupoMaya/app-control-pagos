@@ -27,6 +27,9 @@ const HookPagosModalInvoce = ({ lote }) => {
   })
 
   const onSubmit = (data) => {
+
+    console.log(data, 'patito')
+        
     const payload = {
       cliente: lote.cliente,
       proyecto: lote.proyecto,
@@ -37,6 +40,8 @@ const HookPagosModalInvoce = ({ lote }) => {
       tipoPago: data.tipoPago,
       folio: data.folio 
     }
+
+    console.log(payload)
 
     send('ADD_PAGO_LOTE', { data: payload })
     setNotify()
@@ -62,6 +67,7 @@ const HookPagosModalInvoce = ({ lote }) => {
         <option value="mensualidad">Pago Mensual</option>
         <option value="extra">Pago Extraordinario</option>
         <option value="acreditado">Acreditado</option>
+        <option value="saldoinicial">Saldo inicial</option>
       </select>
 
       <label>Referencia de Pago</label>
