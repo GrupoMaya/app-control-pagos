@@ -55,7 +55,7 @@ const postPago = async (ctx, { idPago, payload }) => {
 
 const addLoteToUser = async (ctx, { idProyecto, payload }) => {
 
-  console.log({ idProyecto })
+  console.log(idProyecto, payload)
   
   const response = await fetch(`${baseURL}/add/lote/user/${idProyecto}/`, {
     method: 'POST',

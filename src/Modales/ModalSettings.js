@@ -5,7 +5,7 @@ import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
 
 const FormCapsule = ({ dataApp, send }) => {
-
+ 
   const onSubmit = (data) => {
     send('PATCH_SETTINGS_DATA', { data })
   }

@@ -34,9 +34,7 @@ const ClienteFluid = ({ match, location }) => {
   }, [])
 
   const { clienteSlug, projectSlug, idlote } = match.params
-  const { pagos } = state.context
-
-  console.log(pagos)
+  const { pagos } = state.context 
       
   return (
     <div className="cliente__App__container">

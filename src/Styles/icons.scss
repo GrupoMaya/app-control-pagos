@@ -46,32 +46,29 @@
 }
 
 
-
-
 .hamburger_btn{
-      visibility: visible;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
+  visibility: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  margin: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+
+  div{
       width: 2rem;
-      height: 2rem;
-      margin: 10px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      z-index: 10;
-
-
-      div{
-          width: 2rem;
-          height: 0.25rem;
-          background: white;
-          border-radius: 10px;
-          transition: all 0.3s linear;
-          position: relative;
-          transform-origin: 5px;
-      }
+      height: 0.25rem;
+      background: white;
+      border-radius: 10px;
+      transition: all 0.3s linear;
+      position: relative;
+      transform-origin: 5px;
+  }
 
 }
 

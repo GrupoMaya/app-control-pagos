@@ -33,6 +33,7 @@ code {
 #Dashboard{
   min-height: 50vh;
   margin-bottom: 250px;
+  
 
   section{
     width: 100%;
@@ -43,6 +44,7 @@ code {
 
   .dashboard__header{
     display: flex;
+    align-items: center;
     justify-content: flex-start;
     padding:  0.25rem 2rem;
     background-color: white;
@@ -51,6 +53,7 @@ code {
       color: #2E2C2F;
       font-weight: bold;
       font-size: 30px;
+      margin-right: 8px;
     }
         
     span{
