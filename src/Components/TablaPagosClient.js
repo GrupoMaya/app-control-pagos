@@ -7,6 +7,8 @@ import ModalEstatus from './ModalEstatus'
 const TablaPagosClient = ({ pagos, lote }) => {
   const { modalPago, setModalPago } = useContext(AppContext)
 
+  console.log({ pagos }, 'pago tabla clientes')
+
   return (
     <section className="cliente__App__pagos">
       <h3> PAGOS </h3>
@@ -36,6 +38,7 @@ const TablaPagosClient = ({ pagos, lote }) => {
           {
             Object.values(pagos)
               .map(pagos => {
+                console.log(pagos, 'perdido')
                 return (
                   <HookPagosTable key={pagos._id} pagoId={pagos._id} lote={lote}/>
                 )

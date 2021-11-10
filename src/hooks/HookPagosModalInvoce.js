@@ -19,12 +19,15 @@ const HookPagosModalInvoce = ({ lote }) => {
 
   })
 
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       lote: lote?.lote,
       mensualidad: lote?.mensualidad
     }
   })
+
+  const saldoInicialWatch = watch('tipoPago')
+  console.log(saldoInicialWatch)
 
   const onSubmit = (data) => {
            
@@ -36,8 +39,11 @@ const HookPagosModalInvoce = ({ lote }) => {
       refPago: data.refPago,
       mensualidad: data.mensualidad,     
       tipoPago: data.tipoPago,
-      folio: data.folio 
+      folio: data.folio,
+      folioincial: data.folioIncial 
     }  
+
+    console.log(payload, 'en cada esquina')
 
     send('ADD_PAGO_LOTE', { data: payload })
     setNotify()
@@ -65,6 +71,15 @@ const HookPagosModalInvoce = ({ lote }) => {
         <option value="acreditado">Acreditado</option>
         <option value="saldoinicial">Saldo inicial</option>
       </select>
+      {
+        saldoInicialWatch === 'saldoinicial' && (
+          <label>Folio Inicial
+            <br />
+            <input type="number" placeholder="Ingresar Folio Inicial" id="folioIncial" {...register('folioIncial')} />
+          </label>
+          
+        )
+      }
 
       <label>Referencia de Pago</label>
       <input placeholder="Referencia de Pago" id="refPago" {...register('refPago')} />

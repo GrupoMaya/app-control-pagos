@@ -30,8 +30,12 @@ const ClienteFluid = ({ match, location }) => {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString()
     }
+
+    console.log({ query })
     send('GET_PAGOS_INFO', { query })
   }, [])
+
+  console.log({ dataQuery, state: state.context })
 
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context 

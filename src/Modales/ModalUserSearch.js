@@ -6,7 +6,7 @@ const ModalUserSearch = ({ visible, onCancel, dataResult }) => {
   const { busqueda } = dataResult?.context  
   const history = useHistory()
   const goToUser = (_id) => {
-    history.push(`/cliente/${_id}`)
+    history.push(`/detalle/cliente/${_id}`)
     onCancel()
   }
 

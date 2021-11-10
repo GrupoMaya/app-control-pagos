@@ -43,6 +43,7 @@ const fetchGetPagosInfo = async (ctx, event) => {
     .then(res => res.message)
     .catch(err => console.log(err))
 
+  console.log({ query, event })
   return query
 
 }
@@ -55,6 +56,8 @@ const getPagosInfo = async (ctx, event) => {
     .then(res => res.json())
     .then(res => res.message)
     .catch(err => console.log(err))
+
+  console.log({ query, event })
 
   return query
 
