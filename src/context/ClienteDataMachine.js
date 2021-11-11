@@ -4,6 +4,7 @@ import { baseURL } from 'context/controllers'
 // assignLoteToNewUser
 const assignLoteToNewUser = async (ctx, { idProyecto, payload }) => {
 
+  console.log({ idProyecto, payload }, 'nebo lote')
   const response = await fetch(`${baseURL}/assign/lote/user/${idProyecto}/`, {
     method: 'POST',
     headers: {

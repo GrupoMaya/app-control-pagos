@@ -13,7 +13,7 @@ class MayaMachineAPI {
     })
       .then(res => res.json())
       .then(res => res)
-      .catch(error => error)
+      .catch(error => console.log(error))
       
     if (res.error) throw new Error('No se puede crear el documento')
     return res

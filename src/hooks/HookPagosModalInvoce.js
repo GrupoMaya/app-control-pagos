@@ -73,7 +73,8 @@ const HookPagosModalInvoce = ({ lote }) => {
       </select>
       {
         saldoInicialWatch === 'saldoinicial' && (
-          <label>Folio Inicial
+          <label>
+            Folio Actual
             <br />
             <input type="number" placeholder="Ingresar Folio Inicial" id="folioIncial" {...register('folioIncial')} />
           </label>
