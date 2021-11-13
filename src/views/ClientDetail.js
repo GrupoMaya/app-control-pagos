@@ -6,8 +6,6 @@ import { useHistory } from 'react-router-dom'
 const ClientDetail = (props) => {
   
   const [current, send] = useMachine(ClienteDetailContext)  
-  console.log(props.match.params.id)
-
   useEffect(() => {
     send('LOAD_CLIENTE', { id: props.match.params.id })
   }, [props])
@@ -15,8 +13,7 @@ const ClientDetail = (props) => {
   const { cliente } = current.context
 
   const history = useHistory()
-  const handledDetail = (e) => {    
-    console.log(e._id, e.cliente[0])
+  const handledDetail = (e) => {        
     history.push(`/detalle/lote/${e._id}/cliente/${e.cliente[0]}/projecto/Perro`)
   }
 

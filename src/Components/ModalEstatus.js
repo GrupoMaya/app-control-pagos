@@ -84,6 +84,11 @@ const ModalEstatus = () => {
         <small>Obligatorio</small>
       </label>
 
+      <label>
+        <input type="text" placeholder="Observaciones del documento" {...register('textoObservaciones')} />
+        <small>Obligatorio</small>
+      </label>
+
       <button type="submit">
         Liquidar Pago
       </button>

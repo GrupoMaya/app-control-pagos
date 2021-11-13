@@ -65,6 +65,9 @@ const HookPagosTable = ({ pagoId, lote }) => {
           case 'acreditado':
             tipoPagoClass = 'tag__acreditado'    
             break
+          case 'saldoinicial': 
+            tipoPagoClass = 'tag__saldoinicial'
+            break
         }
 
         return (

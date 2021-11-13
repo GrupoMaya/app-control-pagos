@@ -29,13 +29,9 @@ const ClienteFluid = ({ match, location }) => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString()
-    }
-
-    console.log({ query })
+    }    
     send('GET_PAGOS_INFO', { query })
   }, [])
-
-  console.log({ dataQuery, state: state.context })
 
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context 
@@ -76,7 +72,7 @@ const ClienteFluid = ({ match, location }) => {
           <tbody>
             {
             location.state
-              .map((lote) => {
+              .map((lote) => {                
                 return (
                   <tr 
                     key={lote._id} 

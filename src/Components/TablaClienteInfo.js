@@ -23,7 +23,7 @@ const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
     setLoteId(loteId)
     handledProjectStatus()
   }
-
+  
   const { openModalPago, handleModalPago } = useContext(AppContext)
 
   return (

@@ -1,0 +1,61 @@
+.modal__confirm{
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  h3, h4{
+    width: 100%;
+    background-color: red;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+  }
+    
+  span{
+      display: flex;  
+      width: 100%;
+      flex-direction: column;      
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+
+      small{        
+        font-weight: bold; 
+        font-size: 1rem;       
+      }
+      
+    }
+
+    span div:last-child{
+      background-color: aqua;
+    }
+    
+}
+
+.btn__send-ok{
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 8px 12px;
+  background-color: #00b300;
+  color: white;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.btn__outline{
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 8px 12px;
+  border: #00b300 1px solid;  
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.error__campos{
+  background-color: red;
+  color: white;
+  padding: 16px;
+}

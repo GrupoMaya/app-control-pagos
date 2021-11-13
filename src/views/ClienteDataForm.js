@@ -43,10 +43,10 @@ const ClienteDataForm = ({ match, location }) => {
   const onSubmit = (data) => {
     
     if (typeof user !== 'undefined') {
-      console.log('update')
+      
       send('ADD_LOTE_USER', { idProyecto, payload: { ...data, idUser: user._id } })
     } else if (typeof user === 'undefined') {
-      console.log('add')
+      
       send('ASSIGN_LOTE_TO_NEW_USER', { idProyecto, payload: data })
     }
   }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import NumberFormat from 'utils/NumberFormat'
 import { Link } from 'react-router-dom'
+import DateIntlFormat from 'utils/DateIntlFormat'
 
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 
@@ -16,7 +17,7 @@ const Proyecto = ({ match }) => {
   }, [match])
 
   const { proyecto } = state.context
-      
+
   return (
     // @params proyecto css
     <div className="proyecto__container">
@@ -44,6 +45,7 @@ const Proyecto = ({ match }) => {
           <th>Lote</th>
           <th>Manzana</th>
           <th>Precio Total</th>
+          <th>Incio de contrato</th>
           <th>Cliente</th>
           <th>Acciones</th>
         </tr>
@@ -52,7 +54,7 @@ const Proyecto = ({ match }) => {
           state.matches('success') &&
           Object.values(proyecto)
             .filter(item => item.clienteData.length > 0)
-            .map((item, index) => {
+            .map((item, index) => {              
               const loteInfo = [item]
               const loteid = item.lote
               return (
@@ -63,6 +65,11 @@ const Proyecto = ({ match }) => {
                   <td>{ item.lote }</td>
                   <td>{ item.manzana }</td>
                   <td>{ <NumberFormat number={item.precioTotal}/> }</td>
+                  <td>
+                    {
+                      item.inicioContrato && <DateIntlFormat date={item.inicioContrato} dateStyle='medium' />
+                    }
+                  </td>
                   {
                     Object.values(item.clienteData)
                       .map(item => {
