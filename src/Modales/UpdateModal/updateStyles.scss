@@ -1,0 +1,17 @@
+.btn__danger{  
+     
+  button{
+    border: 0;
+    padding: 0.55rem;
+    width: 60px;
+    color: white;
+    border-radius: 4px;
+    background-color: var(--rojo);
+    cursor: pointer;
+
+    &:hover{
+      opacity: 0.70;
+    }
+  }
+
+}

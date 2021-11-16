@@ -150,6 +150,12 @@ code {
       opacity: 0.70;
     }
   }
-
 }
 
+.d-flex{
+  display: flex;
+
+  &.center{    
+    justify-content: center;
+  }
+}
