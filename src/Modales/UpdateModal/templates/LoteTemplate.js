@@ -63,8 +63,8 @@ const LoteTemplate = ({ data }) => {
                 <p>Plazo</p>
                 <input
                   type="text"                  
-                  name="precioTotal"
-                  {...register('precioTotal')}
+                  name="plazo"
+                  {...register('plazo')}
                 >
                 </input>
               </label>
