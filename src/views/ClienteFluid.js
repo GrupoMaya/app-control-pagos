@@ -13,6 +13,8 @@ import TablaPagosClient from 'Components/TablaPagosClient'
 
 import ModalStatusProjectDetails from 'Components/ModalStatusProjectDetails'
 
+import DateIntlForma from 'utils/DateIntlFormat'
+
 const ClienteFluid = ({ match, location }) => {
 
   const [openExpediente, setOpenExpediente] = useState(false)
@@ -61,7 +63,7 @@ const ClienteFluid = ({ match, location }) => {
           <tr className="head__data__table">
             <th>Proyecto</th>
             <th>Lote</th>
-            <th>Manzana</th>
+            <th>Inicio Contrato</th>
             <th>Plazo</th>
             <th>Mensualidad</th>
             <th>Enganche</th>
@@ -80,7 +82,7 @@ const ClienteFluid = ({ match, location }) => {
                     >
                       <td>{ projectSlug }</td>
                       <td>{ lote.lote }</td>
-                      <td>{ lote.manzana }</td>
+                      <td>{ lote.inicioContrato && <DateIntlForma date={lote.inicioContrato} /> }</td>
                       <td>{ lote.plazo }</td>
                       <td>{ <NumberFormat number={lote.mensualidad} /> }</td>
                       <td>{ <NumberFormat number={lote.enganche} /> }</td>                             

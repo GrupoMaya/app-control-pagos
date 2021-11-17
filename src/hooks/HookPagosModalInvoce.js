@@ -38,12 +38,10 @@ const HookPagosModalInvoce = ({ lote }) => {
   const tipoPago = watch('tipoPago')
 
   const [payload, setPayload] = useState({})
-  const sendConfirmData = () => {  
-    console.log(payload, 'FOYONE')  
+  const sendConfirmData = () => {       
     send('ADD_PAGO_LOTE', { data: payload })   
     handelOpenModal()
-    setNotify()
-    console.log('aya van') 
+    setNotify()    
   }
 
   const onSubmit = (data) => {

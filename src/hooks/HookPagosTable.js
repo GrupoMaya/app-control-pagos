@@ -12,6 +12,8 @@ import { baseURL } from 'context/controllers'
 
 import DetallePago from 'Models/DetallePago'
 
+import UpdateModal from 'Modales/UpdateModal/UpdateModal'
+
 const HookPagosTable = ({ pagoId, lote }) => {
   
   const [state, send] = useMachine(BuscadorMachine)
@@ -56,6 +58,8 @@ const HookPagosTable = ({ pagoId, lote }) => {
     state.matches('success') && pago
       .filter((pago) => pago.dataLote[0].lote === lote)
       .map((pago) => {
+        
+        const idPago = pago._id
 
         let tipoPagoClass = 'tag__normal'
         switch (pago.tipoPago) {
@@ -93,13 +97,14 @@ const HookPagosTable = ({ pagoId, lote }) => {
                     <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>Pagar</button>
                     <button disabled={!pago.status} onClick={() => handledDetalle()}>Ver</button>
                     <button disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Imprimir</button>
+                    <UpdateModal id={idPago} document="Pago" /> 
                   </td>
               </tr>
               <DetallePago 
                 visible={openDetalle} 
                 onCancel={handledDetalle} 
                 info={pago} 
-              />
+              />              
           </>
         )
       })

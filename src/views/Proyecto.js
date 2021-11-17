@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import NumberFormat from 'utils/NumberFormat'
 import { Link } from 'react-router-dom'
 import DateIntlFormat from 'utils/DateIntlFormat'
+import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 
@@ -42,8 +43,7 @@ const Proyecto = ({ match }) => {
     <section className="proyecto__table">  
       <table>
         <tr className="head__data__table">
-          <th>Lote</th>
-          <th>Manzana</th>
+          <th>Lote</th>          
           <th>Precio Total</th>
           <th>Incio de contrato</th>
           <th>Cliente</th>
@@ -54,16 +54,17 @@ const Proyecto = ({ match }) => {
           state.matches('success') &&
           Object.values(proyecto)
             .filter(item => item.clienteData.length > 0)
-            .map((item, index) => {              
+            .map((item, index) => {  
+              const parentLoteId = item._id
               const loteInfo = [item]
               const loteid = item.lote
+            
               return (
                 <tr 
                   key={index} 
                   className="tabla__data"
                   >
-                  <td>{ item.lote }</td>
-                  <td>{ item.manzana }</td>
+                  <td>{ item.lote }</td>                  
                   <td>{ <NumberFormat number={item.precioTotal}/> }</td>
                   <td>
                     {
@@ -72,21 +73,25 @@ const Proyecto = ({ match }) => {
                   </td>
                   {
                     Object.values(item.clienteData)
-                      .map(item => {
+                      .map(item => {                        
+                        const clientURL = item.nombre.replace(/\//g, '-')
                         return (
                         <>
                         <td key={item._id}>
                             { item.nombre }
                         </td>
                         <td>
-                          <Link
-                            to={{
-                              pathname: `/detalle/lote/${loteid}/cliente/${item.nombre}/projecto/${projectName}`,
-                              state: loteInfo
-                            }}>
-                            <button>Ver</button>
-                          </Link>
-                        </td>
+                          <span className="d-flex center">
+                            <Link
+                              to={{
+                                pathname: `/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${projectName}`,
+                                state: loteInfo
+                              }}>
+                              <button>Ver</button>
+                            </Link>                          
+                            <UpdateModal id={parentLoteId} document="Lote"/>                     
+                          </span>
+                        </td>                        
                         </>
                         ) 
                       })
