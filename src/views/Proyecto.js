@@ -58,6 +58,7 @@ const Proyecto = ({ match }) => {
               const parentLoteId = item._id
               const loteInfo = [item]
               const loteid = item.lote
+            
               return (
                 <tr 
                   key={index} 
@@ -73,6 +74,7 @@ const Proyecto = ({ match }) => {
                   {
                     Object.values(item.clienteData)
                       .map(item => {                        
+                        const clientURL = item.nombre.replace(/\//g, '-')
                         return (
                         <>
                         <td key={item._id}>
@@ -82,7 +84,7 @@ const Proyecto = ({ match }) => {
                           <span className="d-flex center">
                             <Link
                               to={{
-                                pathname: `/detalle/lote/${loteid}/cliente/${item.nombre}/projecto/${projectName}`,
+                                pathname: `/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${projectName}`,
                                 state: loteInfo
                               }}>
                               <button>Ver</button>

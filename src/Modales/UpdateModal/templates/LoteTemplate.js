@@ -68,6 +68,16 @@ const LoteTemplate = ({ data }) => {
                 >
                 </input>
               </label>
+
+              <label>
+                <p>Plazo</p>
+                <input
+                  type="text"                  
+                  name="precioTotal"
+                  {...register('precioTotal')}
+                >
+                </input>
+              </label>
           <div className="footer__template">
           <button type="submit">Modificar</button>    
           </div>                    
