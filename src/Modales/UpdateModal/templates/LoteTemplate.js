@@ -15,6 +15,7 @@ const LoteTemplate = ({ data }) => {
   })
 
   const sendData = (payload) => {
+    console.log({ payload })
     send('PATCH_DATA_LOTE', { payload })
   }
 

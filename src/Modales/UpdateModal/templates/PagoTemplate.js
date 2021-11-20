@@ -16,7 +16,7 @@ const PagoTemplate = ({ data }) => {
     }
   })
 
-  const sendData = (payload) => {
+  const sendData = (payload) => {    
     send('PATCH_DATA_PAGO', { payload })
   }
 
