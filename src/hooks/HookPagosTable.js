@@ -107,7 +107,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
               className='tabla__data'
               > 
                 <td>{pago.folio}</td>
-                <td><DateIntlFormat date={pago.mes} type='numeric' /></td>
+                <td><DateIntlFormat date={pago.mes} type='numeric'/></td>
                 <td
                   className={ pago.status ? 'tabla__data__pagado' : 'tabla__data__pendding' }
                 >

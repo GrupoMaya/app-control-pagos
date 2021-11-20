@@ -98,16 +98,30 @@ const PagoTemplate = ({ data }) => {
                 </label>
               }
               
-              <small>
+            <small>
                 <p>Fecha Guardada </p> 
                 { data.fechaPago && <DateIntlForma date={data.fechaPago} /> }
             </small>
               <label>
-                <p>Fecha de pago</p>
+                <p>Fecha de Deposito</p>
                 <input
                   type="date"                  
                   name="fechaPago"
                   {...register('fechaPago')}
+                >
+                </input>
+              </label>
+
+            <small>
+                <p>Fecha actual</p> 
+                { data.mes && <DateIntlForma date={data.mes} /> }
+            </small>
+              <label>
+                <p>Fecha de Documento</p>
+                <input
+                  type="date"                  
+                  name="mes"
+                  {...register('mes')}
                 >
                 </input>
               </label>
