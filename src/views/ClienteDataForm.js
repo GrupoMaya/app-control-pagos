@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
+import { useToast, Button } from '@chakra-ui/react'
 
 import HookNameProjectById from 'hooks/HookNameProjectById'
 
@@ -58,6 +59,20 @@ const ClienteDataForm = ({ match, location }) => {
   }, [state.value])
   
   const { loading, project } = HookNameProjectById({ id: proyecto })
+ 
+  const toast = useToast()
+  useEffect(() => {
+    if (state.matches('documentSave')) {
+      reset()
+      toast({
+        title: 'Cliente guardado',
+        description: 'El cliente ha sido guardado correctamente',
+        status: 'success',
+        duration: 9000,
+        isClosable: true
+      })
+    }
+  }, [state.value])
 
   return (
 
@@ -69,7 +84,8 @@ const ClienteDataForm = ({ match, location }) => {
           <button className="btn" onClick={() => history.back()}>
             Regresar
           </button>
-          { state.matches('documentSave') && <span className="notification__success">¡Exito al guardar el Cliente!</span>}
+          {/* DOCUMENT SAVE ES EL ESTADO AL QUE PASA LA MAQUINA EN SUCCESS */}
+          {/* { state.matches('documentSave') && handledSuccess() } */}
           { state.matches('error') && <span className="notification__error">El usuario ya existe</span> }
       </div>
       <section className="cliente__App_body">      
@@ -127,8 +143,8 @@ const ClienteDataForm = ({ match, location }) => {
                   {/* TODO para adjuntar la foto */}
                   </div>
                     <div className="modal__footer">
-                      <button type="submit">Guardar</button>
-                      <button tyepe="reset" onClick={() => reset()}>Borrar Campos</button>
+                      <Button type="submit">Guardar</Button>
+                      <Button tyepe="reset" onClick={() => reset()}>Borrar Campos</Button>
                     </div>
                 </fieldset>
                 

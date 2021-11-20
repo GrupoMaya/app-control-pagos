@@ -189,8 +189,6 @@
   justify-content: center;
     
   button{
-    width: fit-content;
-    margin: 4px;
 
     &:hover{
       opacity: 0.75;
@@ -198,6 +196,11 @@
 
     &:disabled{
       opacity: 0.50;
+      cursor: not-allowed;
+    }
+
+    &_imp{
+      background-color: #0C4C7D;
     }
   }
 

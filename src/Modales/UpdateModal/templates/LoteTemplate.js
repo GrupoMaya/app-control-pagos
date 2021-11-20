@@ -1,3 +1,5 @@
+import React, { useEffect } from 'react'
+import { useToast } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import UpdateMachine from '../UpdateMachine'
@@ -8,16 +10,33 @@ const LoteTemplate = ({ data }) => {
 
   const [current, send] = useMachine(UpdateMachine)
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       ...data
     }
   })
 
-  const sendData = (payload) => {
-    console.log({ payload })
+  const sendData = (payload) => {    
     send('PATCH_DATA_LOTE', { payload })
   }
+
+  const toast = useToast()
+  useEffect(() => {
+    if (current.matches('success')) {
+      toast({
+        title: 'Pago actualizado',
+        description: 'El pago se ha actualizado correctamente',        
+        status: 'success',
+        duration: 9000,
+        isClosable: true
+      })
+      
+      setTimeout(() => {
+        reset()
+        location.reload()
+      }, 2000)
+    }
+  }, [current.value])
 
   return (    
       <div>

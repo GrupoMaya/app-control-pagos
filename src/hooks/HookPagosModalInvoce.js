@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Modal } from 'antd'
 
@@ -7,9 +7,8 @@ import { ClienteMachine } from 'context/ClienteDataMachine'
 
 import DateIntlFormat from 'utils/DateIntlFormat'
 import NumberFormat from 'utils/NumberFormat'
-import Notify from 'utils/Notify'
-
 import './StylesModales.scss'
+import { useToast } from '@chakra-ui/react'
 
 const HookPagosModalInvoce = ({ lote }) => {
 
@@ -17,15 +16,6 @@ const HookPagosModalInvoce = ({ lote }) => {
   const handelOpenModal = () => setIsOpen(!isOpen)
 
   const [state, send] = useMachine(ClienteMachine)
-
-  const [notifyHandled, setNotifyHandled] = useState(false)
-  const setNotify = useCallback(() => {
-    setNotifyHandled(true)
-    setTimeout(() => {
-      setNotifyHandled(false)
-    }, 2000)
-
-  })
 
   const { register, handleSubmit, reset, watch } = useForm({
     defaultValues: {
@@ -40,9 +30,21 @@ const HookPagosModalInvoce = ({ lote }) => {
   const [payload, setPayload] = useState({})
   const sendConfirmData = () => {       
     send('ADD_PAGO_LOTE', { data: payload })   
-    handelOpenModal()
-    setNotify()    
+    handelOpenModal()        
   }
+  
+  const toast = useToast()
+  useEffect(() => {
+    if (state.matches('success')) {
+      toast({
+        title: 'Pago guardado',
+        description: 'El pago ha sido guardado correctamente',
+        status: 'success',
+        duration: 9000,
+        isClosable: true
+      })
+    }
+  }, [state.value])
 
   const onSubmit = (data) => {
            
@@ -57,10 +59,7 @@ const HookPagosModalInvoce = ({ lote }) => {
       folio: data.folio,
       folioincial: data.folioIncial,
       extraSlug: data.extraSlug 
-    }
-
-    console.log(dataLote)
-    
+    }    
     setPayload(dataLote)
     setIsOpen(true)
   }
@@ -113,8 +112,7 @@ const HookPagosModalInvoce = ({ lote }) => {
       <input type="number" placeholder="cantidad" id="cantidad" {...register('mensualidad')} />
 
       <div>
-        <button type="submit">Agregar Pago</button>
-        { notifyHandled && <Notify errorType="success" msg="Pago Generado" /> }
+        <button type="submit">Agregar Pago</button>        
       </div>
       {/* modal de confirmacion  */}
     </form>

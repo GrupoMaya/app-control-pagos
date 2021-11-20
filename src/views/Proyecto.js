@@ -66,9 +66,9 @@ const Proyecto = ({ match }) => {
                   >
                   <td>{ item.lote }</td>                  
                   <td>{ <NumberFormat number={item.precioTotal}/> }</td>
-                  <td>
+                  <td>                    
                     {
-                      item.inicioContrato && <DateIntlFormat date={item.inicioContrato} dateStyle='medium' />
+                      item.inicioContrato && <DateIntlFormat date={item.inicioContrato} />
                     }
                   </td>
                   {

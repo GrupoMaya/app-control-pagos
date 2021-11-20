@@ -24,8 +24,6 @@ const TablaPagosClient = ({ pagos, lote }) => {
           <th>Folio</th>
           <th>Fecha</th>
           <th>Estatus</th>
-          <th>Poyecto</th>
-          <th>Lote</th>
           <th>Referencia</th>
           <th>Tipo</th>
           <th>Pago</th>
@@ -40,6 +38,9 @@ const TablaPagosClient = ({ pagos, lote }) => {
                   <HookPagosTable key={pagos._id} pagoId={pagos._id} lote={lote}/>
                 )
               })
+          }
+          {
+            Object.values(pagos).length === 0 && <tr><td colSpan="7">No hay pagos registrados</td></tr>
           }
         </tbody>
       </table>

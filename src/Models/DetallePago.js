@@ -1,10 +1,12 @@
+import React, { useEffect } from 'react'
 import { Modal } from 'antd'
 
-const DetallePago = ({ visible, onCancel, info }) => {
-
-  const onSubmit = (date) => {
-    date.preventDeafault()
-  }
+const DetallePago = ({ visible, onCancel, pdfURL }) => {
+ 
+  useEffect(() => {
+    // const pdf = window.atob(pdfURL)
+    // console.log(pdf)
+  }, [pdfURL])
 
   return (
     <Modal
@@ -13,51 +15,9 @@ const DetallePago = ({ visible, onCancel, info }) => {
       onCancel={onCancel}
       footer={null}
     >
-      <div>
-        {
-        <form onSubmit={onSubmit} className="form__detalle__pago">
-          <label>
-            Referencia de Pago
-            <input
-              disabled={true}
-              type="tex"
-              defaultValue={info.refPago}
-            >
-            </input>
-
-          </label>
-          <label>
-            Referencia Bancaria
-            <input
-              disabled={true}
-              type="tex"
-              defaultValue={info.refBanco}
-            >
-            </input>
-
-          </label>
-          <label>
-            Cuenta Bancaria
-            <input
-              disabled={true}
-              type="tex"
-              defaultValue={info.ctaBancaria}
-            >
-            </input>
-
-          </label>
-          <label>
-            Banco
-            <input
-              disabled={true}
-              type="tex"
-              defaultValue={info.banco}
-            >
-            </input>
-          </label>
-        </form>
-        }
-      </div>
+      {/* iframe pdf blob url */}      
+      <iframe src={pdfURL} frameBorder="0" height="100%" width="100%">
+      </iframe>          
     </Modal>
   )
 

@@ -27,8 +27,7 @@
 
   p{
     margin: 0;
-    color: var(--black);
-    font-weight: bold;
+    color: var(--black);    
   }
 
 }
@@ -85,13 +84,13 @@
       padding: 8px;
       height: 36px;
       border-radius: 4px;
+      box-shadow: var(--shadow);
     }
     
 }
 
 @media (max-width: 60rem){
   .cliente__App__container{
-    
     margin: 0;
     padding: 4px;
   }

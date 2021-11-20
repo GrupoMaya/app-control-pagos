@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { AppContext } from 'context/AppContextProvider'
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
 import { Modal } from 'antd'
+import { useToast } from '@chakra-ui/react'
 
 import { useForm } from 'react-hook-form'
-import Notify from 'utils/Notify'
 import SelectorBanco from 'utils/SelectorBanco'
 
 const ModalEstatus = () => {
@@ -13,15 +13,21 @@ const ModalEstatus = () => {
   const [state, send] = useMachine(ClienteMachine)
   const { idPago, modalPago, setModalPago } = useContext(AppContext)
   
-  const { register, formState: { errors }, handleSubmit } = useForm()
-  const [notify, setNotify] = useState(false)
-
+  const { register, formState: { errors }, handleSubmit, reset } = useForm()
+  
+  const toast = useToast()
   useEffect(() => {
     if (state.matches('success')) {
-      setNotify(true)
-
+      toast({
+        title: 'Pago actualizado',
+        description: 'El pago se ha actualizado correctamente',        
+        status: 'success',
+        duration: 9000,
+        isClosable: true
+      })
+      
       setTimeout(() => {
-        setNotify(false)
+        reset()
         location.reload()
       }, 3000)
     }
@@ -92,8 +98,7 @@ const ModalEstatus = () => {
       <button type="submit">
         Liquidar Pago
       </button>
-      </form>
-      { notify && <Notify msg="Documento Pagado" errorType="success" />}
+      </form>      
     </Modal>
   )
 }
