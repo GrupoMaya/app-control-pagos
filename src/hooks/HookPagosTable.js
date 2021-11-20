@@ -117,9 +117,9 @@ const HookPagosTable = ({ pagoId, lote }) => {
                 <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
                 <td>{ <NumberFormat number={ pago.mensualidad } />}</td>                             
                 <td className='estatus__menu'>
-                    <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>Pagar</button>
-                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>Ver</button>
-                    <button disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Imprimir</button>
+                    <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>
+                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>VER</button>
+                    <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>IMPRIMIR</button>
                     <UpdateModal id={idPago} document="Pago" /> 
                   </td>
               </tr>

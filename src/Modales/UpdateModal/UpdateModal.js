@@ -44,7 +44,7 @@ const UpdateModal = ({ id, document }) => {
   return (
     <section>
       <header className="btn__danger">
-        <button onClick={() => handledModal()}>Editar</button>     
+        <button onClick={() => handledModal()}>Modificar</button>     
       </header>
       <div hidden={!isModal}>
           <Modal

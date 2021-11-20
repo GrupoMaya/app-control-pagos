@@ -10,6 +10,14 @@
 @import './clientedata.scss';
 @import './tablas.scss';
 
+*{
+  button{        
+    padding: 4px !important;    
+    min-width: fit-content !important;
+    font-size: 14px !important;
+  }
+}
+
 body {
   background-color: var(--background);
   margin: 0;
