@@ -101,6 +101,7 @@ const ClienteFluid = ({ match, location }) => {
           { state.matches('success') && <TablaPagosClient pagos={pagos} lote={idlote}/> }
         </section>
         </section>
+        
         <ModalExpediente 
           visible={openExpediente}
           onCancel={toogleExpediente}

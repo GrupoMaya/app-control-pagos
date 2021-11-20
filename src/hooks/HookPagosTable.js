@@ -11,7 +11,6 @@ import { saveAs } from 'file-saver'
 import { baseURL } from 'context/controllers'
 
 import DetallePago from 'Models/DetallePago'
-
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 
 const HookPagosTable = ({ pagoId, lote }) => {
@@ -34,8 +33,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
 
     const folioDate = new Date(data.mes)
     const dayFolio = folioDate.getDay()
-    const mesFolio = folioDate.getMonth()
-    const yearFolio = folioDate.getFullYear()
+    const mesFolio = folioDate.getMonth()    
 
     fetch(`${baseURL}/pdf?folio=${data._id}`, {
       headers: { 'Content-Type': 'application/json' },
@@ -46,13 +44,40 @@ const HookPagosTable = ({ pagoId, lote }) => {
         .arrayBuffer()
         .then(res => {
           const blob = new Blob([res], { type: 'applicacion/pdf' })
-          saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}${yearFolio}.pdf`)      
+          saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}_Folio_${data.folio}.pdf`)      
         })
         .catch(error => console.log(error))
     })
   }
 
   const { pago } = state.context
+
+  const [pdfPreview, setPdfPreview] = useState(null)
+  const previewURL = async (data) => {
+    console.log('pepito')
+    const pdfURL = new FileReader()
+    
+    return new Promise((resolve, reject) => {
+      // pdf blob preview url react pdf viewer
+      fetch(`${baseURL}/pdf?folio=${data._id}`, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+        .then((res) => {
+          const blob = new Blob([res], { type: 'application/pdf' })
+          pdfURL.readAsDataURL(blob)
+          pdfURL.onload = () => resolve(            
+            setPdfPreview(pdfURL.result)  
+          )
+          pdfURL.onerror = (error) => console.log(error)
+
+          console.log(pdfURL)
+        })
+        .finally(() => handledDetalle())
+    })
+    
+  }
 
   return (
     state.matches('success') && pago
@@ -82,20 +107,18 @@ const HookPagosTable = ({ pagoId, lote }) => {
               className='tabla__data'
               > 
                 <td>{pago.folio}</td>
-                <td><DateIntlFormat date={pago.mes} dateStyle='medium' /></td>
+                <td><DateIntlFormat date={pago.mes} type='numeric' /></td>
                 <td
                   className={ pago.status ? 'tabla__data__pagado' : 'tabla__data__pendding' }
                 >
                   { pago.status ? 'Pagado' : 'Pendiente' }
                 </td>
-                <td>{ pago.dataProject[0].title }</td>
-                <td>{ pago.dataLote[0].lote }</td>
                 <td>{ pago.refPago }</td>
                 <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
                 <td>{ <NumberFormat number={ pago.mensualidad } />}</td>                             
                 <td className='estatus__menu'>
                     <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>Pagar</button>
-                    <button disabled={!pago.status} onClick={() => handledDetalle()}>Ver</button>
+                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>Ver</button>
                     <button disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Imprimir</button>
                     <UpdateModal id={idPago} document="Pago" /> 
                   </td>
@@ -103,7 +126,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
               <DetallePago 
                 visible={openDetalle} 
                 onCancel={handledDetalle} 
-                info={pago} 
+                pdfURL={pdfPreview} 
               />              
           </>
         )

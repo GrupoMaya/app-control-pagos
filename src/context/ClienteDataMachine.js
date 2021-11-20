@@ -12,7 +12,10 @@ const assignLoteToNewUser = async (ctx, { idProyecto, payload }) => {
     body: JSON.stringify(payload)
   })
     .then(res => res.json())
-    .then(res => res)
+    .then(res => {
+      console.log(res)
+      return res
+    })
     .catch(error => console.log(error))
 
   if (response.error) throw new Error('El usuario ya exite')
@@ -29,7 +32,10 @@ const addPagoToLote = async (ctx, event) => {
     body: JSON.stringify(event.data)
   })
     .then(res => res.json())
-    .then(res => res)
+    .then(res => {
+      console.log(res)
+      return res
+    })
     .catch(error => console.log(error))
 
   if (response.error) throw new Error('Error al guardar el documento')
@@ -92,7 +98,6 @@ export const ClienteMachine = createMachine({
         src: assignLoteToNewUser,
         onDone: {
           target: 'documentSave'
-
         },
         onError: {
           target: 'error'
