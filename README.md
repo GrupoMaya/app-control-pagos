@@ -12,8 +12,16 @@
   </ul>
 
 
+<b>Version:</b> 0.2.0
+<hr />
+  <ul>
+    <li>Buscador de cliente</li>
+  </ul>
+
 ### Feat: 
   <ul>
     <li>Login de aplicación</li>
     <li>Modificacion de información de pago</li>
   </ul>
+
+

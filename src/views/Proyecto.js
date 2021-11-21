@@ -3,7 +3,6 @@ import NumberFormat from 'utils/NumberFormat'
 import { Link } from 'react-router-dom'
 import DateIntlFormat from 'utils/DateIntlFormat'
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
-
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 
 const Proyecto = ({ match }) => {
@@ -58,7 +57,7 @@ const Proyecto = ({ match }) => {
               const parentLoteId = item._id
               const loteInfo = [item]
               const loteid = item.lote
-            
+              const [idProyecto] = item.proyecto
               return (
                 <tr 
                   key={index} 
@@ -74,7 +73,7 @@ const Proyecto = ({ match }) => {
                   {
                     Object.values(item.clienteData)
                       .map(item => {                        
-                        const clientURL = item.nombre.replace(/\//g, '-')
+                        const clientURL = item.nombre.replace(/\//g, '-')                        
                         return (
                         <>
                         <td key={item._id}>
@@ -84,7 +83,7 @@ const Proyecto = ({ match }) => {
                           <span className="d-flex center">
                             <Link
                               to={{
-                                pathname: `/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${projectName}`,
+                                pathname: `/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${(idProyecto)}`,
                                 state: loteInfo
                               }}>
                               <button>Ver</button>
