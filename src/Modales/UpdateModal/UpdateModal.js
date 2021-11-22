@@ -6,7 +6,7 @@ import LoteTemplate from './templates/LoteTemplate'
 import PagoTemplate from './templates/PagoTemplate'
 import './updateStyles.scss'
 
-const UpdateModal = ({ id, document }) => { 
+const UpdateModal = ({ id, document }) => {
 
   console.log(id)
 
@@ -22,13 +22,13 @@ const UpdateModal = ({ id, document }) => {
   const getDocumentType = () => {
     switch (document) {
       case 'Lote':
-        return send('GET_LOTE_INFO', { id })        
+        return send('GET_LOTE_INFO', { id })
       case 'Pago':
         return send('GET_PAGO_INFO', { id })
       case 'Cliente':
         return 'Cliente'
       default:
-        return 'Lote'        
+        return 'Lote'
     }
   }
 
@@ -44,7 +44,7 @@ const UpdateModal = ({ id, document }) => {
   return (
     <section>
       <header className="btn__danger">
-        <button onClick={() => handledModal()}>Modificar</button>     
+        <button onClick={() => handledModal()}>Modificar</button>
       </header>
       <div hidden={!isModal}>
           <Modal
@@ -62,7 +62,7 @@ const UpdateModal = ({ id, document }) => {
               document === 'Pago' && current.matches('success') && <PagoTemplate data={pago} />
             }
             
-          </Modal>  
+          </Modal>
       </div>
     </section>
   )

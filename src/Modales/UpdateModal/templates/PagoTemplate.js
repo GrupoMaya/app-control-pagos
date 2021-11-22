@@ -18,7 +18,8 @@ const PagoTemplate = ({ data }) => {
     }
   })
 
-  const sendData = (payload) => {    
+  const sendData = (payload) => {
+    console.log(payload)
     send('PATCH_DATA_PAGO', { payload })
   }
 
@@ -27,7 +28,7 @@ const PagoTemplate = ({ data }) => {
     if (current.matches('success')) {
       toast({
         title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',        
+        description: 'El pago se ha actualizado correctamente',
         status: 'success',
         duration: 9000,
         isClosable: true
@@ -36,22 +37,22 @@ const PagoTemplate = ({ data }) => {
       setTimeout(() => {
         reset()
         location.reload()
-      }, 2000)
+      }, 10000)
     }
   }, [current.value])
 
-  return (    
+  return (
       <div>
-        <span>            
-        </span>        
-          <section className="form__template"> 
+        <span>
+        </span>
+          <section className="form__template">
             <form onSubmit={handleSubmit(sendData)}>
 
               <label>
                 <p>Banco</p>
-                <input 
+                <input
                   type="text"
-                  name="banco"  
+                  name="banco"
                   {...register('banco')}
                 />
               </label>
@@ -59,17 +60,17 @@ const PagoTemplate = ({ data }) => {
             <label>
                 <p>Cuenta Bancaria</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="ctaBancaria"
                   {...register('ctaBancaria')}
                 >
                 </input>
-              </label>                          
+              </label>
              
               <label>
                 <p>Total pago</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="mensualidad"
                   {...register('mensualidad')}
                 >
@@ -79,7 +80,7 @@ const PagoTemplate = ({ data }) => {
               <label>
                 <p>Referencia de pago</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="refPago"
                   {...register('refPago')}
                 >
@@ -90,7 +91,7 @@ const PagoTemplate = ({ data }) => {
                 <label>
                   <p>Referencia de documento Extra</p>
                   <input
-                    type="text"                  
+                    type="text"
                     name="extraSlug"
                     {...register('extraSlug')}
                   >
@@ -99,13 +100,13 @@ const PagoTemplate = ({ data }) => {
               }
               
             <small>
-                <p>Fecha Guardada </p> 
+                <p>Fecha Guardada </p>
                 { data.fechaPago && <DateIntlForma date={data.fechaPago} /> }
             </small>
               <label>
                 <p>Fecha de Deposito</p>
                 <input
-                  type="date"                  
+                  type="date"
                   name="fechaPago"
                   {...register('fechaPago')}
                 >
@@ -113,13 +114,13 @@ const PagoTemplate = ({ data }) => {
               </label>
 
             <small>
-                <p>Fecha actual</p> 
+                <p>Fecha actual</p>
                 { data.mes && <DateIntlForma date={data.mes} /> }
             </small>
               <label>
                 <p>Fecha de Documento</p>
                 <input
-                  type="date"                  
+                  type="date"
                   name="mes"
                   {...register('mes')}
                 >
@@ -127,11 +128,11 @@ const PagoTemplate = ({ data }) => {
               </label>
 
           <div className="footer__template">
-          <button type="submit">Modificar</button>    
-          </div>                    
+          <button type="submit">Modificar</button>
+          </div>
             </form>
           </section>
-        </div>      
+        </div>
   )
 }
 

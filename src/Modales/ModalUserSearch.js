@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 
 const ModalUserSearch = ({ visible, onCancel, dataResult }) => {
 
-  const { busqueda } = dataResult?.context  
+  const { busqueda } = dataResult?.context
   const history = useHistory()
   const goToUser = (_id) => {
     history.push(`/detalle/cliente/${_id}`)
@@ -22,7 +22,7 @@ const ModalUserSearch = ({ visible, onCancel, dataResult }) => {
         <thead>
           <th>Nombre Completo</th>
           <th>Acciones</th>
-        </thead>  
+        </thead>
         <tbody>
           {
             busqueda.map(user => {

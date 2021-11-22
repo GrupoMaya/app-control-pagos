@@ -9,11 +9,11 @@ const DateIntlForma = ({ date, locale = 'es-MX', type = 'all' }) => {
 
   const dataInteOptions = () => {
     switch (type) {
-      case 'numeric': 
+      case 'numeric':
         return {
           year: 'numeric',
           month: 'numeric',
-          day: 'numeric'         
+          day: 'numeric'
         }
       case 'month':
         return {
@@ -30,11 +30,11 @@ const DateIntlForma = ({ date, locale = 'es-MX', type = 'all' }) => {
         }
       default:
         return {
-          year: 'numeric',  
+          year: 'numeric',
           month: 'long',
           day: 'numeric'
         }
-    } 
+    }
   }
 
   const dateIntl = new Date(date)

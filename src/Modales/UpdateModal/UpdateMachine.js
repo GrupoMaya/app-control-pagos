@@ -19,7 +19,7 @@ const patchDataLote = async (context, { payload }) => {
     body: JSON.stringify(payload)
   })
     .then(res => res.json())
-    .then(res => res.message) 
+    .then(res => res.message)
 
   return lotePatchResponse
 }
@@ -43,7 +43,7 @@ const patchDataPago = async (context, { payload }) => {
     body: JSON.stringify(payload)
   })
     .then(res => res.json())
-    .then(res => res.message) 
+    .then(res => res.message)
 
   return pagoPatchResponse
 }
@@ -79,9 +79,9 @@ export const UpdateMachine = createMachine({
       invoke: {
         src: patchDataLote,
         onDone: {
-          target: 'success',          
+          target: 'success',
           onError: {
-            target: 'error'            
+            target: 'error'
           }
         }
       }
@@ -107,9 +107,9 @@ export const UpdateMachine = createMachine({
       invoke: {
         src: patchDataPago,
         onDone: {
-          target: 'success',          
+          target: 'success',
           onError: {
-            target: 'error'            
+            target: 'error'
           }
         }
       }

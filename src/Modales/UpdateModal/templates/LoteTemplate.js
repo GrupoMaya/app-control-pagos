@@ -16,7 +16,7 @@ const LoteTemplate = ({ data }) => {
     }
   })
 
-  const sendData = (payload) => {    
+  const sendData = (payload) => {
     send('PATCH_DATA_LOTE', { payload })
   }
 
@@ -25,7 +25,7 @@ const LoteTemplate = ({ data }) => {
     if (current.matches('success')) {
       toast({
         title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',        
+        description: 'El pago se ha actualizado correctamente',
         status: 'success',
         duration: 9000,
         isClosable: true
@@ -38,41 +38,41 @@ const LoteTemplate = ({ data }) => {
     }
   }, [current.value])
 
-  return (    
+  return (
       <div>
         <span>
             { current.matches('success') && 'Datos Guardados' }
-        </span>        
-          <section className="form__template"> 
+        </span>
+          <section className="form__template">
             <form onSubmit={handleSubmit(sendData)}>
 
               <label>
                 <p>Lote</p>
-                <input 
+                <input
                   type="text"
-                  name="lote"  
+                  name="lote"
                   {...register('lote')}
                 />
               </label>
             
             <small>
-              <p>Fecha Almacenada </p> 
+              <p>Fecha Almacenada </p>
               { data.inicioContrato && <DateIntlForma date={data.inicioContrato} /> }
             </small>
             <label>
                 <p>Inicio Contrato</p>
                 <input
-                  type="date"                  
+                  type="date"
                   name="inicioContrato"
                   {...register('inicioContrato')}
                 >
                 </input>
-              </label>                          
+              </label>
              
               <label>
                 <p>Mensualidad</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="mensualidad"
                   {...register('mensualidad')}
                 >
@@ -82,7 +82,7 @@ const LoteTemplate = ({ data }) => {
               <label>
                 <p>Plazo</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="plazo"
                   {...register('plazo')}
                 >
@@ -92,18 +92,18 @@ const LoteTemplate = ({ data }) => {
               <label>
                 <p>Plazo</p>
                 <input
-                  type="text"                  
+                  type="text"
                   name="precioTotal"
                   {...register('precioTotal')}
                 >
                 </input>
               </label>
           <div className="footer__template">
-          <button type="submit">Modificar</button>    
-          </div>                    
+          <button type="submit">Modificar</button>
+          </div>
             </form>
           </section>
-        </div>      
+        </div>
   )
 }
 

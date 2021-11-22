@@ -20,7 +20,7 @@ const ModalEstatus = () => {
     if (state.matches('success')) {
       toast({
         title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',        
+        description: 'El pago se ha actualizado correctamente',
         status: 'success',
         duration: 9000,
         isClosable: true
@@ -49,14 +49,14 @@ const ModalEstatus = () => {
     <Modal
     visible={modalPago}
     footer={null}
-    onCancel={resetModal}  
-    > 
+    onCancel={resetModal}
+    >
       <form onSubmit={handleSubmit(pagar)} className="form__liquid__pago">
       <label>Referencia de Bancaria
-      <input 
+      <input
         required={errors.refBanco && true }
-        id="refBanco" 
-        type="text" 
+        id="refBanco"
+        type="text"
         placeHolder="Referencia bancaria"
         {...register('refBanco', { required: true })}
         />
@@ -64,10 +64,10 @@ const ModalEstatus = () => {
       </label>
 
       <label>Fecha de Deposito
-      <input 
+      <input
         required={errors.fechaPago && true }
-        id="fechaPago" 
-        type="date" 
+        id="fechaPago"
+        type="date"
         placeHolder="Fecha de depostio"
         {...register('fechaPago', { required: true })}
         />
@@ -76,10 +76,10 @@ const ModalEstatus = () => {
 
       <label>
         Cuenta Bancaria
-      <input 
+      <input
         required={errors.ctaBancaria && true }
-        type="text" 
-        placeholder="CTA o CABLE" {...register('ctaBancaria', { required: true })} 
+        type="text"
+        placeholder="CTA o CABLE" {...register('ctaBancaria', { required: true })}
         />
         <small>Obligatorio</small>
       </label>
@@ -98,7 +98,7 @@ const ModalEstatus = () => {
       <button type="submit">
         Liquidar Pago
       </button>
-      </form>      
+      </form>
     </Modal>
   )
 }

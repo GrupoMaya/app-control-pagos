@@ -24,7 +24,7 @@ module.exports = {
     'react/jsx-uses-vars': 'warn',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
-    'no-trailing-spaces': 'off',
-    'padded-blocks': 'off'
+    'padded-blocks': 'off',
+    'no-trailing-spaces': [2, { skipBlankLines: true }]
   }
 }

@@ -32,15 +32,15 @@ function App () {
             <Dashboard />
           </Route>
 
-          <Route 
+          <Route
             exact={true}
-            path="/proyecto/:slug/:projectName" 
+            path="/proyecto/:slug/:projectName"
             render={(props) => <Proyecto { ...props } />}
-            >            
+            >
           </Route>
 
           {/* Parte del flujo */}
-          <Route 
+          <Route
             exact={true}
             path="/detalle/lote/:idlote/cliente/:clienteSlug/projecto/:projectSlug"
             render={(props) => <ClienteFluid { ...props } />}
@@ -48,25 +48,25 @@ function App () {
           </Route>
 
           {/* complementarios */}
-          <Route 
+          <Route
             path="/cliente/:slug"
             render={(props) => <Cliente { ...props } />}
           >
           </Route>
 
-          <Route 
+          <Route
             path="/add/proyecto/:idProyecto/cliente/:idCliente"
             render={(props) => <ClienteDataForm { ...props } /> }
             >
           </Route>
 
-          <Route 
+          <Route
             path="/detalle/cliente/:id"
             render={(props) => <ClientDetail { ...props } /> }
-          />          
+          />
 
       <div className="cliente_App_footer"></div>
-      </div> 
+      </div>
       
           </AppContextProvider>
           </MayaAppMachineProvider>

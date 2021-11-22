@@ -4,7 +4,7 @@ import { baseURL } from 'context/controllers'
 const loadCliente = async (context, event) => {
   const data = await fetch(`${baseURL}/detail/client/${event.id}`)
   const cliente = await data.json()
-  return cliente.message 
+  return cliente.message
 }
 
 const loadDocumentValues = async (context, { id, documentType }) => {
@@ -13,7 +13,7 @@ const loadDocumentValues = async (context, { id, documentType }) => {
     .then(res => res.message[0])
     .catch(err => console.log(err))
 
-  return data 
+  return data
 }
 
 const ClienteDetailContext = createMachine({
@@ -43,7 +43,7 @@ const ClienteDetailContext = createMachine({
       invoke: {
         src: loadDocumentValues,
         onDone: {
-          target: 'success',  
+          target: 'success',
           actions: assign({
             documentValues: (context, event) => event.data
           })

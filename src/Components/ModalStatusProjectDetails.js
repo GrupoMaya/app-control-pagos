@@ -63,7 +63,7 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
         footer={null}
       >
       {
-        loading && 
+        loading &&
       <section>
       <table className="tabla__edo__pagos">
         <thead title="Estados de pagos">

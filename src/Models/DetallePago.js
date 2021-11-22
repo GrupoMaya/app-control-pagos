@@ -15,9 +15,9 @@ const DetallePago = ({ visible, onCancel, pdfURL }) => {
       onCancel={onCancel}
       footer={null}
     >
-      {/* iframe pdf blob url */}      
+      {/* iframe pdf blob url */}
       <iframe src={pdfURL} frameBorder="0" height="100%" width="100%">
-      </iframe>          
+      </iframe>
     </Modal>
   )
 

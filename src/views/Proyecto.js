@@ -39,10 +39,10 @@ const Proyecto = ({ match }) => {
       }
   </div>
     </section>
-    <section className="proyecto__table">  
+    <section className="proyecto__table">
       <table>
         <tr className="head__data__table">
-          <th>Lote</th>          
+          <th>Lote</th>
           <th>Precio Total</th>
           <th>Incio de contrato</th>
           <th>Cliente</th>
@@ -53,27 +53,27 @@ const Proyecto = ({ match }) => {
           state.matches('success') &&
           Object.values(proyecto)
             .filter(item => item.clienteData.length > 0)
-            .map((item, index) => {  
+            .map((item, index) => {
               const parentLoteId = item._id
               const loteInfo = [item]
               const loteid = item.lote
               const [idProyecto] = item.proyecto
               return (
-                <tr 
-                  key={index} 
+                <tr
+                  key={index}
                   className="tabla__data"
                   >
-                  <td>{ item.lote }</td>                  
+                  <td>{ item.lote }</td>
                   <td>{ <NumberFormat number={item.precioTotal}/> }</td>
-                  <td>                    
+                  <td>
                     {
                       item.inicioContrato && <DateIntlFormat date={item.inicioContrato} />
                     }
                   </td>
                   {
                     Object.values(item.clienteData)
-                      .map(item => {                        
-                        const clientURL = item.nombre.replace(/\//g, '-')                        
+                      .map(item => {
+                        const clientURL = item.nombre.replace(/\//g, '-')
                         return (
                         <>
                         <td key={item._id}>
@@ -87,12 +87,12 @@ const Proyecto = ({ match }) => {
                                 state: loteInfo
                               }}>
                               <button>Ver</button>
-                            </Link>                          
-                            <UpdateModal id={parentLoteId} document="Lote"/>                     
+                            </Link>
+                            <UpdateModal id={parentLoteId} document="Lote"/>
                           </span>
-                        </td>                        
+                        </td>
                         </>
-                        ) 
+                        )
                       })
                   }
                 </tr>
@@ -100,7 +100,7 @@ const Proyecto = ({ match }) => {
             })
         }
       </table>
-    </section>    
+    </section>
     </div>
   )
 }

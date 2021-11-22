@@ -61,12 +61,12 @@ const MenuMaya = () => {
   const toogleSettingsModal = () => {
     setSettingsModal(!settingsModal)
     toggleHaburger()
-  }  
+  }
 
   return (
     <>
-      <div 
-        id='hamburgerBtn' 
+      <div
+        id='hamburgerBtn'
         onClick={toggleHaburger}
         className={ openHamburger ? 'hamburger_btn' : 'hamburger_btn hamburger_btn_open'}>
         <div/>
@@ -95,16 +95,16 @@ const MenuMaya = () => {
           </button>
 
           <div className="separacion__menu" />
-          <button 
+          <button
             className="btn__esmeralda"
             onClick={() => handleProjectModal()}>
               <div className="ico__proyecto" ></div>
               Añadir Proyecto
-          </button>        
+          </button>
         </>
         }
 
-        { params.includes('proyecto') && !params.includes('cliente') && 
+        { params.includes('proyecto') && !params.includes('cliente') &&
         <>
           <button
           onClick={() => nuevoLoteClient()}
@@ -123,7 +123,7 @@ const MenuMaya = () => {
           </button>
           
           <div className="separacion__menu" />
-          <button 
+          <button
             onClick={handleRemoveUser}
             className="menu__hamburger__btn__red">
             <div className="ico__user__morosos"></div>

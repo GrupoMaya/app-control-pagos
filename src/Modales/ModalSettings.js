@@ -19,7 +19,7 @@ const FormCapsule = ({ dataApp, send }) => {
     <label htmlFor="razonSocial">
       Razón Social
       <div>
-          <input 
+          <input
             type="text"
             id="razonSocial"
             {...register('razonSocial', { required: true })}
@@ -29,7 +29,7 @@ const FormCapsule = ({ dataApp, send }) => {
     <label htmlFor="razonSocial">
       RFC
       <div>
-          <input 
+          <input
             type="text"
             id="rfc"
             {...register('rfc', { required: true })}
@@ -39,7 +39,7 @@ const FormCapsule = ({ dataApp, send }) => {
     <label htmlFor="direccion">
       Calle, Número y Código Postal
       <div>
-          <input 
+          <input
             type="text"
             id="direccion"
             {...register('direccion', { required: true })}
@@ -49,7 +49,7 @@ const FormCapsule = ({ dataApp, send }) => {
     <label htmlFor="ciudad">
       Ciudad, Estado y Municipio
       <div>
-          <input 
+          <input
             type="text"
             id="ciudad"
             {...register('ciudad', { required: true })}
@@ -74,14 +74,14 @@ const ModalSettings = ({ visible, onCancel }) => {
 
   const { appData } = state.context
 
-  return (  
+  return (
     <Modal
       title="Configuración de la Empresa"
       visible={visible}
       onCancel={onCancel}
       footer={null}
       >
-     { 
+     {
       state.matches('success') &&
         <FormCapsule dataApp={appData} send={send} />
       }
