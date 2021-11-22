@@ -13,9 +13,9 @@ const TablaPagosClient = ({ pagos, lote }) => {
       <section className="proyecto__table">
 
         {/* Modal para agreagar un pago a la deuda */}
-      <ModalEstatus 
-        openModal={modalPago} 
-        handledStatusPago={setModalPago} 
+      <ModalEstatus
+        openModal={modalPago}
+        handledStatusPago={setModalPago}
         />
 
       <table>
@@ -33,7 +33,7 @@ const TablaPagosClient = ({ pagos, lote }) => {
         <tbody>
           {
             Object.values(pagos)
-              .map(pagos => {                
+              .map(pagos => {
                 return (
                   <HookPagosTable key={pagos._id} pagoId={pagos._id} lote={lote}/>
                 )

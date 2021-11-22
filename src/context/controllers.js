@@ -24,7 +24,7 @@ class MayaMachineAPI {
       .then(res => res.json())
       .then(res => res.message)
 
-    return res 
+    return res
   }
 
   static async getProyectoByID (ctx, event) {
@@ -57,7 +57,7 @@ class MayaMachineAPI {
       .then(res => res)
       .catch(error => error)
       
-    if (res.error) throw new Error('No se puedo guardar el cliente')    
+    if (res.error) throw new Error('No se puedo guardar el cliente')
     return res
   }
 

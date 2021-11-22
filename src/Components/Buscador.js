@@ -27,20 +27,20 @@ const Buscador = () => {
   <>
     { state.matches('error') && <p className="error__message">No hay usuario que coincidan con tu búsqueda</p>}
     <form className="proyecto__input" onSubmit={handleSubmit(onSubmitForm)}>
-      <input 
-        id="input__search__proyecto" 
-        placeholder="Buscar por nombre" 
+      <input
+        id="input__search__proyecto"
+        placeholder="Buscar por nombre"
         { ...register('keyword') }
-      />              
-      <button 
+      />
+      <button
         htmlFor="input__search__proyecto">
           Buscar
       </button>
     </form>
-    <ModalUserSearch 
-      visible={openResults} 
-      onCancel={toogleResult} 
-      dataResult={state} 
+    <ModalUserSearch
+      visible={openResults}
+      onCancel={toogleResult}
+      dataResult={state}
     />
   </>
   )

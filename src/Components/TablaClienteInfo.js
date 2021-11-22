@@ -29,10 +29,10 @@ const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
   return (
     <>
       {/* Modal para añadir pago */}
-      <ModalPagosClient 
-        openModalPago={openModalPago} 
+      <ModalPagosClient
+        openModalPago={openModalPago}
         handledOpen={handleModalPago}
-        lotes={lotes} 
+        lotes={lotes}
         pagos={pagos}
         />
 
@@ -63,8 +63,8 @@ const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
           </div>
         </Modal>
 
-        <ModalStatusProjectDetails 
-          openModal={ projectStatus } 
+        <ModalStatusProjectDetails
+          openModal={ projectStatus }
           handledModal={ handledProjectStatus }
           loteid={loteId}
         />
@@ -99,8 +99,8 @@ const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
                     .map((lote) => {
                       const { project, loading } = HookNameProjectById({ id: lote.proyecto })
                       return (
-                        <tr 
-                          key={lote._id} 
+                        <tr
+                          key={lote._id}
                           className="tabla__data"
                           onClick={() => handleLoteModal(lote._id)}
                           >
@@ -109,9 +109,9 @@ const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
                             <td>{ lote.manzana }</td>
                             <td>{ lote.plazo }</td>
                             <td>{ <NumberFormat number={lote.mensualidad} /> }</td>
-                            <td>{ <NumberFormat number={lote.enganche} /> }</td>                             
-                            <td>{ <NumberFormat number={lote.financiamiento} /> }</td>                             
-                            <td>{ <NumberFormat number={lote.precioTotal} /> }</td>                             
+                            <td>{ <NumberFormat number={lote.enganche} /> }</td>
+                            <td>{ <NumberFormat number={lote.financiamiento} /> }</td>
+                            <td>{ <NumberFormat number={lote.precioTotal} /> }</td>
                           </tr>
                       )
                     })

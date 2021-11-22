@@ -42,6 +42,8 @@ const ClienteDataForm = ({ match, location }) => {
   })
   
   const onSubmit = (data) => {
+
+    console.log({ data })
     
     if (typeof user !== 'undefined') {
       
@@ -88,7 +90,7 @@ const ClienteDataForm = ({ match, location }) => {
           {/* { state.matches('documentSave') && handledSuccess() } */}
           { state.matches('error') && <span className="notification__error">El usuario ya existe</span> }
       </div>
-      <section className="cliente__App_body">      
+      <section className="cliente__App_body">
       <form onSubmit={handleSubmit(onSubmit)}>
                 <fieldset>
                   <legend onClick={() => handleShowCliente() }>
@@ -99,7 +101,7 @@ const ClienteDataForm = ({ match, location }) => {
                   <div hidden={showCliente}>
                   <label htmlFor="nombre">
                     Nombre Completo
-                    <input 
+                    <input
                       type="text"
                       id="nombre"
                       aria-invalid={errors.title ? 'true' : 'false'}
@@ -110,7 +112,7 @@ const ClienteDataForm = ({ match, location }) => {
 
                   <label htmlFor="address">
                     Dirección
-                    <input 
+                    <input
                       type="text"
                       id="text"
                       aria-invalid={errors.address ? 'true' : 'false'}
@@ -121,7 +123,7 @@ const ClienteDataForm = ({ match, location }) => {
 
                   <label htmlFor="phone">
                     Teléfono
-                    <input 
+                    <input
                       type="text"
                       id="phone"
                       aria-invalid={errors.address ? 'true' : 'false'}
@@ -132,7 +134,7 @@ const ClienteDataForm = ({ match, location }) => {
 
                   <label htmlFor="email">
                     Email
-                    <input 
+                    <input
                       type="email"
                       id="email"
                       aria-invalid={errors.email ? 'true' : 'false'}
@@ -144,7 +146,7 @@ const ClienteDataForm = ({ match, location }) => {
                   </div>
                     <div className="modal__footer">
                       <Button type="submit">Guardar</Button>
-                      <Button tyepe="reset" onClick={() => reset()}>Borrar Campos</Button>
+                      <Button type="reset" onClick={() => reset()}>Borrar Campos</Button>
                     </div>
                 </fieldset>
                 
@@ -154,98 +156,97 @@ const ClienteDataForm = ({ match, location }) => {
                         <button className="button__acordeon"></button>
                     </legend>
 
-                  <label htmlFor="inicioControl">
+                  <label htmlFor="inicioContrato">
                     Inicio de Contrato
-                    <input 
+                    <input
                       id="inicioContrato"
+                      name='inicioContrato'
                       type="date"
-                      min={0}
-                      aria-invalid={errors.inicioContrato ? 'true' : 'false' }
-                      { ...register('inicioContrato', { required: true })}          
+                      { ...register('inicioContrato', { required: true })}
                       />
-                  </label> 
+                  </label>
 
                   <div hidden={showLote}>
                     <label htmlFor="lote">
                       Número de Lote
-                      <input 
+                      <input
                         id="lote"
                         type="number"
                         min={0}
                         aria-invalid={errors.lote ? 'true' : 'false' }
-                        { ...register('lote', { required: true, min: 1 })}          
+                        { ...register('lote', { required: true, min: 1 })}
                         />
                         {errors.lote ? <p>Ingrese un número valido</p> : null }
                     </label>
 
                     <label htmlFor="manzana">
                       Número de Manzana
-                      <input 
+                      <input
                         id="manzana"
                         type="text"
                         min={0}
                         aria-invalid={errors.manzana ? 'true' : 'false' }
-                        { ...register('manzana')}          
+                        { ...register('manzana')}
                         />
                         {errors.manzana ? <p>Ingrese un número valido</p> : null }
                     </label>
 
                     <label htmlFor="precioTotal">
                       Precio Total
-                      <input 
+                      <input
                         id="precioTotal"
                         type="number"
                         min={0}
                         aria-invalid={errors.precioTotal ? 'true' : 'false' }
-                        { ...register('precioTotal', { required: true })}          
+                        { ...register('precioTotal', { required: true })}
                         />
                         {errors.precioTotal ? <p>Campo Obligatorio</p> : null }
                     </label>
 
                     <label htmlFor="enganche">
                       Enganche
-                      <input 
+                      <input
                         id="enganche"
                         type="number"
                         min={0}
                         aria-invalid={errors.enganche ? 'true' : 'false' }
-                        { ...register('enganche', { required: true })}          
+                        { ...register('enganche', { required: true })}
                         />
                         {errors.enganche ? <p>Campo Obligatorio</p> : null }
                     </label>
 
                     <label htmlFor="financiamiento">
                       Monto financiamiento
-                      <input 
+                      <input
                         id="financiamiento"
                         type="number"
                         min={0}
                         aria-invalid={errors.financiamiento ? 'true' : 'false' }
-                        { ...register('financiamiento', { required: true })}          
+                        { ...register('financiamiento', { required: true })}
                         />
                         {errors.financiamiento ? <p>Campo Obligatorio</p> : null }
                     </label>
 
                     <label htmlFor="plazo">
                       Plazo  &#40; Total de Meses &#41;
-                      <input 
+                      <input
                         id="plazo"
                         type="number"
                         min={0}
                         aria-invalid={errors.plazo ? 'true' : 'false' }
-                        { ...register('plazo', { required: true, min: 1 })}          
+                        { ...register('plazo', { required: true, min: 1 })}
                         />
                         {errors.plazo ? <p>Ingrese un numero valido</p> : null }
                     </label>
 
                     <label htmlFor="mensualidad">
                       Mensualidad
-                      <input 
+                      <input
                         id="mensualidad"
                         type="number"
                         min={0}
                         aria-invalid={errors.mensualidad ? 'true' : 'false' }
-                        { ...register('mensualidad', { required: true })}          
+                        { ...register('mensualidad', { required: true })}
                         />
                         {errors.mensualidad ? <p>Campo Obligatorio</p> : null }
                     </label>

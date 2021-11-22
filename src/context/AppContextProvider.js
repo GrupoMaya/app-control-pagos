@@ -12,12 +12,12 @@ const AppContextProvider = (props) => {
   const handleModalPago = () => SetOpenModalPago(!openModalPago)
 
   const [plataformName, setPlataformName] = useState(undefined)
-  const GetInfoData = async () => {    
+  const GetInfoData = async () => {
     const promise = new Promise((resolve) => {
       resolve(fetch(`${baseURL}/settingsapp/get`))
     })
       .then(response => response.json())
-      .then(data => {        
+      .then(data => {
         return data.message
       })
 
@@ -33,7 +33,7 @@ const AppContextProvider = (props) => {
     <AppContext.Provider value={{
       modalPago,
       setModalPago,
-      idPago, 
+      idPago,
       setIdPago,
       openModalPago,
       handleModalPago,

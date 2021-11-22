@@ -21,7 +21,7 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
   const goToUser = (user) => {
     const idProject = location.pathname.split('/')[2]
     
-    history.push({ 
+    history.push({
       pathname: `/add/proyecto/${idProject}/cliente/${user._id}`,
       state: { proyecto: idProject, user }
 
@@ -51,7 +51,7 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
     <form onSubmit={handleSubmit(submitUser)} className="modal__user__existente">
       
       <label>
-        <input 
+        <input
         placeHolder="Buscar nombre del cliente"
         type="search"
         name="keyword"
@@ -62,12 +62,12 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
     </form>
 
     {
-      state.matches('success') && 
+      state.matches('success') &&
       <table className="modal__search__users">
       <thead>
         <th>Nombre Completo</th>
         <th>Acciones</th>
-      </thead>  
+      </thead>
       <tbody>
         {
           busqueda.map(user => {

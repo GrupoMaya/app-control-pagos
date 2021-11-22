@@ -29,19 +29,19 @@ const ClienteFluid = ({ match, location }) => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString()
-    }    
+    }
     send('GET_PAGOS_INFO', { query })
   }, [])
 
   const { clienteSlug, projectSlug, idlote } = match.params
-  const { pagos } = state.context 
+  const { pagos } = state.context
   const nombreProyecto = <ValuesByDocument id={ projectSlug } documentType="Proyecto" cbValue='title' />
       
   return (
     <div className="cliente__App__container">
       <section className="cliente__App__header">
       <h4>
-        { `${clienteSlug}`} 
+        { `${clienteSlug}`}
         <hr />
         { nombreProyecto }
       </h4>
@@ -77,10 +77,10 @@ const ClienteFluid = ({ match, location }) => {
             {
             location?.state
               .map((lote) => {
-                console.log(lote)              
+                console.log(lote)
                 return (
-                  <tr 
-                    key={lote._id} 
+                  <tr
+                    key={lote._id}
                     className="tabla__data"
                     >
                       <td>{ nombreProyecto }</td>
@@ -89,9 +89,9 @@ const ClienteFluid = ({ match, location }) => {
                       <td>{ lote?.inicioContrato && <DateIntlForma date={lote.inicioContrato} /> }</td>
                       <td>{ lote?.plazo }</td>
                       <td>{ <NumberFormat number={lote?.mensualidad} /> }</td>
-                      <td>{ <NumberFormat number={lote?.enganche} /> }</td>                             
-                      <td>{ <NumberFormat number={lote?.financiamiento} /> }</td>                             
-                      <td>{ <NumberFormat number={lote?.precioTotal} /> }</td>                             
+                      <td>{ <NumberFormat number={lote?.enganche} /> }</td>
+                      <td>{ <NumberFormat number={lote?.financiamiento} /> }</td>
+                      <td>{ <NumberFormat number={lote?.precioTotal} /> }</td>
                     </tr>
                 )
               })
@@ -106,18 +106,18 @@ const ClienteFluid = ({ match, location }) => {
         </section>
         </section>
         {/* TODO SE ROMPIO */}
-        {/* <ModalExpediente 
+        {/* <ModalExpediente
           visible={openExpediente}
           onCancel={toogleExpediente}
           cliente={location.state}
         /> */}
-        <ModalPagosClient 
-          openModalPago={openModalPago} 
+        <ModalPagosClient
+          openModalPago={openModalPago}
           handledOpen={handleModalPago}
-          lotes={dataQuery} 
+          lotes={dataQuery}
         />
-      <ModalStatusProjectDetails 
-        openModal={modalPagoDetalles} 
+      <ModalStatusProjectDetails
+        openModal={modalPagoDetalles}
         handledModal={tooglePagoDetalles}
         loteid={pagos}
       />

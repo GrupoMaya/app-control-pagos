@@ -28,9 +28,9 @@ const HookPagosModalInvoce = ({ lote }) => {
   const tipoPago = watch('tipoPago')
 
   const [payload, setPayload] = useState({})
-  const sendConfirmData = () => {       
-    send('ADD_PAGO_LOTE', { data: payload })   
-    handelOpenModal()        
+  const sendConfirmData = () => {
+    send('ADD_PAGO_LOTE', { data: payload })
+    handelOpenModal()
   }
   
   const toast = useToast()
@@ -54,12 +54,12 @@ const HookPagosModalInvoce = ({ lote }) => {
       lote: lote._id,
       mes: new Date(data.mes),
       refPago: data.refPago,
-      mensualidad: data.mensualidad,     
+      mensualidad: data.mensualidad,
       tipoPago: data.tipoPago,
       folio: data.folio,
       folioincial: data.folioIncial,
-      extraSlug: data.extraSlug 
-    }    
+      extraSlug: data.extraSlug
+    }
     setPayload(dataLote)
     setIsOpen(true)
   }
@@ -112,7 +112,7 @@ const HookPagosModalInvoce = ({ lote }) => {
       <input type="number" placeholder="cantidad" id="cantidad" {...register('mensualidad')} />
 
       <div>
-        <button type="submit">Agregar Pago</button>        
+        <button type="submit">Agregar Pago</button>
       </div>
       {/* modal de confirmacion  */}
     </form>
@@ -123,14 +123,14 @@ const HookPagosModalInvoce = ({ lote }) => {
           footer={[
             <button className="btn__send-ok" key="send" onClick={() => sendConfirmData()}>
               Enviar
-            </button>, 
+            </button>,
             <button className="btn__outline" key="cancel" onClick={() => handelOpenModal()}>
               Regresar
-            </button>           
+            </button>
           ]}
           >
           <div className="modal__confirm">
-          <h3>Confirma tus datos</h3>            
+          <h3>Confirma tus datos</h3>
           <hr/>
             <span>
               <small>Mensualidad Correspondiente</small>

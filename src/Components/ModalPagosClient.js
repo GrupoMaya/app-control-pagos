@@ -12,7 +12,7 @@ const ModalPagosClient = ({ openModalPago, handledOpen, lotes }) => {
     <Modal
     visible={openModalPago}
     onCancel={closeModal}
-    footer={null}    
+    footer={null}
     >
     <HookPagosModalInvoce lote={lotes[0]}/>
     </Modal>

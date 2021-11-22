@@ -33,7 +33,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
 
     const folioDate = new Date(data.mes)
     const dayFolio = folioDate.getDay()
-    const mesFolio = folioDate.getMonth()    
+    const mesFolio = folioDate.getMonth()
 
     fetch(`${baseURL}/pdf?folio=${data._id}`, {
       headers: { 'Content-Type': 'application/json' },
@@ -44,7 +44,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
         .arrayBuffer()
         .then(res => {
           const blob = new Blob([res], { type: 'applicacion/pdf' })
-          saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}_Folio_${data.folio}.pdf`)      
+          saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}_Folio_${data.folio}.pdf`)
         })
         .catch(error => console.log(error))
     })
@@ -67,8 +67,8 @@ const HookPagosTable = ({ pagoId, lote }) => {
         .then((res) => {
           const blob = new Blob([res], { type: 'application/pdf' })
           pdfURL.readAsDataURL(blob)
-          pdfURL.onload = () => resolve(            
-            setPdfPreview(pdfURL.result)  
+          pdfURL.onload = () => resolve(
+            setPdfPreview(pdfURL.result)
           )
           pdfURL.onerror = (error) => console.log(error)
 
@@ -92,20 +92,20 @@ const HookPagosTable = ({ pagoId, lote }) => {
             tipoPagoClass = 'tag__extra'
             break
           case 'acreditado':
-            tipoPagoClass = 'tag__acreditado'    
+            tipoPagoClass = 'tag__acreditado'
             break
-          case 'saldoinicial': 
+          case 'saldoinicial':
             tipoPagoClass = 'tag__saldoinicial'
             break
         }
 
         return (
-          <>   
-            <tr 
-              key={pago._id} 
+          <>
+            <tr
+              key={pago._id}
               id='row_info_pago'
               className='tabla__data'
-              > 
+              >
                 <td>{pago.folio}</td>
                 <td><DateIntlFormat date={pago.mes} type='numeric'/></td>
                 <td
@@ -115,19 +115,19 @@ const HookPagosTable = ({ pagoId, lote }) => {
                 </td>
                 <td>{ pago.refPago }</td>
                 <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
-                <td>{ <NumberFormat number={ pago.mensualidad } />}</td>                             
+                <td>{ <NumberFormat number={ pago.mensualidad } />}</td>
                 <td className='estatus__menu'>
                     <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>
                     <button disabled={!pago.status} onClick={() => previewURL(pago)}>VER</button>
                     <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>IMPRIMIR</button>
-                    <UpdateModal id={idPago} document="Pago" /> 
+                    <UpdateModal id={idPago} document="Pago" />
                   </td>
               </tr>
-              <DetallePago 
-                visible={openDetalle} 
-                onCancel={handledDetalle} 
-                pdfURL={pdfPreview} 
-              />              
+              <DetallePago
+                visible={openDetalle}
+                onCancel={handledDetalle}
+                pdfURL={pdfPreview}
+              />
           </>
         )
       })

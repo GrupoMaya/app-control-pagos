@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import {
   Table,
   Thead,
-  Tbody,  
+  Tbody,
   Tr,
   Th,
   Td,
@@ -24,15 +24,15 @@ import ValuesByDocument from 'hooks/ValuesByDocument'
 
 const ClientDetail = (props) => {
   
-  const [current, send] = useMachine(ClienteDetailContext)  
+  const [current, send] = useMachine(ClienteDetailContext)
   useEffect(() => {
     send('LOAD_CLIENTE', { id: props.match.params.id })
   }, [props])
   
   const { cliente } = current.context
 
-  const history = useHistory()  
-  const handledDetail = (lote, idProject) => {        
+  const history = useHistory()
+  const handledDetail = (lote, idProject) => {
     history.push({
       pathname: `/detalle/lote/${lote.lote}/cliente/${cliente.nombre}/projecto/${idProject}`,
       state: [lote]
@@ -61,7 +61,7 @@ const ClientDetail = (props) => {
             <Th>Inicio de Contrato</Th>
             <Th>Mensualidad</Th>
             <Th>Plazo</Th>
-            <Th>Precio Total</Th>            
+            <Th>Precio Total</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -72,7 +72,7 @@ const ClientDetail = (props) => {
                 console.log({ lote })
                 const [idProject] = lote?.proyecto
                 const proyectName = <ValuesByDocument id={ idProject } documentType="Proyecto" cbValue='title' />
-                return (                
+                return (
                   <Tr style={{ pointer: 'cursor' }} key={lote?._id} onClick={() => handledDetail(lote, idProject)}>
                     <Td>{ proyectName }</Td>
                     <Td>{ lote?.lote }</Td>
@@ -80,20 +80,20 @@ const ClientDetail = (props) => {
                     <Td>{ lote?.inicioContrato && <DateIntlForma date={lote?.inicioContrato } />}</Td>
                     <Td><NumberFormat number={ lote?.mensualidad} /></Td>
                     <Td>{ lote?.plazo}</Td>
-                    <Td><NumberFormat number={ lote?.precioTotal} /></Td>                    
+                    <Td><NumberFormat number={ lote?.precioTotal} /></Td>
                   </Tr>
                 )
               })
           }
           {
-             current.matches('loadCliente') && <Spinner /> 
+             current.matches('loadCliente') && <Spinner />
           }
           {
-            current.matches('success') && 
-              Object.values(cliente.lotes).length === 0 && 
+            current.matches('success') &&
+              Object.values(cliente.lotes).length === 0 &&
               <Text fontSize="xl">No hay lotes registrados</Text>
-          }                
-        </Tbody>      
+          }
+        </Tbody>
       </Table>
       <Stack direction="row" h="100px" p={4}>
         <Divider orientation="vertical" />

@@ -54,7 +54,7 @@ const getPagosInfo = async (ctx, event) => {
   const query = await fetch(`${baseURL}/pagos/${idProject}?idcliente=${clientID}`)
     .then(res => res.json())
     .then(res => res.message)
-    .catch(err => console.log(err))  
+    .catch(err => console.log(err))
 
   return query
 
@@ -136,7 +136,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'success',
           actions: assign({
-            busqueda: (ctx, evt) => evt.data 
+            busqueda: (ctx, evt) => evt.data
           })
         },
         onError: {
@@ -150,7 +150,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'getLotesInfo',
           actions: assign({
-            cliente: (ctx, evt) => evt.data 
+            cliente: (ctx, evt) => evt.data
           })
         },
         onError: {
@@ -164,7 +164,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'success',
           actions: assign({
-            pagos: (ctx, evt) => evt.data 
+            pagos: (ctx, evt) => evt.data
           })
         },
         onError: {
@@ -178,7 +178,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'success',
           actions: assign({
-            pago: (ctx, evt) => evt.data 
+            pago: (ctx, evt) => evt.data
           })
         },
         onError: {
@@ -192,7 +192,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'success',
           actions: assign({
-            pagos: (ctx, evt) => evt.data 
+            pagos: (ctx, evt) => evt.data
           })
         },
         onError: {
@@ -206,7 +206,7 @@ const BuscadorMachine = createMachine({
         onDone: {
           target: 'success',
           actions: assign({
-            appData: (ctx, evt) => evt.data 
+            appData: (ctx, evt) => evt.data
           })
         },
         onError: {

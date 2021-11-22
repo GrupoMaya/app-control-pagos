@@ -17,9 +17,9 @@ const Cliente = ({ match }) => {
   return (
         <div className="cliente__App__container">
             {
-                state.matches('success') && 
-                    <TablaClienteInfo 
-                        cliente={cliente} 
+                state.matches('success') &&
+                    <TablaClienteInfo
+                        cliente={cliente}
                         lotes={lotes}
                         pagos={pagos}
                     />
