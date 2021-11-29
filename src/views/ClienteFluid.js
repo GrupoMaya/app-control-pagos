@@ -11,20 +11,24 @@ import TablaPagosClient from 'Components/TablaPagosClient'
 import ModalStatusProjectDetails from 'Components/ModalStatusProjectDetails'
 import DateIntlForma from 'utils/DateIntlFormat'
 import ValuesByDocument from 'hooks/ValuesByDocument'
+import { Redirect } from 'react-router-dom'
 
 const ClienteFluid = ({ match, location }) => {
+  
+  const dataQuery = location.state
+  if (typeof dataQuery === 'undefined') {
+    return <Redirect to={'/'}></Redirect>
+  }
 
   const [openExpediente, setOpenExpediente] = useState(false)
   const toogleExpediente = () => setOpenExpediente(!openExpediente)
-
+  
   const [state, send] = useMachine(BuscadorMachine)
   const { openModalPago, handleModalPago } = useContext(AppContext)
-
+  
   const [modalPagoDetalles, setModalPagoDetalles] = useState(false)
   const tooglePagoDetalles = () => setModalPagoDetalles(!modalPagoDetalles)
 
-  const dataQuery = location.state
-  console.log({ esado: location.state })
   useEffect(() => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
@@ -32,6 +36,8 @@ const ClienteFluid = ({ match, location }) => {
     }
     send('GET_PAGOS_INFO', { query })
   }, [])
+
+  console.log({ dataQuery, satate: state.context })
 
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context
@@ -75,26 +81,25 @@ const ClienteFluid = ({ match, location }) => {
           </thead>
           <tbody>
             {
-            location?.state
-              .map((lote) => {
-                console.log(lote)
-                return (
-                  <tr
-                    key={lote._id}
-                    className="tabla__data"
-                    >
-                      <td>{ nombreProyecto }</td>
-                      <td>{ lote?.lote }</td>
-                      <td>{ lote?.manzana }</td>
-                      <td>{ lote?.inicioContrato && <DateIntlForma date={lote.inicioContrato} /> }</td>
-                      <td>{ lote?.plazo }</td>
-                      <td>{ <NumberFormat number={lote?.mensualidad} /> }</td>
-                      <td>{ <NumberFormat number={lote?.enganche} /> }</td>
-                      <td>{ <NumberFormat number={lote?.financiamiento} /> }</td>
-                      <td>{ <NumberFormat number={lote?.precioTotal} /> }</td>
-                    </tr>
-                )
-              })
+              Boolean(location?.state) &&
+                location?.state.map((lote) => {
+                  return (
+                    <tr
+                      key={lote?._id}
+                      className="tabla__data"
+                      >
+                        <td>{ nombreProyecto }</td>
+                        <td>{ lote?.lote }</td>
+                        <td>{ lote?.manzana }</td>
+                        <td>{ lote?.inicioContrato && <DateIntlForma date={lote.inicioContrato} /> }</td>
+                        <td>{ lote?.plazo }</td>
+                        <td>{ <NumberFormat number={lote?.mensualidad} /> }</td>
+                        <td>{ <NumberFormat number={lote?.enganche} /> }</td>
+                        <td>{ <NumberFormat number={lote?.financiamiento} /> }</td>
+                        <td>{ <NumberFormat number={lote?.precioTotal} /> }</td>
+                      </tr>
+                  )
+                })
             }
           </tbody>
         </table>
