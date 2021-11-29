@@ -16,7 +16,7 @@ const ClienteDataForm = ({ match, location }) => {
   
   const { idProyecto } = match.params
   const { proyecto, user } = location.state
-
+ 
   const defaultValues = () => {
     if (typeof user === 'undefined') {
       return {
