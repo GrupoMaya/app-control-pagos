@@ -69,6 +69,20 @@ class MayaMachineAPI {
     return res
   }
 
+  static async patchCliente ({ id, body }) {
+    const res = await fetch(`${baseURL}/modify/cliente/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+      .then(res => res.json())
+      .then(res => res)
+
+    return res
+  }
+
 }
 
 export default MayaMachineAPI

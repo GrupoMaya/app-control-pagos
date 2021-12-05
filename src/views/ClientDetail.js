@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMachine } from '@xstate/react'
 import ClienteDetailContext from 'context/ClienteDetailContext'
 import { useHistory } from 'react-router-dom'
@@ -16,13 +16,18 @@ import {
   Text,
   Stack,
   Divider,
-  Spinner
+  Spinner,
+  Button
 } from '@chakra-ui/react'
 import NumberFormat from 'utils/NumberFormat'
 import DateIntlForma from 'utils/DateIntlFormat'
 import ValuesByDocument from 'hooks/ValuesByDocument'
+import DrawNuevoCiente from 'Modales/DrawNuevoCiente'
+import edit from 'assets/icons/edit.svg'
 
 const ClientDetail = (props) => {
+
+  const [isOpen, setIsOpen] = useState(false)
   
   const [current, send] = useMachine(ClienteDetailContext)
   useEffect(() => {
@@ -46,6 +51,14 @@ const ClientDetail = (props) => {
         <Heading mb={4}>
           { current.matches('success') && cliente.nombre }
           { current.matches('loadCliente') && <Spinner /> }
+          <Button
+            colorScheme="teal"
+            variant="link"
+            style={{ marginLeft: '30px', width: '40px' }}
+            onClick={() => setIsOpen(true)}
+            >
+            <img src={edit} style={{ width: '30px' }} />
+          </Button>
         </Heading>
         <Text fontSize="xl">
           Selecciona alguno de los lotes para ver pagos pendientes
@@ -100,8 +113,16 @@ const ClientDetail = (props) => {
         <Text>Chakra UI</Text>
       </Stack>
     </Container>
+    {
+      current.matches('success') &&
+      <DrawNuevoCiente
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        data={cliente}
+      />
+    }
   </>
   )
 }
 
-export default memo(ClientDetail)
+export default ClientDetail
