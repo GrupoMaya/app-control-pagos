@@ -46,14 +46,14 @@ const ModalCliente = () => {
             { state.matches('error') && <span>El Proyecto ya está Activo</span> }
             { state.matches('documentSave') && <div className="spinner" />}
             </div>
-            <div className="modal__body"> 
+            <div className="modal__body">
 
               <form onSubmit={handleSubmit(onSubmit)}>
                 <fieldset>
                   <legend>Datos del Cliente</legend>
                   <label htmlFor="nombre">
                     Nombre Completo
-                    <input 
+                    <input
                       type="text"
                       id="nombre"
                       aria-invalid={errors.title ? 'true' : 'false'}
@@ -64,7 +64,7 @@ const ModalCliente = () => {
 
                   <label htmlFor="address">
                     Dirección
-                    <input 
+                    <input
                       type="text"
                       id="text"
                       aria-invalid={errors.address ? 'true' : 'false'}
@@ -75,7 +75,7 @@ const ModalCliente = () => {
 
                   <label htmlFor="phone">
                     Teléfono
-                    <input 
+                    <input
                       type="text"
                       id="phone"
                       aria-invalid={errors.address ? 'true' : 'false'}
@@ -86,7 +86,7 @@ const ModalCliente = () => {
 
                   <label htmlFor="email">
                     Email
-                    <input 
+                    <input
                       type="email"
                       id="email"
                       aria-invalid={errors.email ? 'true' : 'false'}

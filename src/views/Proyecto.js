@@ -59,7 +59,9 @@ const Proyecto = ({ match }) => {
           <th>Acciones</th>
         </tr>
         {
-          currentClientes.length === 0 && <h3>No hay lotes en para este proyecto</h3>
+           state.matches('success') &&
+           currentClientes.length === 0 &&
+           <p style={{ fontSize: '24px' }}>No se encontraron lotes &#128577;</p>
         }
         {
           state.matches('success') &&
