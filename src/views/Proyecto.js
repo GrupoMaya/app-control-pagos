@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import NumberFormat from 'utils/NumberFormat'
 import { Link } from 'react-router-dom'
 import DateIntlFormat from 'utils/DateIntlFormat'
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
+import SearchClientProyecto from 'utils/SearchClientProyecto'
 
 const Proyecto = ({ match }) => {
 
@@ -17,6 +18,7 @@ const Proyecto = ({ match }) => {
   }, [match])
 
   const { proyecto } = state.context
+  const [currentClientes, setCurrentClientes] = useState([])
 
   return (
     // @params proyecto css
@@ -38,6 +40,14 @@ const Proyecto = ({ match }) => {
         state.matches('success') && Object.values(proyecto).length === 0 && <span>No hay Elementos para mostrar</span>
       }
   </div>
+  {/* buscador web */}
+      {
+        state.matches('success') &&
+          <SearchClientProyecto
+            data={proyecto}
+            setCurrentClientes={setCurrentClientes}
+          />
+      }
     </section>
     <section className="proyecto__table">
       <table>
@@ -48,10 +58,12 @@ const Proyecto = ({ match }) => {
           <th>Cliente</th>
           <th>Acciones</th>
         </tr>
-        
+        {
+          currentClientes.length === 0 && <h3>No hay lotes en para este proyecto</h3>
+        }
         {
           state.matches('success') &&
-          Object.values(proyecto)
+          Object.values(currentClientes)
             .filter(item => item.clienteData.length > 0)
             .map((item, index) => {
               const parentLoteId = item._id
