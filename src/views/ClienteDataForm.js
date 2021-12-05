@@ -1,22 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
 import { useToast, Button } from '@chakra-ui/react'
-
+import API from 'context/controllers'
 import HookNameProjectById from 'hooks/HookNameProjectById'
+import ModalUserSearch from 'Modales/ModalUserSearch'
 
 const ClienteDataForm = ({ match, location }) => {
 
-  const [showCliente, setShowCliente] = useState(false)
-  const handleShowCliente = () => setShowCliente(!showCliente)
-
-  const [showLote, setShowLote] = useState(false)
-  const handleShowLote = () => setShowLote(!showLote)
-  
   const { idProyecto } = match.params
   const { proyecto, user } = location.state
- 
+
   const defaultValues = () => {
     if (typeof user === 'undefined') {
       return {
@@ -35,16 +30,41 @@ const ClienteDataForm = ({ match, location }) => {
     }
   }
     
-  const [state, send] = useMachine(ClienteMachine)
-
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
     defaultValues: defaultValues()
   })
   
-  const onSubmit = (data) => {
-
-    console.log({ data })
+  const [getUsers, setGetUsers] = useState([])
+  useEffect(() => {
+    API.getAllClients()
+      .then(res => {
+        console.log(res)
+        return setGetUsers(res)
+      })
     
+  }, [match])
+    
+  const [matchVisible, setMatchVisible] = useState(false)
+  const onCloseMatch = () => setMatchVisible(!matchVisible)
+  const userKeyword = watch('nombre')
+  const isUserMatch = useMemo(() => {
+    const filter = getUsers.filter(({ nombre }) => {
+      const regex = new RegExp(`${userKeyword}`, 'gi')
+      return nombre.match(regex)
+
+    })
+    return filter
+  }, [userKeyword])
+  
+  const [showCliente, setShowCliente] = useState(false)
+  const handleShowCliente = () => setShowCliente(!showCliente)
+
+  const [showLote, setShowLote] = useState(false)
+  const handleShowLote = () => setShowLote(!showLote)
+
+  const [state, send] = useMachine(ClienteMachine)
+
+  const onSubmit = (data) => {
     if (typeof user !== 'undefined') {
       
       send('ADD_LOTE_USER', { idProyecto, payload: { ...data, idUser: user._id } })
@@ -83,9 +103,6 @@ const ClienteDataForm = ({ match, location }) => {
         <h4>Añadir usuario <br/> proyecto: { loading && project?.title } </h4>
       </div>
       <div className="notification">
-          <button className="btn" onClick={() => history.back()}>
-            Regresar
-          </button>
           {/* DOCUMENT SAVE ES EL ESTADO AL QUE PASA LA MAQUINA EN SUCCESS */}
           {/* { state.matches('documentSave') && handledSuccess() } */}
           { state.matches('error') && <span className="notification__error">El usuario ya existe</span> }
@@ -109,6 +126,14 @@ const ClienteDataForm = ({ match, location }) => {
                       />
                       {errors.nombre ? <p>Campo Obligatorio</p> : null }
                   </label>
+                  {
+                    isUserMatch.length > 0 &&
+                    userKeyword.length > 4 &&
+                    <p
+                      style={{ fontWeight: 900, marginBottom: '10px' }}
+                      onClick={onCloseMatch}>{`Existen ${isUserMatch.length} con ese nombre, clic aqui para ver`}
+                    </p>
+                  }
 
                   <label htmlFor="address">
                     Dirección
@@ -145,6 +170,9 @@ const ClienteDataForm = ({ match, location }) => {
                   {/* TODO para adjuntar la foto */}
                   </div>
                     <div className="modal__footer">
+                      <button className="btn red" onClick={() => history.back()}>
+                        Regresar
+                      </button>
                       <Button type="submit">Guardar</Button>
                       <Button type="reset" onClick={() => reset()}>Borrar Campos</Button>
                     </div>
@@ -256,6 +284,11 @@ const ClienteDataForm = ({ match, location }) => {
               </form>
 
       </section>
+      <ModalUserSearch
+        visible={matchVisible}
+        dataResult={{ context: { busqueda: isUserMatch } }}
+        onCancel={onCloseMatch}
+      />
     </div>
   )
 }

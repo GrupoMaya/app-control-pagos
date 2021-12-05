@@ -11,6 +11,9 @@ import ModalSettings from 'Modales/ModalSettings'
 
 import ModalRemoveClient from 'Modales/ModalRemoveClient'
 
+// drawer
+import DrawNuevoCiente from 'Modales/DrawNuevoCiente'
+
 const MenuMaya = () => {
 
   const { handleModalPago } = useContext(AppContext)
@@ -35,8 +38,11 @@ const MenuMaya = () => {
     toggleHaburger()
   }
 
+  // TODO AGREGAR DRAWE
+  const [isOpen, setIsOpen] = useState(false)
   const nuevoLoteClient = () => {
     history.push({ pathname: `/add/proyecto/${idPoject()}/cliente/nuevo`, state: { proyecto: idPoject() } })
+    // setIsOpen(true)
     toggleHaburger()
   }
   
@@ -153,6 +159,7 @@ const MenuMaya = () => {
     <ModalAddUserProject visible={handleAddUser} onCancel={setHandledAddUser} />
     <ModalRemoveClient visible={removeModal} onCancel={handleRemoveUser} />
     <ModalSettings visible={settingsModal} onCancel={toogleSettingsModal} />
+    <DrawNuevoCiente isOpen={isOpen} setIsOpen={setIsOpen} />
   </>
   )
 }

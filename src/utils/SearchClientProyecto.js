@@ -7,9 +7,8 @@ const SearchClientProyecto = ({ data, setCurrentClientes }) => {
   const onHandledSubmit = useMemo(() => {
   // filter whit match methods
     const filter = Object.values(data).filter(({ clienteData }) => {
-      console.log(clienteData)
       const regex = new RegExp(`${keyword}`, 'gi')
-      return clienteData[0].nombre.match(regex)
+      return clienteData[0]?.nombre.match(regex)
     })
 
     return filter
@@ -18,9 +17,12 @@ const SearchClientProyecto = ({ data, setCurrentClientes }) => {
 
   useEffect(() => {
     const copy = [...data]
-    if (onHandledSubmit.length === 0) {
+    if (onHandledSubmit.length === 0 && keyword.length > 0) {
+      setCurrentClientes([])
+
+    } else if (onHandledSubmit.length === 0) {
       setCurrentClientes(copy)
-      
+
     } else {
       setCurrentClientes(onHandledSubmit)
     }

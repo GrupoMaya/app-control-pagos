@@ -61,6 +61,14 @@ class MayaMachineAPI {
     return res
   }
 
+  static async getAllClients () {
+    const res = await fetch(`${baseURL}/cliente`)
+      .then(res => res.json())
+      .then(res => res.message)
+
+    return res
+  }
+
 }
 
 export default MayaMachineAPI
