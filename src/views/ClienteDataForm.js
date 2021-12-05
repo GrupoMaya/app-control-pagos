@@ -47,9 +47,11 @@ const ClienteDataForm = ({ match, location }) => {
   const [matchVisible, setMatchVisible] = useState(false)
   const onCloseMatch = () => setMatchVisible(!matchVisible)
   const userKeyword = watch('nombre')
+
   const isUserMatch = useMemo(() => {
+    const regex = new RegExp(`${userKeyword}`, 'gi')
     const filter = getUsers.filter(({ nombre }) => {
-      const regex = new RegExp(`${userKeyword}`, 'gi')
+      console.log(nombre)
       return nombre.match(regex)
 
     })
@@ -128,7 +130,7 @@ const ClienteDataForm = ({ match, location }) => {
                   </label>
                   {
                     isUserMatch.length > 0 &&
-                    userKeyword.length > 4 &&
+                    userKeyword.length >= 4 &&
                     <p
                       style={{ fontWeight: 900, marginBottom: '10px' }}
                       onClick={onCloseMatch}>{`Existen ${isUserMatch.length} con ese nombre, clic aqui para ver`}
