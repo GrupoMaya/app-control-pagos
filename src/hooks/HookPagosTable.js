@@ -30,6 +30,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
   }
 
   const pdfCreator = ({ data } = {}) => {
+    // preview pdf blob data
 
     const folioDate = new Date(data.mes)
     const dayFolio = folioDate.getDay()
@@ -43,7 +44,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
       return res
         .arrayBuffer()
         .then(res => {
-          const blob = new Blob([res], { type: 'applicacion/pdf' })
+          const blob = new Blob([res], { type: 'application/pdf' })
           saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}_Folio_${data.folio}.pdf`)
         })
         .catch(error => console.log(error))
@@ -55,8 +56,6 @@ const HookPagosTable = ({ pagoId, lote }) => {
   const [pdfPreview, setPdfPreview] = useState(null)
   const previewURL = async (data) => {
     console.log('pepito')
-    const pdfURL = new FileReader()
-    
     return new Promise((resolve, reject) => {
       // pdf blob preview url react pdf viewer
       fetch(`${baseURL}/pdf?folio=${data._id}`, {
@@ -65,14 +64,13 @@ const HookPagosTable = ({ pagoId, lote }) => {
         body: JSON.stringify(data)
       })
         .then((res) => {
-          const blob = new Blob([res], { type: 'application/pdf' })
-          pdfURL.readAsDataURL(blob)
-          pdfURL.onload = () => resolve(
-            setPdfPreview(pdfURL.result)
-          )
-          pdfURL.onerror = (error) => console.log(error)
-
-          console.log(pdfURL)
+          res.arrayBuffer()
+            .then(res => {
+              const blob = new Blob([res], { type: 'application/pdf' })
+              const URLpreview = URL.createObjectURL(blob)
+              console.log({ URLpreview })
+              setPdfPreview(URLpreview)
+            })
         })
         .finally(() => handledDetalle())
     })
@@ -121,8 +119,8 @@ const HookPagosTable = ({ pagoId, lote }) => {
                 <td>{ <NumberFormat number={ pago.mensualidad } />}</td>
                 <td className='estatus__menu'>
                     <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>
-                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>VER</button>
-                    <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>IMPRIMIR</button>
+                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>Vista previa</button>
+                    <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Descargar</button>
                     <UpdateModal id={idPago} document="Pago" />
                   </td>
               </tr>
