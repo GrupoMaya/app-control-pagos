@@ -82,7 +82,6 @@ const ClientDetail = (props) => {
             current.matches('success') && Object
               .values(cliente.lotes)
               .map((lote) => {
-                console.log({ lote })
                 const [idProject] = lote?.proyecto
                 const proyectName = <ValuesByDocument id={ idProject } documentType="Proyecto" cbValue='title' />
                 return (

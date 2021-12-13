@@ -104,6 +104,9 @@ const Proyecto = ({ match }) => {
                             </Link>
                             <UpdateModal id={parentLoteId} document="Lote"/>
                           </span>
+                        <small className='id__inform'>
+                          {item._id}
+                        </small>
                         </td>
                         </>
                         )

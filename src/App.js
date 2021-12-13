@@ -7,6 +7,7 @@ import Cliente from 'views/Cliente'
 import ClienteFluid from 'views/ClienteFluid'
 import ClienteDataForm from 'views/ClienteDataForm'
 import ClientDetail from 'views/ClientDetail'
+import Morosos from 'views/Morosos'
 
 import { MayaAppMachineProvider } from 'context/MayaMachine'
 import AppContextProvider from 'context/AppContextProvider'
@@ -63,6 +64,11 @@ function App () {
           <Route
             path="/detalle/cliente/:id"
             render={(props) => <ClientDetail { ...props } /> }
+          />
+
+          <Route
+            path="/morosos"
+            render={(props) => <Morosos {...props} /> }
           />
 
       <div className="cliente_App_footer"></div>

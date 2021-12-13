@@ -16,12 +16,22 @@ const loadDocumentValues = async (context, { id, documentType }) => {
   return data
 }
 
+const loadMorosos = async () => {
+  const loadMorosos = await fetch(`${baseURL}/morosos`)
+    .then(res => res.json())
+    .then(res => {
+      return res.message
+    })
+  return loadMorosos
+}
+
 const ClienteDetailContext = createMachine({
   id: 'ClienteDetailContext',
   initial: 'idle',
   context: {
     cliente: [],
-    documentValues: []
+    documentValues: [],
+    morosos: []
   },
   states: {
     idle: {},
@@ -49,6 +59,17 @@ const ClienteDetailContext = createMachine({
           })
         }
       }
+    },
+    loadMorosos: {
+      invoke: {
+        src: loadMorosos,
+        onDone: {
+          target: 'success',
+          actions: assign({
+            morosos: (ctx, event) => event.data
+          })
+        }
+      }
     }
   },
   on: {
@@ -57,6 +78,9 @@ const ClienteDetailContext = createMachine({
     },
     GET_DOCUMENT_VALUES: {
       target: 'loadDocumentValues'
+    },
+    GET_MOROSOS: {
+      target: 'loadMorosos'
     }
   }
 })
