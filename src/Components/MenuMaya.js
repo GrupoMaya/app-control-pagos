@@ -9,7 +9,7 @@ import { AppContext } from 'context/AppContextProvider'
 import ModalAddUserProject from 'Modales/ModalAddUserProject'
 import ModalSettings from 'Modales/ModalSettings'
 
-import ModalRemoveClient from 'Modales/ModalRemoveClient'
+// import ModalRemoveClient from 'Modales/ModalRemoveClient'
 
 // drawer
 
@@ -54,10 +54,9 @@ const MenuMaya = () => {
     handleModalPago()
     toggleHaburger()
   }
-
-  const [removeModal, setRemoveModal] = useState(false)
+  
   const handleRemoveUser = () => {
-    setRemoveModal(!removeModal)
+    history.push('/morosos')
     toggleHaburger()
   }
 
@@ -93,7 +92,10 @@ const MenuMaya = () => {
             Configuración
           </button>
 
-          <button className="menu__hamburger__btn__red">
+          <button
+            onClick={() => handleRemoveUser()}
+            className="menu__hamburger__btn__red"
+          >
           <div className="ico__user__morosos"></div>
             Usuarios Morosos
           </button>
@@ -125,14 +127,6 @@ const MenuMaya = () => {
           <div className="ico__user__normal"></div>
             Agregar Cliente
           </button>
-          
-          <div className="separacion__menu" />
-          <button
-            onClick={handleRemoveUser}
-            className="menu__hamburger__btn__red">
-            <div className="ico__user__morosos"></div>
-              Remover Cliente
-          </button>
         </>
         }
 
@@ -155,7 +149,6 @@ const MenuMaya = () => {
     </div>
     <NuevoPoject visible={openProject} onCancel={handleProjectModal} />
     <ModalAddUserProject visible={handleAddUser} onCancel={setHandledAddUser} />
-    <ModalRemoveClient visible={removeModal} onCancel={handleRemoveUser} />
     <ModalSettings visible={settingsModal} onCancel={toogleSettingsModal} />
   </>
   )

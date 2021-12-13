@@ -57,7 +57,7 @@
 
 .tabla__data{
   width: 100%;
-  text-align: center;
+  text-align: center;  
 
   button{
     background-color: var(--esmeralda);
@@ -114,14 +114,13 @@
 }
 
 
-
-
 .tabla__data td {
   padding: 4px;
 }
 
 .tabla__data:nth-child(2n + 1){
   background-color: #dbdfe2;
+  
 }
 
 // .tabla__data:hover{
@@ -137,6 +136,11 @@
 
 .cliente__App__pagos{
   margin: 1rem;
+}
+
+.important_title{
+  font-size: 24px;
+  font-weight: bold;
 }
 
 @media (max-width:60rem){
