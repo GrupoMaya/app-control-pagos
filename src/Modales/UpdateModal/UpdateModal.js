@@ -7,9 +7,6 @@ import PagoTemplate from './templates/PagoTemplate'
 import './updateStyles.scss'
 
 const UpdateModal = ({ id, document }) => {
-
-  console.log(id)
-
   /**
    * Tipos de documento
    * Lote

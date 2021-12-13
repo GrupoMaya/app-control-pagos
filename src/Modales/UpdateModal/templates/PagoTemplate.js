@@ -8,18 +8,17 @@ import './templates.scss'
 
 const PagoTemplate = ({ data }) => {
 
-  console.log({ data })
-
   const [current, send] = useMachine(UpdateMachine)
 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      ...data
+      ...data,
+      mes: data.mes.split('T')[0],
+      fechaPago: data.fechaPago.split('T')[0]
     }
   })
 
   const sendData = (payload) => {
-    console.log(payload)
     send('PATCH_DATA_PAGO', { payload })
   }
 
@@ -83,6 +82,16 @@ const PagoTemplate = ({ data }) => {
                   type="text"
                   name="refPago"
                   {...register('refPago')}
+                >
+                </input>
+              </label>
+
+              <label>
+                <p>Referencia Bancaria</p>
+                <input
+                  type="text"
+                  name="refBanco"
+                  {...register('refBanco')}
                 >
                 </input>
               </label>
