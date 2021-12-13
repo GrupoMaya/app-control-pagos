@@ -5,7 +5,7 @@
 
 .App-header{
     display: flex;
-    position: relative;
+    position: relative;    
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -18,13 +18,13 @@
         display: block;
         position: absolute;
         width: auto;
-        height: 80px;
+        height: 60px;
         content: url("../assets/img/logo_blanco.png");
-        background-position: center;
+        background-position: center;        
         background-repeat: no-repeat;
         left: 5rem;
         right: 0;
-        bottom: 0;
+        bottom: 10px;
         transform: translate3d(10px 50px);
 }
 
