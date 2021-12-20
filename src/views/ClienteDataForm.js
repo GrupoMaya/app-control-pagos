@@ -38,7 +38,6 @@ const ClienteDataForm = ({ match, location }) => {
   useEffect(() => {
     API.getAllClients()
       .then(res => {
-        console.log(res)
         return setGetUsers(res)
       })
     
@@ -51,7 +50,6 @@ const ClienteDataForm = ({ match, location }) => {
   const isUserMatch = useMemo(() => {
     const regex = new RegExp(`${userKeyword}`, 'gi')
     const filter = getUsers.filter(({ nombre }) => {
-      console.log(nombre)
       return nombre.match(regex)
 
     })
@@ -68,7 +66,6 @@ const ClienteDataForm = ({ match, location }) => {
 
   const onSubmit = (data) => {
     if (typeof user !== 'undefined') {
-      
       send('ADD_LOTE_USER', { idProyecto, payload: { ...data, idUser: user._id } })
     } else if (typeof user === 'undefined') {
       
@@ -117,7 +114,7 @@ const ClienteDataForm = ({ match, location }) => {
                       <button className="button__acordeon"></button>
                   </legend>
 
-                  <div hidden={showCliente}>
+                <div>
                   <label htmlFor="nombre">
                     Nombre Completo
                     <input

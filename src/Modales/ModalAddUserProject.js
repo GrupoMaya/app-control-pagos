@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
+import { AppContext } from 'context/AppContextProvider'
 import { Modal } from 'antd'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
 
 import { useLocation, useHistory } from 'react-router-dom'
+import { Button } from '@chakra-ui/react'
 
 const ModalAddUserProject = ({ visible, onCancel }) => {
+
+  const { toggleDrawerNewUser } = useContext(AppContext)
 
   const { register, handleSubmit, reset } = useForm()
 
@@ -22,9 +26,8 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
     const idProject = location.pathname.split('/')[2]
     
     history.push({
-      pathname: `/add/proyecto/${idProject}/cliente/${user._id}`,
+      pathname: `/detalle/cliente/${user._id}`,
       state: { proyecto: idProject, user }
-
     })
   }
 
@@ -47,7 +50,6 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
       title="Añadir Usuario Existente"
       footer={null}
     >
-    { state.matches('error') && <p className="error__message">No hay usuario que coincidan con tu búsqueda</p>}
     <form onSubmit={handleSubmit(submitUser)} className="modal__user__existente">
       
       <label>
@@ -87,7 +89,19 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
     </tbody>
     </table>
     }
-    </Modal>
+    <div className='d-flex center'>
+      {
+        state.matches('error') &&
+        <Button
+          variant="solid"
+          sx={{ width: '120px' }}
+          colorScheme='teal'
+          onClick={() => toggleDrawerNewUser()}>
+            Añadir Nuevo
+        </Button>
+      }
+    </div>
+  </Modal>
   )
 }
 

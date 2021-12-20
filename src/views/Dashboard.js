@@ -21,8 +21,8 @@ const Dashboard = () => {
   return (
         <div id="Dashboard">
             <section className="dashboard__header">
-              <h1>Proyectos Activos:</h1>
-              <h2>{`${plataformName}`}</h2>
+              <h1>Empresa:</h1>
+              <h2>{`${plataformName || 'Cargando...'}`}</h2>
             </section>
             <section className="cards">
                 {
@@ -33,9 +33,6 @@ const Dashboard = () => {
                       </Link>
                     )
                   })
-                }
-                {
-                  
                 }
                 {
                   state.matches('getProyectos') && <span className="logo__loader__await" />

@@ -28,9 +28,6 @@ const getPagoInfo = async (context, event) => {
   const pagoResponse = await fetch(`${baseURL}/get/pago/${event.id}`)
     .then(res => res.json())
     .then(res => res.message)
-
-  console.log({ pagoResponse })
-
   return pagoResponse
 }
 

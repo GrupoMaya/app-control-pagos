@@ -12,9 +12,7 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import API from 'context/controllers'
 
-const DrawNuevoCiente = ({ isOpen, setIsOpen, data }) => {
-
-  console.log(data)
+const DrawUpdateCiente = ({ isOpen, setIsOpen, data }) => {
 
   const onClose = () => setIsOpen(false)
   const { handleSubmit, control, watch } = useForm({
@@ -71,4 +69,4 @@ const DrawNuevoCiente = ({ isOpen, setIsOpen, data }) => {
   )
 }
 
-export default DrawNuevoCiente
+export default DrawUpdateCiente
