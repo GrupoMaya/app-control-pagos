@@ -31,11 +31,6 @@ const HookPagosTable = ({ pagoId, lote }) => {
 
   const pdfCreator = ({ data } = {}) => {
     // preview pdf blob data
-
-    const folioDate = new Date(data.mes)
-    const dayFolio = folioDate.getDay()
-    const mesFolio = folioDate.getMonth()
-
     fetch(`${baseURL}/pdf?folio=${data._id}`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
@@ -45,7 +40,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
         .arrayBuffer()
         .then(res => {
           const blob = new Blob([res], { type: 'application/pdf' })
-          saveAs(blob, `${data.dataClient[0].nombre}_${dayFolio}${mesFolio}_Folio_${data.folio}.pdf`)
+          saveAs(blob, `${data.dataClient[0].nombre}_Folio_${data.folio}.pdf`)
         })
         .catch(error => console.log(error))
     })
