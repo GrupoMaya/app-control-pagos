@@ -140,9 +140,15 @@ export default function DrawerAddLote ({ isOpen, setIsOpen, dataClient }) {
                 </Stack>
 
               <Box>
-                {
-                  
-                }
+              <label htmlFor="inicioContrato">
+                Inicio de Contrato
+                <input
+                  id="inicioContrato"
+                  name='inicioContrato'
+                  type="date"
+                  { ...register('inicioContrato', { required: true })}
+                  />
+                </label>
                 <label htmlFor="lote">
                   Número de Lote
                   <input
