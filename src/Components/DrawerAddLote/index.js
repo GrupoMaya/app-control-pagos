@@ -30,6 +30,7 @@ export default function DrawerAddLote ({ isOpen, setIsOpen, dataClient }) {
 
   const loteSelected = watch('lote')
   const proyectoSelected = watch('idProyecto')
+  const manzanaSelected = watch('manzana')
   
   const onSubmitData = (data) => {
     send('ADD_LOTE_USER', { idProyecto: data.idProyecto, payload: { ...data, idUser: dataClient._id } })
@@ -47,9 +48,11 @@ export default function DrawerAddLote ({ isOpen, setIsOpen, dataClient }) {
   const isMatchLote = useMemo(() => {
     if (Array.isArray(getUsers)) {
       return getUsers.length > 0 &&
-      Boolean(Object.values(getUsers).find(({ lote }) => lote === loteSelected))
+      Boolean(Object
+        .values(getUsers)
+        .find(({ lote, manzana }) => lote === loteSelected && manzana === manzanaSelected))
     }
-  }, [loteSelected, getUsers])
+  }, [loteSelected, manzanaSelected, getUsers])
 
   // para el selector
   const [projects, setProjects] = useState([])

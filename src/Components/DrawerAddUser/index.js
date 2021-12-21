@@ -43,6 +43,7 @@ export default function DrawerAddUser () {
   }
 
   const loteSelected = watch('lote')
+  const manzanaSelected = watch('manzana')
   const [getUsers, setGetUsers] = useState([])
   useEffect(() => {
     API.getLotes({ _id: idProyecto })
@@ -55,9 +56,11 @@ export default function DrawerAddUser () {
   const isMatchLote = useMemo(() => {
     if (Array.isArray(getUsers)) {
       return getUsers.length > 0 &&
-      Boolean(Object.values(getUsers).find(({ lote }) => lote === loteSelected))
+      Boolean(Object
+        .values(getUsers)
+        .find(({ lote, manzana }) => lote === loteSelected && manzana === manzanaSelected))
     }
-  }, [loteSelected, getUsers])
+  }, [loteSelected, manzanaSelected, getUsers])
 
   const toast = useToast()
   useEffect(() => {
