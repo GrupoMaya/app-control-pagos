@@ -53,6 +53,7 @@ const Proyecto = ({ match }) => {
       <table>
         <tr className="head__data__table">
           <th>Lote</th>
+          <th>Manzana</th>
           <th>Precio Total</th>
           <th>Incio de contrato</th>
           <th>Cliente</th>
@@ -78,6 +79,7 @@ const Proyecto = ({ match }) => {
                   className="tabla__data"
                   >
                   <td>{ item.lote }</td>
+                  <td>{ item.manzana }</td>
                   <td>{ <NumberFormat number={item.precioTotal}/> }</td>
                   <td>
                     {
