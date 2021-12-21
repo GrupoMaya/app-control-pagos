@@ -36,9 +36,7 @@ const ClienteFluid = ({ match, location }) => {
     }
     send('GET_PAGOS_INFO', { query })
   }, [])
-
-  console.log({ dataQuery, satate: state.context })
-
+  
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context
   const nombreProyecto = <ValuesByDocument id={ projectSlug } documentType="Proyecto" cbValue='title' />

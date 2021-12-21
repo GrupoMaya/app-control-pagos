@@ -30,7 +30,7 @@ const Proyecto = ({ match }) => {
       </div>
   
         <section className="proyecto__data__info">
-            {/* INFORMACION "ESTADISTICO" DEL PROYECTO */}
+        {/* INFORMACION "ESTADISTICO" DEL PROYECTO */}
         </section>
     <div className="ntf__results">
       {

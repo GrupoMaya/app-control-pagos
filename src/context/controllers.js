@@ -37,8 +37,15 @@ class MayaMachineAPI {
   }
 
   static async getAllLotesByProjectID ({ proyecto }, event) {
-    
     const request = await fetch(`${baseURL}/lotes/proyecto/${proyecto._id}`)
+      .then(res => res.json())
+      .then(res => res.message)
+    return request
+
+  }
+
+  static async getLotes ({ _id }) {
+    const request = await fetch(`${baseURL}/lotes/${_id}`)
       .then(res => res.json())
       .then(res => res.message)
     return request
@@ -81,6 +88,14 @@ class MayaMachineAPI {
       .then(res => res)
 
     return res
+  }
+
+  static async getAllProjetcs () {
+    const projects = await fetch(`${baseURL}/proyectos`)
+      .then(res => res.json())
+      .then(res => res.message)
+    
+    return projects
   }
 
 }

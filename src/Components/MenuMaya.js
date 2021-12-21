@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
+import DrawerAddUser from './DrawerAddUser'
 
 import NuevoPoject from 'Modales/NuevoProject'
 import Buscador from './Buscador'
@@ -9,24 +10,13 @@ import { AppContext } from 'context/AppContextProvider'
 import ModalAddUserProject from 'Modales/ModalAddUserProject'
 import ModalSettings from 'Modales/ModalSettings'
 
-// import ModalRemoveClient from 'Modales/ModalRemoveClient'
-
-// drawer
-
 const MenuMaya = () => {
 
-  const { handleModalPago } = useContext(AppContext)
+  const { handleModalPago, openDrawerNewUser, setOpenDrawerNewUser } = useContext(AppContext)
 
   const location = useLocation()
   const history = useHistory()
   const params = location.pathname.split('/')
-  
-  const idPoject = () => {
-    if (params.includes('proyecto')) {
-      return params[params.length - 2]
-      
-    }
-  }
   
   const [openHamburger, setOpenHAmburger] = useState(true)
   const toggleHaburger = () => setOpenHAmburger(!openHamburger)
@@ -34,13 +24,6 @@ const MenuMaya = () => {
   const [openProject, setOpenProject] = useState(false)
   const handleProjectModal = () => {
     setOpenProject(!openProject)
-    toggleHaburger()
-  }
-
-  // TODO AGREGAR DRAWER
-  const nuevoLoteClient = () => {
-    history.push({ pathname: `/add/proyecto/${idPoject()}/cliente/nuevo`, state: { proyecto: idPoject() } })
-    // setIsOpen(true)
     toggleHaburger()
   }
   
@@ -112,13 +95,13 @@ const MenuMaya = () => {
 
         { params.includes('proyecto') && !params.includes('cliente') &&
         <>
-          <button
+          {/* <button
           onClick={() => nuevoLoteClient()}
           className="btn__esmeralda"
           >
           <div className="ico__user"></div>
             Nuevo Cliente
-          </button>
+          </button> */}
 
           <button
           onClick={toogleHandledUser}
@@ -150,6 +133,7 @@ const MenuMaya = () => {
     <NuevoPoject visible={openProject} onCancel={handleProjectModal} />
     <ModalAddUserProject visible={handleAddUser} onCancel={setHandledAddUser} />
     <ModalSettings visible={settingsModal} onCancel={toogleSettingsModal} />
+    <DrawerAddUser visible={openDrawerNewUser} onCancel={setOpenDrawerNewUser} />
   </>
   )
 }

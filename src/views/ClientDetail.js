@@ -22,12 +22,15 @@ import {
 import NumberFormat from 'utils/NumberFormat'
 import DateIntlForma from 'utils/DateIntlFormat'
 import ValuesByDocument from 'hooks/ValuesByDocument'
-import DrawNuevoCiente from 'Modales/DrawNuevoCiente'
 import edit from 'assets/icons/edit.svg'
+import DrawerAddLote from 'Components/DrawerAddLote'
+import DrawUpdateCiente from 'Modales/DrawUpdateCiente'
 
 const ClientDetail = (props) => {
 
+  // modal de datos del cliente
   const [isOpen, setIsOpen] = useState(false)
+  const [newLote, setNewLote] = useState(false)
   
   const [current, send] = useMachine(ClienteDetailContext)
   useEffect(() => {
@@ -63,6 +66,9 @@ const ClientDetail = (props) => {
         <Text fontSize="xl">
           Selecciona alguno de los lotes para ver pagos pendientes
         </Text>
+        <small>
+          { current.matches('success') && `ID interno: ${cliente.email}` }
+        </small>
       </Box>
       <Table variant="striped" colorScheme="teal" className='bg_esmeralda'>
         <TableCaption></TableCaption>
@@ -107,14 +113,31 @@ const ClientDetail = (props) => {
           }
         </Tbody>
       </Table>
+      
       <Stack direction="row" h="100px" p={4}>
         <Divider orientation="vertical" />
-        <Text>Chakra UI</Text>
+        <Button
+          onClick={() => setNewLote(true)}
+          variantColor="teal"
+          variant="outline"
+          sx={{ width: '180px' }}>
+          Añadir Lote
+        </Button>
       </Stack>
     </Container>
     {
       current.matches('success') &&
-      <DrawNuevoCiente
+      <DrawerAddLote
+        dataClient={cliente}
+        isOpen={newLote}
+        setIsOpen={setNewLote}
+        data={cliente}
+      />
+    }
+    {
+      current.matches('success') &&
+      <DrawUpdateCiente
+        dataClient={cliente}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         data={cliente}

@@ -307,6 +307,7 @@
     align-items: center;
     border: 1px solid var(--esmeralda_light);
     height: fit-content;
+    border-radius: 4px;
   }
 
   button{
@@ -318,9 +319,10 @@
     
     &::before{
       content: url('../assets/icons/search-alt.svg');
-      width: 1rem;
-      height: 1rem;
+      width: 1.82rem;
+      height: fit-content;
       margin: 0.20rem;
+      padding: 1px;      
     }
 
   }

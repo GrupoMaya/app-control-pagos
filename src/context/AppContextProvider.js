@@ -29,6 +29,12 @@ const AppContextProvider = (props) => {
     
   }
 
+  const [openDrawerNewUser, setOpenDrawerNewUser] = useState(false)
+  const toggleDrawerNewUser = () => setOpenDrawerNewUser(!openDrawerNewUser)
+
+  const [openDrawerNewLote, setOpenDrawerNewLote] = useState(false)
+  const toggleDrawerNewLote = () => setOpenDrawerNewLote(!openDrawerNewLote)
+
   return (
     <AppContext.Provider value={{
       modalPago,
@@ -39,7 +45,12 @@ const AppContextProvider = (props) => {
       handleModalPago,
       plataformName,
       setPlataformName,
-      GetInfoData
+      GetInfoData,
+      openDrawerNewUser,
+      toggleDrawerNewUser,
+      openDrawerNewLote,
+      toggleDrawerNewLote
+
     }}>
       { props.children }
     </AppContext.Provider>

@@ -28,6 +28,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "sass": "^1.38.1",
+    "swr": "^1.1.2-beta.0",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
     "xstate": "^4.23.1"
   },

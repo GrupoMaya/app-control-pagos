@@ -53,14 +53,19 @@ code {
   .dashboard__header{
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding:  0.25rem 2rem;
-    background-color: white;
-
+    align-content: center;        
+    padding:  0.25rem 2rem;    
+    background-color: #ecf0f1;
+    
     h1{
       color: #2E2C2F;
-      font-size: 30px;
+      font-size: 25px;
       margin-right: 8px;
+    }
+
+    h2{
+      font-size: 25px;
+      font-weight: bold;
     }
         
     span{
