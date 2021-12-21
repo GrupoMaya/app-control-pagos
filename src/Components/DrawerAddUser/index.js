@@ -1,10 +1,11 @@
 import './sytles.scss'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
 import { v4 as uuidv4 } from 'uuid'
+import API from 'context/controllers'
 
 import {
   Drawer,
@@ -31,7 +32,7 @@ export default function DrawerAddUser () {
   const [state, send] = useMachine(ClienteMachine)
 
   const { openDrawerNewUser, toggleDrawerNewUser } = useContext(AppContext)
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
     defaultValues: {
       email: uuid
     }
@@ -40,6 +41,23 @@ export default function DrawerAddUser () {
     send('ASSIGN_LOTE_TO_NEW_USER', { idProyecto, payload: data })
 
   }
+
+  const loteSelected = watch('lote')
+  const [getUsers, setGetUsers] = useState([])
+  useEffect(() => {
+    API.getLotes({ _id: idProyecto })
+      .then(res => {
+        return setGetUsers(res)
+      })
+    
+  }, [loteSelected])
+
+  const isMatchLote = useMemo(() => {
+    if (Array.isArray(getUsers)) {
+      return getUsers.length > 0 &&
+      Boolean(Object.values(getUsers).find(({ lote }) => lote === loteSelected))
+    }
+  }, [loteSelected, getUsers])
 
   const toast = useToast()
   useEffect(() => {
@@ -67,6 +85,9 @@ export default function DrawerAddUser () {
           <DrawerHeader>Crear nuevo cliente</DrawerHeader>
 
           <DrawerBody className='form_box'>
+            {
+              isMatchLote ? <span className='alert__lote'>{`Ya existe el lote: ${loteSelected} `}</span> : null
+            }
             <form onSubmit={handleSubmit(onSubmitData)}>
               <Box>
               <label htmlFor="nombre">
@@ -227,6 +248,7 @@ export default function DrawerAddUser () {
               sx={{ width: '100%' }}
               variant="outline"
               type="submit"
+              disabled={!!isMatchLote}
               isLoading={state.matches('assignLoteToNewUser')}
             >
               Guardar
