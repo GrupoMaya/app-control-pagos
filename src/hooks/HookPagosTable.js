@@ -73,7 +73,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
   return (
     state.matches('success') && pago
       .filter((pago) => {
-        return pago.dataLote[0].lote === lote
+        return pago.dataLote[0]?.lote === lote
       })
       .map((pago) => {
         
