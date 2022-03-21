@@ -13,6 +13,8 @@ import { baseURL } from 'context/controllers'
 import DetallePago from 'Models/DetallePago'
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 
+import { UserState } from 'context/userContext'
+
 const HookPagosTable = ({ pagoId, lote }) => {
   
   const [state, send] = useMachine(BuscadorMachine)
@@ -70,6 +72,9 @@ const HookPagosTable = ({ pagoId, lote }) => {
     
   }
 
+  const { state: contextUser } = UserState()
+  const { user: userState } = contextUser.context
+
   return (
     state.matches('success') && pago
       .filter((pago) => {
@@ -110,10 +115,10 @@ const HookPagosTable = ({ pagoId, lote }) => {
                 <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
                 <td>{ <NumberFormat number={ pago.mensualidad } />}</td>
                 <td className='estatus__menu'>
-                    <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>
+                    { userState?.role === 'admin' && <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>}
                     <button disabled={!pago.status} onClick={() => previewURL(pago)}>Vista previa</button>
                     <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Descargar</button>
-                    <UpdateModal id={idPago} document="Pago" />
+                   <UpdateModal id={idPago} document="Pago"/>
                   </td>
                 <small style={{ color: '#bdc3c7' }}>{pago._id}</small>
               </tr>

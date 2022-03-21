@@ -5,7 +5,7 @@ import ModalPagosClient from 'Components/ModalPagosClient'
 
 import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
-// import ModalExpediente from 'Modales/ModalExpediente'
+import { useMayaDispatch } from 'context/MayaMachine'
 import NumberFormat from 'utils/NumberFormat'
 import TablaPagosClient from 'Components/TablaPagosClient'
 import ModalStatusProjectDetails from 'Components/ModalStatusProjectDetails'
@@ -14,7 +14,6 @@ import ValuesByDocument from 'hooks/ValuesByDocument'
 import { Redirect } from 'react-router-dom'
 
 const ClienteFluid = ({ match, location }) => {
-  
   const dataQuery = location.state
   if (typeof dataQuery === 'undefined') {
     return <Redirect to={'/'}></Redirect>
@@ -28,13 +27,15 @@ const ClienteFluid = ({ match, location }) => {
   
   const [modalPagoDetalles, setModalPagoDetalles] = useState(false)
   const tooglePagoDetalles = () => setModalPagoDetalles(!modalPagoDetalles)
-
+  const { setXstateQuery } = useMayaDispatch()
   useEffect(() => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString()
     }
-    send('GET_PAGOS_INFO', { query })
+    send('GET_PAGOS_BY_PROJECT', { query })
+    // guardamos la query para poder actualizar el estado de la maquina padre
+    setXstateQuery({ query, send })
   }, [])
   
   const { clienteSlug, projectSlug, idlote } = match.params

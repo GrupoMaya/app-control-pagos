@@ -7,8 +7,8 @@ import { useEffect } from 'react'
 
 const NuevoPoject = ({ visible, onCancel }) => {
 
-  const dispatch = useMayaDispatch()
-  const state = useMayaState()
+  const { dispatch } = useMayaDispatch()
+  const { state } = useMayaState()
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const onSubmit = (data) => {

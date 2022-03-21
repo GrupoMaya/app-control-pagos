@@ -22,6 +22,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { AppContext } from 'context/AppContextProvider'
+import { useMayaState } from 'context/MayaMachine'
 
 export default function DrawerAddUser () {
 
@@ -37,9 +38,10 @@ export default function DrawerAddUser () {
       email: uuid
     }
   })
+
+  const { xstateMutate, xstateQuery } = useMayaState()
   const onSubmitData = (data) => {
     send('ASSIGN_LOTE_TO_NEW_USER', { idProyecto, payload: data })
-
   }
 
   const loteSelected = watch('lote')
@@ -73,8 +75,15 @@ export default function DrawerAddUser () {
         duration: 9000,
         isClosable: true
       })
+      toggleDrawerNewUser()
+      xstateMutate('GET_DATA', { payload: xstateQuery.payload })
     }
   }, [state.value])
+
+  useEffect(() => {
+    return () => reset()
+  }, [])
+
   return (
       <Drawer
         isOpen={openDrawerNewUser}
@@ -241,6 +250,8 @@ export default function DrawerAddUser () {
 
           <DrawerFooter sx={{ display: 'flex', justifyContent: 'center' }}>
             <Button
+              onClick={toggleDrawerNewUser}
+              type="button"
               colorScheme='teal'
               sx={{ width: '100%', marginRight: '10px' }}
             >

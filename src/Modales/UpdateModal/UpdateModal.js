@@ -4,9 +4,10 @@ import { Modal } from 'antd'
 import UpdateMachine from './UpdateMachine'
 import LoteTemplate from './templates/LoteTemplate'
 import PagoTemplate from './templates/PagoTemplate'
+import { UserState } from 'context/userContext'
 import './updateStyles.scss'
 
-const UpdateModal = ({ id, document }) => {
+const UpdateModal = ({ id, document, dispatch }) => {
   /**
    * Tipos de documento
    * Lote
@@ -38,10 +39,13 @@ const UpdateModal = ({ id, document }) => {
 
   const { lote, pago } = current.context
 
+  const { state } = UserState()
+  const { user: userState } = state.context
+  
   return (
     <section>
       <header className="btn__danger">
-        <button onClick={() => handledModal()}>Modificar</button>
+        { userState?.role === 'admin' && <button onClick={() => handledModal()}>Modificar</button> }
       </header>
       <div hidden={!isModal}>
           <Modal
@@ -53,10 +57,10 @@ const UpdateModal = ({ id, document }) => {
                         
           >
             {
-              document === 'Lote' && current.matches('success') && <LoteTemplate data={lote} />
+              document === 'Lote' && current.matches('success') && <LoteTemplate data={lote} dispatch={dispatch} />
             }
             {
-              document === 'Pago' && current.matches('success') && <PagoTemplate data={pago} />
+              document === 'Pago' && current.matches('success') && <PagoTemplate data={pago} dispatch={dispatch} />
             }
             
           </Modal>

@@ -25,6 +25,7 @@ import ValuesByDocument from 'hooks/ValuesByDocument'
 import edit from 'assets/icons/edit.svg'
 import DrawerAddLote from 'Components/DrawerAddLote'
 import DrawUpdateCiente from 'Modales/DrawUpdateCiente'
+import { UserState } from 'context/userContext'
 
 const ClientDetail = (props) => {
 
@@ -47,6 +48,9 @@ const ClientDetail = (props) => {
     })
   }
 
+  const { state: contextUser } = UserState()
+  const { user: userState } = contextUser.context
+
   return (
   <>
     <Container maxW="container.lg">
@@ -54,17 +58,21 @@ const ClientDetail = (props) => {
         <Heading mb={4}>
           { current.matches('success') && cliente.nombre }
           { current.matches('loadCliente') && <Spinner /> }
-          <Button
-            colorScheme="teal"
-            variant="link"
-            style={{ marginLeft: '30px', width: '40px' }}
-            onClick={() => setIsOpen(true)}
-            >
-            <img src={edit} style={{ width: '30px' }} />
-          </Button>
+          {
+            userState?.role === 'admin' && (
+              <Button
+                colorScheme="teal"
+                variant="link"
+                style={{ marginLeft: '30px', width: '40px' }}
+                onClick={() => setIsOpen(true)}
+                >
+                <img src={edit} style={{ width: '30px' }} />
+              </Button>
+            )
+          }
         </Heading>
         <Text fontSize="xl">
-          Selecciona alguno de los lotes para ver pagos pendientes
+          Selecciona alguno de los lotes para ver sus detalles
         </Text>
         <small>
           { current.matches('success') && `ID interno: ${cliente.email}` }
@@ -116,13 +124,17 @@ const ClientDetail = (props) => {
       
       <Stack direction="row" h="100px" p={4}>
         <Divider orientation="vertical" />
-        <Button
-          onClick={() => setNewLote(true)}
-          variantColor="teal"
-          variant="outline"
-          sx={{ width: '180px' }}>
-          Añadir Lote
-        </Button>
+        {
+          userState?.role === 'admin' && (
+            <Button
+              onClick={() => setNewLote(true)}
+              variantColor="teal"
+              variant="outline"
+              sx={{ width: '180px' }}>
+              Añadir Lote
+            </Button>
+          )
+        }
       </Stack>
     </Container>
     {
@@ -137,6 +149,7 @@ const ClientDetail = (props) => {
     {
       current.matches('success') &&
       <DrawUpdateCiente
+        send={send}
         dataClient={cliente}
         isOpen={isOpen}
         setIsOpen={setIsOpen}

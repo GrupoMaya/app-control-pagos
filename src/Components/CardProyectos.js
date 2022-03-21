@@ -1,5 +1,6 @@
 
 const CardProyectos = ({ name, clientes }) => {
+
   return (
         <div className="card__proyectos__container">
             <div className="card__proyectos__header">

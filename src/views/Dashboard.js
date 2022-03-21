@@ -9,8 +9,8 @@ const Dashboard = () => {
 
   const { plataformName, GetInfoData } = useContext(AppContext)
 
-  const state = useMayaState()
-  const dispatch = useMayaDispatch()
+  const { state } = useMayaState()
+  const { dispatch } = useMayaDispatch()
 
   const { proyectos } = state.context
   useEffect(() => {

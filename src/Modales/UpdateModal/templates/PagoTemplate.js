@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import UpdateMachine from '../UpdateMachine'
 import DateIntlForma from 'utils/DateIntlFormat'
+import { UserState } from 'context/userContext'
+import { useMayaState } from 'context/MayaMachine'
 import './templates.scss'
 
 const PagoTemplate = ({ data }) => {
@@ -13,11 +15,12 @@ const PagoTemplate = ({ data }) => {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       ...data,
-      mes: data.mes.split('T')[0],
-      fechaPago: data.fechaPago.split('T')[0]
+      mes: data?.mes?.split('T')[0],
+      fechaPago: data?.fechaPago?.split('T')[0]
     }
   })
 
+  const { xstateMutate } = useMayaState()
   const sendData = (payload) => {
     send('PATCH_DATA_PAGO', { payload })
   }
@@ -29,16 +32,19 @@ const PagoTemplate = ({ data }) => {
         title: 'Pago actualizado',
         description: 'El pago se ha actualizado correctamente',
         status: 'success',
-        duration: 9000,
+        duration: 4000,
         isClosable: true
       })
-      
+
+      xstateMutate('GET_PAGOS_BY_PROJECT')
       setTimeout(() => {
         reset()
-        location.reload()
       }, 10000)
     }
   }, [current.value])
+
+  const { state } = UserState()
+  const { user: userState } = state.context
 
   return (
       <div>
@@ -137,7 +143,7 @@ const PagoTemplate = ({ data }) => {
               </label>
 
           <div className="footer__template">
-          <button type="submit">Modificar</button>
+          { userState?.role === 'admin' && <button type="submit">Modificar</button> }
           </div>
             </form>
           </section>

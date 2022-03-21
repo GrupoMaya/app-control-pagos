@@ -36,7 +36,7 @@ const SearchClientProyecto = ({ data, setCurrentClientes }) => {
         className='buscador__cliente'
         onChange={(e) => setKeyword(e.target.value)}
         type="search"
-        placeholder="Buscar por nombre">
+        placeholder="Buscar por nombre del cliente">
       </input>
     </div>
   )

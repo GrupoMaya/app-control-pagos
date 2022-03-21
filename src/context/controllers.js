@@ -27,9 +27,9 @@ class MayaMachineAPI {
     return res
   }
 
-  static async getProyectoByID (ctx, event) {
-    
-    const res = await fetch(`${baseURL}/proyecto/${event.id}`)
+  static async getProyectoByID ({ currentProjectId }, event) {
+
+    const res = await fetch(`${baseURL}/proyecto/${currentProjectId}`)
       .then(res => res.json())
       .then(res => res.message)
     

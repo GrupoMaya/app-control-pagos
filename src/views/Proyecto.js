@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Box, Select } from '@chakra-ui/react'
 import NumberFormat from 'utils/NumberFormat'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import DateIntlFormat from 'utils/DateIntlFormat'
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
@@ -8,17 +9,37 @@ import SearchClientProyecto from 'utils/SearchClientProyecto'
 
 const Proyecto = ({ match }) => {
 
-  const state = useMayaState()
-  const dispatch = useMayaDispatch()
+  const { state } = useMayaState()
+  const { dispatch, setXstateQuery } = useMayaDispatch()
   
   const { slug, projectName } = match.params
+  
+  useEffect(() => {
+    dispatch('GET_DATA', { payload: slug })
+  }, [match])
 
   useEffect(() => {
-    dispatch('GET_DATA', { id: slug })
-  }, [match])
+    setXstateQuery({ payload: slug, send: dispatch })
+  }, [])
 
   const { proyecto } = state.context
   const [currentClientes, setCurrentClientes] = useState([])
+
+  const history = useHistory()
+
+  const handleSelectLoteFilter = (e) => {
+    const keyTargetValue = e.target.value
+    const keyParse = JSON.parse(keyTargetValue)
+    const loteNumber = keyParse.lote
+    const [nombreCliente] = keyParse.clienteData.map(item => item.nombre)
+    const clientURL = nombreCliente.replace(/\//g, '-')
+    const projectObjectID = keyParse.proyecto.toString()
+
+    history.push({
+      pathname: `/detalle/lote/${loteNumber}/cliente/${clientURL}/projecto/${projectObjectID}`,
+      state: [keyParse]
+    })
+  }
 
   return (
     // @params proyecto css
@@ -43,10 +64,33 @@ const Proyecto = ({ match }) => {
   {/* buscador web */}
       {
         state.matches('success') &&
-          <SearchClientProyecto
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '1rem',
+            justifyContent: 'space-between'
+
+          }}>
+            <SearchClientProyecto
             data={proyecto}
             setCurrentClientes={setCurrentClientes}
           />
+          <Select placeholder='Todos los lotes' size="md" onChange={handleSelectLoteFilter}>
+            {
+              proyecto
+                .sort((a, b) => +a.lote - +b.lote)
+                .map((item) => {
+                  return (
+                    <option
+                      key={item._id}
+                      value={JSON.stringify(item)}>
+                        {`Lote ${item.lote} - Manzana ${item.manzana}`}
+                    </option>
+                  )
+                })
+            }
+          </Select>
+          </Box>
       }
     </section>
     <section className="proyecto__table">
@@ -104,7 +148,11 @@ const Proyecto = ({ match }) => {
                               }}>
                               <button>Ver</button>
                             </Link>
-                            <UpdateModal id={parentLoteId} document="Lote"/>
+                            <UpdateModal
+                              id={parentLoteId}
+                              document="Lote"
+                              dispatch={dispatch}
+                            />
                           </span>
                         <small className='id__inform'>
                           {item._id}

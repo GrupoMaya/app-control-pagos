@@ -28,7 +28,6 @@ const ModalEstatus = () => {
       
       setTimeout(() => {
         reset()
-        location.reload()
       }, 3000)
     }
   }, [state.value])
@@ -42,7 +41,6 @@ const ModalEstatus = () => {
 
   const resetModal = () => {
     setModalPago(false)
-    location.reload()
   }
 
   return (

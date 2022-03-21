@@ -15,7 +15,7 @@ const assignLoteToNewUser = async (ctx, { idProyecto, payload }) => {
     .then(res => {
       return res
     })
-    .catch(error => console.log(error))
+    .catch(error => error)
 
   if (response.error) throw new Error('El usuario ya exite')
   return response
@@ -31,11 +31,8 @@ const addPagoToLote = async (ctx, event) => {
     body: JSON.stringify(event.data)
   })
     .then(res => res.json())
-    .then(res => {
-      console.log(res)
-      return res
-    })
-    .catch(error => console.log(error))
+    .then(res => res)
+    .catch(error => error)
 
   if (response.error) throw new Error('Error al guardar el documento')
   return response
@@ -52,7 +49,7 @@ const postPago = async (ctx, { idPago, payload }) => {
   })
     .then(res => res.json())
     .then(res => res)
-    .catch(error => console.log(error))
+    .catch(error => error)
 
   if (response.error) throw new Error('Error al guardar el documento')
   return response
@@ -71,7 +68,7 @@ const addLoteToUser = async (ctx, { idProyecto, payload }) => {
   })
     .then(res => res.json())
     .then(res => res)
-    .catch(error => console.log(error))
+    .catch(error => error)
 
   if (response.error) throw new Error('Error al guardar el documento')
   return response
@@ -89,12 +86,17 @@ export const ClienteMachine = createMachine({
     documentSave: {
       after: {
         3000: {
-          target: 'iddle',
-          actions: () => window.location.reload()
+          target: 'iddle'
         }
       }
     },
-    error: {},
+    error: {
+      after: {
+        3000: {
+          target: 'iddle'
+        }
+      }
+    },
     assignLoteToNewUser: {
       invoke: {
         src: assignLoteToNewUser,
@@ -102,7 +104,11 @@ export const ClienteMachine = createMachine({
           target: 'documentSave'
         },
         onError: {
-          target: 'error'
+          target: 'error',
+          actions: () => {
+            console.log('error')
+          }
+          
         }
       }
     },
