@@ -20,7 +20,7 @@ const PagoTemplate = ({ data }) => {
     }
   })
 
-  const { xstateMutate } = useMayaState()
+  const { xstateQuery } = useMayaState()
   const sendData = (payload) => {
     send('PATCH_DATA_PAGO', { payload })
   }
@@ -36,7 +36,7 @@ const PagoTemplate = ({ data }) => {
         isClosable: true
       })
 
-      xstateMutate('GET_PAGOS_BY_PROJECT')
+      xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
       setTimeout(() => {
         reset()
       }, 10000)

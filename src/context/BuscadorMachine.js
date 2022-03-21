@@ -246,6 +246,7 @@ const BuscadorMachine = createMachine({
       target: 'getPagosByProject',
       actions: (ctx, event) => {
         const payload = ctx.currentPayloadGetDataInfo = event.query
+        console.log(payload, 'payload')
         return payload
       }
     },

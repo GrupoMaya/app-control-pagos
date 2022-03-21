@@ -34,7 +34,7 @@ const HookPagosModalInvoce = ({ lote }) => {
     handelOpenModal()
   }
   
-  const { xstateMutate } = useMayaState()
+  const { xstateQuery } = useMayaState()
   const toast = useToast()
   useEffect(() => {
     if (state.matches('success')) {
@@ -45,7 +45,7 @@ const HookPagosModalInvoce = ({ lote }) => {
         duration: 9000,
         isClosable: true
       })
-      xstateMutate('GET_PAGOS_BY_PROJECT')
+      xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
     }
 
   }, [state.value])
