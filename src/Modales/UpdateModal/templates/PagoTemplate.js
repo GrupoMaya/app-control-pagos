@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
@@ -9,6 +9,8 @@ import { useMayaState } from 'context/MayaMachine'
 import './templates.scss'
 
 const PagoTemplate = ({ data }) => {
+
+  console.log({ data }, 'rene')
 
   const [current, send] = useMachine(UpdateMachine)
 
@@ -39,12 +41,15 @@ const PagoTemplate = ({ data }) => {
       xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
       setTimeout(() => {
         reset()
-      }, 10000)
+      }, 3000)
     }
   }, [current.value])
 
   const { state } = UserState()
   const { user: userState } = state.context
+
+  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
+  const handledOpenMensajeRecibo = () => setOpenMensajeRecibo(!openMensajeRecibo)
 
   return (
       <div>
@@ -141,6 +146,25 @@ const PagoTemplate = ({ data }) => {
                 >
                 </input>
               </label>
+              <p className='texto-button' onClick={() => handledOpenMensajeRecibo()}>
+                Modificar mensaje de recibo
+              </p>
+              {
+                openMensajeRecibo && (
+                  <>
+                    <small className='mensaje-recibo'>Este campo modificara todo el mensaje</small>
+                    <label>
+                      <p>Mensaje de recibo</p>
+                      <input
+                          type="mensajeRecibo"
+                          placeholder="Modificar mensaje del recibo"
+                          {...register('mensajeRecibo')}
+                        />
+                    </label>
+                    <hr/><br/>
+                  </>
+                )
+              }
 
           <div className="footer__template">
           { userState?.role === 'admin' && <button type="submit">Modificar</button> }

@@ -132,7 +132,7 @@ export const MayaAppMachineProvider = ({ children }) => {
     console.log({ event, query }, 'xstateMutate', xstateQuery)
     const payload = query || xstateQuery.query
     console.log('xstateMutate----------->', payload)
-    xstateQuery.send(event, { payload })
+    xstateQuery.send(event, { ...payload })
   }
 
   return (
