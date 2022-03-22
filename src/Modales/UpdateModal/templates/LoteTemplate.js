@@ -4,9 +4,18 @@ import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import UpdateMachine from '../UpdateMachine'
 import DateIntlForma from 'utils/DateIntlFormat'
+import { UserState } from 'context/userContext'
+import { useParams } from 'react-router-dom'
 import './templates.scss'
 
-const LoteTemplate = ({ data }) => {
+/**
+ * Para poder cambiar datos del lote en la vista de proyectos / lotes
+ * @param {Function} allLotesParent - xstate function de la vista de proyectos/id/slug
+ * @param {Object} data - payload con la informacion del lote
+ * @returns Solo cambia los datos del lote no retorna nada
+ */
+
+const LoteTemplate = ({ data, dispatch: allLotesParent }) => {
 
   const [current, send] = useMachine(UpdateMachine)
 
@@ -20,6 +29,7 @@ const LoteTemplate = ({ data }) => {
     send('PATCH_DATA_LOTE', { payload })
   }
 
+  const match = useParams()
   const toast = useToast()
   useEffect(() => {
     if (current.matches('success')) {
@@ -33,10 +43,13 @@ const LoteTemplate = ({ data }) => {
       
       setTimeout(() => {
         reset()
-        location.reload()
+        allLotesParent('GET_DATA', { id: match.slug })
       }, 2000)
     }
   }, [current.value])
+
+  const { state } = UserState()
+  const { user: userState } = state.context
 
   return (
       <div>
@@ -90,7 +103,7 @@ const LoteTemplate = ({ data }) => {
               </label>
 
               <label>
-                <p>Plazo</p>
+                <p>Precio Total</p>
                 <input
                   type="text"
                   name="precioTotal"
@@ -99,7 +112,7 @@ const LoteTemplate = ({ data }) => {
                 </input>
               </label>
           <div className="footer__template">
-          <button type="submit">Modificar</button>
+          { userState?.role === 'admin' && <button type="submit">Modificar</button> }
           </div>
             </form>
           </section>

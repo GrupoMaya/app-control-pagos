@@ -2,7 +2,6 @@ import { createMachine, assign } from 'xstate'
 import { baseURL } from 'context/controllers'
 
 const getLoteInfo = async (context, event) => {
-  console.log({ event })
   const loteResponse = await fetch(`${baseURL}/lote/${event.id}`)
     .then(res => res.json())
     .then(res => res.message)
@@ -51,7 +50,8 @@ export const UpdateMachine = createMachine({
   context: {
     lote: [],
     pago: [],
-    error: null
+    error: null,
+    currentProjectToReload: null
   },
   states: {
     idle: {},
@@ -125,7 +125,10 @@ export const UpdateMachine = createMachine({
       target: 'getPagoInfo'
     },
     PATCH_DATA_PAGO: {
-      target: 'patchDataPago'
+      target: 'patchDataPago',
+      actions: assign({
+        currentProjectToReload: (ctx, event) => event.query
+      })
     }
   }
 })

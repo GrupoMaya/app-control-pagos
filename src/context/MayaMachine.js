@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useMachine } from '@xstate/react'
 import { assign, createMachine } from 'xstate'
 
@@ -13,7 +13,8 @@ export const MayaMachine = createMachine({
   context: {
     proyectos: [],
     proyecto: [],
-    lotes: []
+    lotes: [],
+    currentProjectId: null
   },
   states: {
     iddle: {},
@@ -108,17 +109,40 @@ export const MayaMachine = createMachine({
     GET_PROYECTOS_BY_ID: 'getProyectoByID',
     GET_ALL_LOTES_BY_POJECT_ID: 'getAllLotesByProjectID',
     // combinacion de los dos de arriba
-    GET_DATA: 'getProyectoByID'
+    GET_DATA: {
+      target: 'getProyectoByID',
+      actions: (ctx, event) => {
+        ctx.currentProjectId = event.payload || event.id
+      }
+    }
   }
   
 })
 
 export const MayaAppMachineProvider = ({ children }) => {
   const [state, dispatch] = useMachine(MayaMachine)
+  const [xstateQuery, setXstateQuery] = useState({
+    send: null,
+    query: null
+  })
+
+  console.log({ xstateQuery }, 'la query')
+
+  const xstateMutate = (event, query) => {
+    console.log({ event, query }, 'xstateMutate', xstateQuery)
+    const payload = query || xstateQuery.query
+    console.log('xstateMutate----------->', payload)
+    xstateQuery.send(event, { ...payload })
+  }
 
   return (
-    <MayaStateContext.Provider value={state}>
-      <MayaDispatchContext.Provider value={dispatch}>
+    <MayaStateContext.Provider value={{ state, xstateQuery, xstateMutate }}>
+      <MayaDispatchContext.Provider
+      value={{
+        dispatch,
+        setXstateQuery
+      }}
+      >
         { children }
       </MayaDispatchContext.Provider>
     </MayaStateContext.Provider>

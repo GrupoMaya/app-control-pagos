@@ -5,7 +5,6 @@ const ModalPagosClient = ({ openModalPago, handledOpen, lotes }) => {
   
   const closeModal = () => {
     handledOpen()
-    location.reload()
   }
 
   return (

@@ -1,23 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import UpdateMachine from '../UpdateMachine'
 import DateIntlForma from 'utils/DateIntlFormat'
+import { UserState } from 'context/userContext'
+import { useMayaState } from 'context/MayaMachine'
 import './templates.scss'
 
 const PagoTemplate = ({ data }) => {
+
+  console.log({ data }, 'rene')
 
   const [current, send] = useMachine(UpdateMachine)
 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       ...data,
-      mes: data.mes.split('T')[0],
-      fechaPago: data.fechaPago.split('T')[0]
+      mes: data?.mes?.split('T')[0],
+      fechaPago: data?.fechaPago?.split('T')[0]
     }
   })
 
+  const { xstateQuery } = useMayaState()
   const sendData = (payload) => {
     send('PATCH_DATA_PAGO', { payload })
   }
@@ -29,16 +34,22 @@ const PagoTemplate = ({ data }) => {
         title: 'Pago actualizado',
         description: 'El pago se ha actualizado correctamente',
         status: 'success',
-        duration: 9000,
+        duration: 4000,
         isClosable: true
       })
-      
+
+      xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
       setTimeout(() => {
         reset()
-        location.reload()
-      }, 10000)
+      }, 3000)
     }
   }, [current.value])
+
+  const { state } = UserState()
+  const { user: userState } = state.context
+
+  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
+  const handledOpenMensajeRecibo = () => setOpenMensajeRecibo(!openMensajeRecibo)
 
   return (
       <div>
@@ -135,9 +146,28 @@ const PagoTemplate = ({ data }) => {
                 >
                 </input>
               </label>
+              <p className='texto-button' onClick={() => handledOpenMensajeRecibo()}>
+                Modificar mensaje de recibo
+              </p>
+              {
+                openMensajeRecibo && (
+                  <>
+                    <small className='mensaje-recibo'>Este campo modificara todo el mensaje</small>
+                    <label>
+                      <p>Mensaje de recibo</p>
+                      <input
+                          type="mensajeRecibo"
+                          placeholder="Modificar mensaje del recibo"
+                          {...register('mensajeRecibo')}
+                        />
+                    </label>
+                    <hr/><br/>
+                  </>
+                )
+              }
 
           <div className="footer__template">
-          <button type="submit">Modificar</button>
+          { userState?.role === 'admin' && <button type="submit">Modificar</button> }
           </div>
             </form>
           </section>

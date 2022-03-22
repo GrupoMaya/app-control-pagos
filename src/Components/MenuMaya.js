@@ -9,6 +9,7 @@ import Buscador from './Buscador'
 import { AppContext } from 'context/AppContextProvider'
 import ModalAddUserProject from 'Modales/ModalAddUserProject'
 import ModalSettings from 'Modales/ModalSettings'
+import { UserState, UserDispatch } from 'context/userContext'
 
 const MenuMaya = () => {
 
@@ -49,31 +50,56 @@ const MenuMaya = () => {
     toggleHaburger()
   }
 
+  const { state } = UserState()
+  const { user } = state.context
+
+  const dispatch = UserDispatch()
+  
+  const handleLogoutBtn = () => {
+    dispatch('LOGOUT')
+    toggleHaburger()
+  }
+
   return (
     <>
-      <div
-        id='hamburgerBtn'
-        onClick={toggleHaburger}
-        className={ openHamburger ? 'hamburger_btn' : 'hamburger_btn hamburger_btn_open'}>
-        <div/>
-        <div/>
-        <div/>
-    </div>
+      {
+        user && (
+          <div
+            id='hamburgerBtn'
+            onClick={toggleHaburger}
+            className={ openHamburger ? 'hamburger_btn' : 'hamburger_btn hamburger_btn_open'}>
+            <div/>
+            <div/>
+            <div/>
+          </div>
+        )
+      }
     <div hidden={openHamburger} className="menu__hiden__hamburger">
 
       <nav className="menu__hamburger">
+        <p style={{
+          color: '#ffff',
+          fontSize: '18px'
+        }}>
+          { user?.name ? `Bienvenido, ${user?.name}` : null }
+        </p>
         <div className="separacion__menu" />
         <Buscador></Buscador>
         <hr/>
         { location.pathname === '/' &&
         <>
-          <button
-            className="bg__blue"
-            onClick={() => toogleSettingsModal()}
-            >
-            <div className="ico__settings"></div>
-            Configuración
-          </button>
+          
+          {
+            user?.role === 'admin' && (
+              <button
+                className="bg__blue"
+                onClick={() => toogleSettingsModal()}
+                >
+                <div className="ico__settings"></div>
+                Configuración
+              </button>
+            )
+          }
 
           <button
             onClick={() => handleRemoveUser()}
@@ -84,16 +110,22 @@ const MenuMaya = () => {
           </button>
 
           <div className="separacion__menu" />
-          <button
-            className="btn__esmeralda"
-            onClick={() => handleProjectModal()}>
-              <div className="ico__proyecto" ></div>
-              Añadir Proyecto
-          </button>
+
+         {
+           user?.role === 'admin' && (
+             <button
+             className="btn__esmeralda"
+             onClick={() => handleProjectModal()}>
+                <div className="ico__proyecto" ></div>
+                Añadir Proyecto
+            </button>
+           )
+         }
         </>
         }
 
         { params.includes('proyecto') && !params.includes('cliente') &&
+          user?.role === 'admin' && (
         <>
           {/* <button
           onClick={() => nuevoLoteClient()}
@@ -104,18 +136,19 @@ const MenuMaya = () => {
           </button> */}
 
           <button
-          onClick={toogleHandledUser}
-          className="btn__esmeralda"
-          >
-          <div className="ico__user__normal"></div>
-            Agregar Cliente
+            onClick={toogleHandledUser}
+            className="btn__esmeralda"
+            >
+            <div className="ico__user__normal"></div>
+              Agregar Cliente
           </button>
-        </>
+        </>)
         }
 
         {
           params.includes('lote') && params.includes('cliente') && params.includes('projecto') &&
-        <>
+          user?.role === 'admin' && (
+            <>
           <button
             className="btn__esmeralda"
             onClick={() => modalPagoBurger()}
@@ -125,8 +158,15 @@ const MenuMaya = () => {
           </button>
 
           <div className="separacion__menu" />
-        </>
+        </>)
         }
+      <div className="separacion__menu" />
+      <button
+        onClick={() => handleLogoutBtn()}
+        className="bg-magenta">
+      <div className="ico__salir"></div>
+        Salir
+      </button>
 
       </nav>
     </div>

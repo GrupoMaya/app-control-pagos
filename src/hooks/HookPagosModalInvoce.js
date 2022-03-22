@@ -4,6 +4,7 @@ import { Modal } from 'antd'
 
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
+import { useMayaState } from 'context/MayaMachine'
 
 import DateIntlFormat from 'utils/DateIntlFormat'
 import NumberFormat from 'utils/NumberFormat'
@@ -33,6 +34,7 @@ const HookPagosModalInvoce = ({ lote }) => {
     handelOpenModal()
   }
   
+  const { xstateMutate, xstateQuery } = useMayaState()
   const toast = useToast()
   useEffect(() => {
     if (state.matches('success')) {
@@ -43,7 +45,9 @@ const HookPagosModalInvoce = ({ lote }) => {
         duration: 9000,
         isClosable: true
       })
+      xstateMutate('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
     }
+
   }, [state.value])
 
   const onSubmit = (data) => {

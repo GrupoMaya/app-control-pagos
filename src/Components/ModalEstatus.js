@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from 'context/AppContextProvider'
 import { useMachine } from '@xstate/react'
 import { ClienteMachine } from 'context/ClienteDataMachine'
@@ -7,15 +7,22 @@ import { useToast } from '@chakra-ui/react'
 
 import { useForm } from 'react-hook-form'
 import SelectorBanco from 'utils/SelectorBanco'
+import { useMayaState } from 'context/MayaMachine'
 
 const ModalEstatus = () => {
-
+  
   const [state, send] = useMachine(ClienteMachine)
   const { idPago, modalPago, setModalPago } = useContext(AppContext)
   
   const { register, formState: { errors }, handleSubmit, reset } = useForm()
-  
+  const { xstateMutate, xstateQuery } = useMayaState()
   const toast = useToast()
+
+  const resetModal = () => {
+    reset()
+    setModalPago(false)
+  }
+
   useEffect(() => {
     if (state.matches('success')) {
       toast({
@@ -27,9 +34,9 @@ const ModalEstatus = () => {
       })
       
       setTimeout(() => {
-        reset()
-        location.reload()
-      }, 3000)
+        xstateMutate('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
+        resetModal()
+      }, 1000)
     }
   }, [state.value])
 
@@ -40,11 +47,9 @@ const ModalEstatus = () => {
     send('POST__PAGAR', { idPago, payload })
   }
 
-  const resetModal = () => {
-    setModalPago(false)
-    location.reload()
-  }
-
+  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
+  const handledOpenMensajeRecibo = () => setOpenMensajeRecibo(!openMensajeRecibo)
+  
   return (
     <Modal
     visible={modalPago}
@@ -52,7 +57,7 @@ const ModalEstatus = () => {
     onCancel={resetModal}
     >
       <form onSubmit={handleSubmit(pagar)} className="form__liquid__pago">
-      <label>Referencia de Bancaria
+      <label>Referencia Bancaria
       <input
         required={errors.refBanco && true }
         id="refBanco"
@@ -94,7 +99,23 @@ const ModalEstatus = () => {
         <input type="text" placeholder="Observaciones del documento" {...register('textoObservaciones')} />
         <small>Obligatorio</small>
       </label>
-
+      <p className='texto-button' onClick={() => handledOpenMensajeRecibo()}>
+        Modificar mensaje de recibo
+      </p>
+      {
+        openMensajeRecibo && (
+          <>
+          <label>
+            <input
+                type="mensajeRecibo"
+                placeholder="Modificar mensaje del recibo"
+                {...register('mensajeRecibo')}
+              />
+              <small className='mensaje-recibo'>Este campo modificara el mensaje completo, predeterminado del recibo</small>
+          </label>
+          </>
+        )
+      }
       <button type="submit">
         Liquidar Pago
       </button>

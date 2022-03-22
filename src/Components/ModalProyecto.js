@@ -15,8 +15,8 @@ const ModalProyecto = () => {
     })
   }, [])
   
-  const dispatch = useMayaDispatch()
-  const state = useMayaState()
+  const { dispatch } = useMayaDispatch()
+  const { state } = useMayaState()
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const onSubmit = (data) => {
@@ -47,9 +47,9 @@ const ModalProyecto = () => {
 
         <section ref={blackdropRef} className="modal__black__drop"/>
         <section className="modal__card">
-            <div className="modal__body"> 
+            <div className="modal__body">
 
-            <div className="modal__header">              
+            <div className="modal__header">
             { state?.matches('error') && <span className="error__message">El Proyecto ya está Activo</span> }
             { state?.matches('documentSave') && <div className="spinner" />}
             </div>
@@ -58,7 +58,7 @@ const ModalProyecto = () => {
                   <legend>Datos del Proyecto</legend>
                   <label htmlFor="title">
                     Nombre
-                    <input 
+                    <input
                       type="text"
                       id="title"
                       aria-invalid={errors.title ? 'true' : 'false'}
@@ -69,7 +69,7 @@ const ModalProyecto = () => {
 
                   <label htmlFor="address">
                     Dirección
-                    <input 
+                    <input
                       type="text"
                       id="text"
                       aria-invalid={errors.address ? 'true' : 'false'}

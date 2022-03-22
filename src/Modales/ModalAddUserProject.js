@@ -4,7 +4,6 @@ import { Modal } from 'antd'
 import { useForm } from 'react-hook-form'
 import { useMachine } from '@xstate/react'
 import BuscadorMachine from 'context/BuscadorMachine'
-
 import { useLocation, useHistory } from 'react-router-dom'
 import { Button } from '@chakra-ui/react'
 
@@ -39,6 +38,11 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
   useEffect(() => {
     onCancel(false)
     reset()
+
+    return () => {
+      reset()
+
+    }
   }, [location])
 
   const { busqueda } = state.context
@@ -89,17 +93,17 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
     </tbody>
     </table>
     }
-    <div className='d-flex center'>
-      {
-        state.matches('error') &&
-        <Button
-          variant="solid"
-          sx={{ width: '120px' }}
-          colorScheme='teal'
-          onClick={() => toggleDrawerNewUser()}>
-            Añadir Nuevo
-        </Button>
-      }
+    <div className='d-flex'>
+      <Button
+        variant="solid"
+        sx={{ width: '120px' }}
+        colorScheme='teal'
+        onClick={() => {
+          toggleDrawerNewUser()
+          return onCancel()
+        }}>
+          Añadir Nuevo
+      </Button>
     </div>
   </Modal>
   )

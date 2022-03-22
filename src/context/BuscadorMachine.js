@@ -47,9 +47,10 @@ const fetchGetPagosInfo = async (ctx, event) => {
 
 }
 
-const getPagosInfo = async (ctx, event) => {
+const getPagosByProject = async ({ currentPayloadGetDataInfo }, event) => {
 
-  const { idProject, clientID } = event.query
+  const { idProject, clientID } = currentPayloadGetDataInfo
+  console.log(idProject, clientID, 'para ser benditos')
     
   const query = await fetch(`${baseURL}/pagos/${idProject}?idcliente=${clientID}`)
     .then(res => res.json())
@@ -110,7 +111,8 @@ const BuscadorMachine = createMachine({
     pagos: [],
     pago: [],
     appData: [],
-    clientId: undefined
+    clientId: undefined,
+    currentPayloadGetDataInfo: null
   },
   states: {
     iddle: {},
@@ -186,9 +188,9 @@ const BuscadorMachine = createMachine({
         }
       }
     },
-    getPagosInfo: {
+    getPagosByProject: {
       invoke: {
-        src: getPagosInfo,
+        src: getPagosByProject,
         onDone: {
           target: 'success',
           actions: assign({
@@ -240,7 +242,12 @@ const BuscadorMachine = createMachine({
       }
     },
     GET_LOTES: 'getLotesInfo',
-    GET_PAGOS_INFO: 'getPagosInfo',
+    GET_PAGOS_BY_PROJECT: {
+      target: 'getPagosByProject',
+      actions: (ctx, event) => {
+        ctx.currentPayloadGetDataInfo = event.query
+      }
+    },
     USER_SEARCH: 'userSearch',
     GET_INFO_PAGO: 'getInfoPago',
     REMOVE_USER_LOTE: 'removeUserLote',

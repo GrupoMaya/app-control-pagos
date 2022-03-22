@@ -183,6 +183,14 @@
   padding: 0.25rem;
 }
 
+.ico__salir{
+  display: block;
+  content: url('../assets/icons/signout.svg');
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
 .ico__user__normal{
   display: block;
   content: url('../assets/icons/user.svg');
@@ -251,3 +259,14 @@
 }
 
 
+
+.bg-magenta{
+  background-color: #7a074a;
+  position: absolute;
+  bottom: 10rem;
+}
+
+.saludo_chistoso{
+  display: flex;
+  justify-content: center;
+}

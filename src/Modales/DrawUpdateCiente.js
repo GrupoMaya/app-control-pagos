@@ -11,8 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { useForm, Controller } from 'react-hook-form'
 import API from 'context/controllers'
+import { useParams } from 'react-router-dom'
 
-const DrawUpdateCiente = ({ isOpen, setIsOpen, data }) => {
+const DrawUpdateCiente = ({ isOpen, setIsOpen, data, send }) => {
 
   const onClose = () => setIsOpen(false)
   const { handleSubmit, control, watch } = useForm({
@@ -23,10 +24,11 @@ const DrawUpdateCiente = ({ isOpen, setIsOpen, data }) => {
 
   const nombreWatch = watch('nombre')
 
+  const match = useParams()
   const hanldedPatch = () => {
     setIsloading(false)
     onClose()
-    window.location.reload()
+    send('LOAD_CLIENTE', { id: match.id })
   }
 
   const [isLoading, setIsloading] = useState(false)

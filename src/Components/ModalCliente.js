@@ -16,8 +16,8 @@ const ModalCliente = () => {
     })
   }, [])
 
-  const dispatch = useMayaDispatch()
-  const state = useMayaState()
+  const { dispatch } = useMayaDispatch()
+  const { state } = useMayaState()
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const onSubmit = (data) => {
