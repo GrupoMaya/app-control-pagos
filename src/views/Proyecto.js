@@ -6,6 +6,7 @@ import DateIntlFormat from 'utils/DateIntlFormat'
 import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 import SearchClientProyecto from 'utils/SearchClientProyecto'
+import XLSX from 'xlsx'
 
 const Proyecto = ({ match }) => {
 
@@ -39,6 +40,26 @@ const Proyecto = ({ match }) => {
       pathname: `/detalle/lote/${loteNumber}/cliente/${clientURL}/projecto/${projectObjectID}`,
       state: [keyParse]
     })
+  }
+
+  const exportExcel = () => {
+
+    if (proyecto.length === 0) {
+      return
+    }
+    const payloadToExport = proyecto.map(lote => {
+      const nombreCliente = lote.clienteData[0].nombre
+      const { __v, _id, cliente, proyecto, isActive, clienteData, ...restOfLote } = lote
+      return {
+        cliente: nombreCliente,
+        ...restOfLote
+      }
+    })
+    
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(payloadToExport)
+    XLSX.utils.book_append_sheet(wb, ws, 'Lotes')
+    XLSX.writeFile(wb, `lotes_${projectName}.xlsx`)
   }
 
   return (
@@ -94,6 +115,17 @@ const Proyecto = ({ match }) => {
       }
     </section>
     <section className="proyecto__table">
+    <nav className='botonera'>
+        <ul className='linkExcel'>
+          <li>
+            <button
+              onClick={() => exportExcel()}
+            >
+              Exportar Lista
+            </button>
+          </li>
+        </ul>
+      </nav>
       <table>
         <tr className="head__data__table">
           <th>Lote</th>

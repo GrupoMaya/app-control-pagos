@@ -10,8 +10,6 @@ import './templates.scss'
 
 const PagoTemplate = ({ data }) => {
 
-  console.log({ data }, 'rene')
-
   const [current, send] = useMachine(UpdateMachine)
 
   const { register, handleSubmit, reset } = useForm({
