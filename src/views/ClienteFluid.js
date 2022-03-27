@@ -41,7 +41,7 @@ const ClienteFluid = ({ match, location }) => {
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context
   const nombreProyecto = <ValuesByDocument id={ projectSlug } documentType="Proyecto" cbValue='title' />
-      
+        
   return (
     <div className="cliente__App__container">
       <section className="cliente__App__header">
@@ -106,7 +106,13 @@ const ClienteFluid = ({ match, location }) => {
               
         </div>
         <section>
-          { state.matches('success') && <TablaPagosClient pagos={pagos} lote={idlote}/> }
+          { state.matches('success') &&
+            <TablaPagosClient
+              pagos={pagos}
+              lote={idlote}
+              clienteInfo={{ clienteSlug, proyecto: nombreProyecto, idlote }}
+              />
+          }
         </section>
         </section>
         {/* TODO SE ROMPIO */}

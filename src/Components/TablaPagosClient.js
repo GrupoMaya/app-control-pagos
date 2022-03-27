@@ -3,16 +3,53 @@ import { AppContext } from 'context/AppContextProvider'
 
 import HookPagosTable from 'hooks/HookPagosTable'
 import ModalEstatus from './ModalEstatus'
+import XLSX from 'xlsx'
 
-const TablaPagosClient = ({ pagos, lote }) => {
+const TablaPagosClient = ({ pagos, lote, clienteInfo }) => {
+
   const { modalPago, setModalPago } = useContext(AppContext)
+
+  const exportExcel = () => {
+
+    if (pagos.length === 0) {
+      return
+    }
+    
+    const payloadToExport = pagos.map(pago => {
+      return {
+        Fecha: pago.mes,
+        pago: pago.mensualidad,
+        Tipo_pago: pago.tipoPago,
+        Numero_pago: pago.folio,
+        cuenta: pago.ctaBancaria,
+        fecha_deposito: pago.fechaPago,
+        Referencia_Banco: pago.refBanco,
+        Observaciones: `${pago.textoObservaciones || ''} ${pago.refPago || ''} ${pago.mensajeRecibo || ''}`
+      }
+    })
+
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(payloadToExport)
+    XLSX.utils.book_append_sheet(wb, ws, 'Pagos')
+    XLSX.writeFile(wb, `pagos_${lote}_${clienteInfo.clienteSlug}.xlsx`)
+  }
 
   return (
     <section className="cliente__App__pagos">
       <h3> PAGOS </h3>
       <section className="proyecto__table">
-
         {/* Modal para agreagar un pago a la deuda */}
+      <nav className='botonera'>
+        <ul className='linkExcel'>
+          <li>
+            <button
+              onClick={() => exportExcel()}
+            >
+              Exportar Lista
+            </button>
+          </li>
+        </ul>
+      </nav>
       <ModalEstatus
         openModal={modalPago}
         handledStatusPago={setModalPago}

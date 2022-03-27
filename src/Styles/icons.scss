@@ -207,6 +207,15 @@
   padding: 0.25rem;
 }
 
+.ico_excel{
+  display: block;
+  content: url('../assets/icons/exce_ico.svg');
+  background-color: #7a074a;
+  width: 60px;
+  height: 56px;  
+  padding: 0.25rem;
+}
+
 .logo__loader__await{
   content: url('../assets/img/logo_blanco.png');
   object-fit: scale-down;
@@ -258,6 +267,18 @@
   }
 }
 
+
+.botonera{
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  width: 100%;    
+}
+
+.linkExcel{
+  font-weight: bold;
+  list-style: none;
+}
 
 
 .bg-magenta{
