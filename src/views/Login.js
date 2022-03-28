@@ -69,6 +69,10 @@ const Login = () => {
         open={openModal}
         handleCloseModal={handleCloseModal}
       /> }
+      {
+        state.matches(['login', 'auth', 'validate']) &&
+          <span className="logo__loader__await" />
+      }
     </div>
   )
 }

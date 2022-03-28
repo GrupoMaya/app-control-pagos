@@ -1,13 +1,26 @@
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { AppContext } from 'context/AppContextProvider'
 
 import HookPagosTable from 'hooks/HookPagosTable'
 import ModalEstatus from './ModalEstatus'
 import XLSX from 'xlsx'
 
-const TablaPagosClient = ({ pagos, lote, clienteInfo }) => {
-
+const TablaPagosClient = ({ pagos: pagosData, lote, clienteInfo }) => {
+  
   const { modalPago, setModalPago } = useContext(AppContext)
+  const [pagosSelected, setPagosSelected] = useState('all')
+  const [pagos, setPagos] = useState(pagosData)
+
+  useEffect(() => {
+    setPagos(
+      pagosData.filter(pago => {
+        if (pagosSelected === 'all') {
+          return pago
+        }
+        return pago.tipoPago === pagosSelected
+      })
+    )
+  }, [pagosSelected])
 
   const exportExcel = () => {
 
@@ -62,7 +75,17 @@ const TablaPagosClient = ({ pagos, lote, clienteInfo }) => {
           <th>Fecha</th>
           <th>Estatus</th>
           <th>Referencia</th>
-          <th>Tipo</th>
+          <th>
+            <select
+              className='select_gde'
+              style={{ fotWeight: 'bold' }}
+              onChange={(e) => setPagosSelected(e.target.value)}>
+                <option value="all">Todos</option>
+                <option value='mensualidad'>Mensualidad</option>
+                <option value='extra'>Extra</option>
+                <option value='saldoinicial'>Saldo Inicial</option>
+            </select>
+          </th>
           <th>Pago</th>
           <th>Acciones</th>
         </tr>

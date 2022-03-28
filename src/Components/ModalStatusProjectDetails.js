@@ -10,20 +10,25 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
 
   const [estatus, setEstus] = useState([])
   const [loading, setLoading] = useState(false)
-  
+    
   const statusPagosPendiente = (payload) => {
     const plazo = payload[0]?.plazo
     
-    const totalPagos = payload[0]?.pagos.filter(item => item.status === true && item.tipoPago !== 'extra').length
+    const folioArray = payload[0]?.pagos.map(pago => pago.folio)
+    const totalPagos = Array.isArray(folioArray) && Math.max(...folioArray)
+    
     const diffPagos = plazo - totalPagos
     
-    const pendiente = payload[0]?.pagos.filter(item => item.status === false && item.tipoPago !== 'extra').length
+    const pendiente = payload[0]?.pagos.filter(item =>
+      item.status === false &&
+      item.tipoPago !== 'extra' &&
+      item.tipoPago !== 'saldoinicial').length
       
     return { totalPagos, plazo, diffPagos, pendiente }
   }
 
   const financiamientoPendiente = (payload) => {
-    const financiamiento = payload[0]?.financiamiento
+    const financiamiento = payload[0]?.precioTotal
     
     const pagoRealizado = payload[0]?.pagos
       .filter(item => item.status === true && item.tipoPago !== 'extra')
@@ -57,21 +62,22 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
     
   return (
       <Modal
-        title="ESTATUS DE PAGO"
+        title="RESUMEN DE PAGOS"
         visible={openModal}
         onCancel={handledModal}
         footer={null}
+         width={'40%'}
+
       >
       {
         loading &&
-      <section>
+      <section >
       <table className="tabla__edo__pagos">
         <thead title="Estados de pagos">
           <h3>Pagos</h3>
           <tr>
             <th>Plazo</th>
             <th>Realizados</th>
-            <th>Por pagar</th>
             <th>Restantes</th>
           </tr>
         </thead>
@@ -79,36 +85,33 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
         <tr>
           <td>{ plazoStatus?.plazo }</td>
           <td>{ plazoStatus?.totalPagos }</td>
-          <td>{ plazoStatus?.pendiente}</td>
           <td>{ plazoStatus?.diffPagos }</td>
         </tr>
         </tbody>
       </table>
-      <table className="tabla__edo__pagos">
-        <thead title="Estados de pagos">
-          <h3>Financiamiento</h3>
-          <tr>
-            <th>Total</th>
-            <th>Pagado</th>
-            <th>Intereses</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{ NumberFormat({ number: financiamento?.financiamiento })}</td>
-          <td>{ NumberFormat({ number: financiamento?.pagoRealizado })}</td>
-          <td>{ NumberFormat({ number: financiamento?.intereses })}</td>
-        </tr>
-        <tr>
-          <th>Por Pagar</th>
-          <th>Restantes</th>
-        </tr>
-        <tr>
-          <td>{ NumberFormat({ number: financiamento?.pagoPorRealizar })}</td>
-          <td>{ NumberFormat({ number: financiamento?.restante })}</td>
-        </tr>
-        </tbody>
-      </table>
+        <h3 style={{ fontWeight: 'bold', fontSize: '1rem' }}>Financiamiento</h3>
+        <div>
+          <div className='tabla_resumen'>
+            <span>Total: </span>
+            <span>{ NumberFormat({ number: financiamento?.financiamiento })}</span>
+          </div>
+          <div className='tabla_resumen'>
+            <span>Total, pagos realizado: </span>
+            <span>{ NumberFormat({ number: financiamento?.pagoRealizado })}</span>
+          </div>
+          <div className='tabla_resumen'>
+            <span>Intereses generados: </span>
+            <span>{ NumberFormat({ number: financiamento?.intereses })}</span>
+          </div>
+          <div className='tabla_resumen'>
+            <span>Pagos pendientes: </span>
+            <span>{ NumberFormat({ number: financiamento?.pagoPorRealizar })}</span>
+          </div>
+          <div className='tabla_resumen'>
+            <span>Total por pagar: </span>
+            <span>{ NumberFormat({ number: financiamento?.restante })}</span>
+          </div>
+        </div>
       </section>
       }
       </Modal>

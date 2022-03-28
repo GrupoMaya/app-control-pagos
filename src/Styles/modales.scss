@@ -214,10 +214,16 @@
 .tabla__edo__pagos{
   width: 100%;
   margin-bottom: 10px;
-  
+
+  h3{
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+    
   tr,th,td{
-    width: 100vh;
+    width: 100px;
     text-align: center;
+    
   }
 
   th{
@@ -485,6 +491,30 @@
   .footer__form{
     display: flex;
     justify-content: center;
+  }
+
+}
+
+.tabla_resumen{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 20px;
+
+  span:first-child{
+    width: 100%;
+    background-color: var(--esmeralda);
+    color: white;
+    font-weight: 300;
+    font-size: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  span:last-child{
+    padding: 0 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid var(--esmeralda);
   }
 
 }
