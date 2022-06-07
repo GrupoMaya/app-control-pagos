@@ -32,7 +32,7 @@ class MayaMachineAPI {
     const res = await fetch(`${baseURL}/proyecto/${currentProjectId}`)
       .then(res => res.json())
       .then(res => res.message)
-    
+
     return res
   }
 

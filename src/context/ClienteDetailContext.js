@@ -4,7 +4,16 @@ import { baseURL } from 'context/controllers'
 const loadCliente = async (context, event) => {
   const data = await fetch(`${baseURL}/detail/client/${event.id}`)
   const cliente = await data.json()
-  return cliente.message
+    
+  const filter = cliente.message.lotes.filter(
+    ({ isActive }) => isActive === true
+  )
+  
+  return {
+    ...cliente.message,
+    lotes: filter
+  }
+  
 }
 
 const loadDocumentValues = async (context, { id, documentType }) => {

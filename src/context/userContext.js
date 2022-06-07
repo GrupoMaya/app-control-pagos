@@ -107,7 +107,6 @@ const UserContextMachine = createMachine({
           target: 'validate',
           actions: 'verifiToken',
           cond: (ctx) => {
-            console.log({ ctx }, 'evento')
             return ctx.token !== null
           }
         },

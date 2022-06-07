@@ -25,7 +25,7 @@ const Proyecto = ({ match }) => {
 
   const { proyecto } = state.context
   const [currentClientes, setCurrentClientes] = useState([])
-
+  
   const history = useHistory()
 
   const handleSelectLoteFilter = (e) => {
