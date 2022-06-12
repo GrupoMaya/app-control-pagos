@@ -29,7 +29,7 @@ const Dashboard = () => {
                   state.matches('success') && proyectos.map(({ title, _id, activos }) => {
                     return (
                       <Link key={_id} to={`/proyecto/${_id}/${title}`} >
-                          <CardProyectos name={ title.toUpperCase() } clientes={activos}/>
+                          <CardProyectos name={ title?.toUpperCase() } clientes={activos}/>
                       </Link>
                     )
                   })

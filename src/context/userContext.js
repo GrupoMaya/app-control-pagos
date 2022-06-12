@@ -93,7 +93,6 @@ const UserContextMachine = createMachine({
         onError: {
           actions: assign({
             error: (contex, event) => {
-              console.log(event)
               return event.data
             }
           }),

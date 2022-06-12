@@ -2,6 +2,7 @@
 const CardProyectos = ({ name, clientes }) => {
 
   return (
+    <>
         <div className="card__proyectos__container">
             <div className="card__proyectos__header">
                 <p>{ name }</p>
@@ -17,6 +18,7 @@ const CardProyectos = ({ name, clientes }) => {
                 <p>{clientes.length}</p>
             </div>
         </div>
+    </>
   )
 }
 

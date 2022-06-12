@@ -519,6 +519,37 @@
 
 }
 
+.form__types{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+
+  p{
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  input{
+    padding: 0.8rem;
+    border: 1px solid var(--esmeralda);
+    border-radius: 4px;
+
+  }
+
+  button{
+    margin-top: 2rem;
+    color: white;
+    background-color: var(--esmeralda);
+
+    &:disabled{
+      opacity: 0.5;
+      background-color: var(--esmeralda);
+    }
+  }
+
+}
+
 // MEDIAS //
 
 @media (max-width: 60rem){

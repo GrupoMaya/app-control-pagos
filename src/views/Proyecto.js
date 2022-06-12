@@ -7,6 +7,8 @@ import UpdateModal from 'Modales/UpdateModal/UpdateModal'
 import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
 import SearchClientProyecto from 'utils/SearchClientProyecto'
 import XLSX from 'xlsx'
+import { UserState } from 'context/userContext'
+import ModalProyectName from 'Modales/ModalProyectName'
 
 const Proyecto = ({ match }) => {
 
@@ -62,11 +64,23 @@ const Proyecto = ({ match }) => {
     XLSX.writeFile(wb, `lotes_${projectName}.xlsx`)
   }
 
+  const { state: userState } = UserState()
+  const { user } = userState.context
+  const [editName, setEditName] = useState(false)
+
   return (
     // @params proyecto css
     <div className="proyecto__container">
     <section className="proyecto__header">
-
+    <ModalProyectName
+      open={editName}
+      handleCloseModal={() => setEditName(false)}
+      proyectName={projectName}
+      id={slug}
+    />
+      {
+        user?.role === 'admin' && <a onClick={() => setEditName(true)}>Cambiar nombre de proyecto</a>
+      }
       <div className="proyecto__header__title">
         <h3>{ projectName }</h3>
       </div>
