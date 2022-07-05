@@ -2,7 +2,6 @@ import { Modal } from 'antd'
 import { useHistory } from 'react-router-dom'
 
 const ModalUserSearch = ({ visible, onCancel, dataResult }) => {
-
   const { busqueda } = dataResult?.context
   const history = useHistory()
   const goToUser = (_id) => {

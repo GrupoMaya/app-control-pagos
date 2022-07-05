@@ -101,6 +101,20 @@ const patchSettingsData = async (ctx, { data }) => {
   return query
 }
 
+const userSearchRefPago = async (ctx, { keyword }) => {
+  const query = await fetch(`${baseURL}/search/ref/pagos?ref=${keyword}`)
+    .then(res => res.json())
+    .then(res => {
+      if (Object.values(res.message).length === 0) throw new Error('No existen usarios con tus criterios de busqueda')
+      return res.message
+    })
+    .catch(err => {
+      throw new Error({ err })
+    })
+
+  return query
+}
+
 const BuscadorMachine = createMachine({
   id: 'buscador',
   initial: 'iddle',
@@ -112,7 +126,8 @@ const BuscadorMachine = createMachine({
     pago: [],
     appData: [],
     clientId: undefined,
-    currentPayloadGetDataInfo: null
+    currentPayloadGetDataInfo: null,
+    refPagoMatch: null
   },
   states: {
     iddle: {},
@@ -229,7 +244,22 @@ const BuscadorMachine = createMachine({
     },
     removeUserLote: () => {
       
-    }
+    },
+    userSearchRefPago: {
+      invoke: {
+        src: userSearchRefPago,
+        onDone: {
+          target: 'successRefPago',
+          actions: assign({
+            refPagoMatch: (ctx, evt) => evt.data
+          })
+        },
+        onError: {
+          target: 'error'
+        }
+      }
+    },
+    successRefPago: {}
   },
   on: {
     BUSCAR: 'busqueda',
@@ -252,7 +282,8 @@ const BuscadorMachine = createMachine({
     GET_INFO_PAGO: 'getInfoPago',
     REMOVE_USER_LOTE: 'removeUserLote',
     GET_SETTINGS_APP: 'getSettingsApp',
-    PATCH_SETTINGS_DATA: 'patchSettingsData'
+    PATCH_SETTINGS_DATA: 'patchSettingsData',
+    USER_SEARCH_PAGO: 'userSearchRefPago'
   }
   
 })
