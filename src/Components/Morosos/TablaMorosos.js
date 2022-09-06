@@ -24,7 +24,7 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
    * @param {string} title Clientes con mas de 30 días de su ultimo pago
    */
 
-  const [isOpen, setIsopen] = useState(false)
+  const [isOpen, setIsopen] = useState(true)
   const show = () => setIsopen(!isOpen)
 
   const history = useHistory()
@@ -87,6 +87,7 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
             <Th>Lote</Th>
             <Th>Inicio de Contrato</Th>
             <Th>Ultimo Pago</Th>
+            <Th>Acciones</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -103,13 +104,16 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
                 return (
                   <Tr
                     style={{ pointer: 'cursor' }}
-                    key={pago?._id}
-                    onClick={() => handledDetail(lotes, proyecto._id, cliente.nombre)}>
+                    key={pago?._id}>
                     <Td>{ cliente?.nombre }</Td>
                     <Td>{ proyecto?.title }</Td>
                     <Td>{ lotes?.lote }</Td>
                     <Td>{ lotes?.inicioContrato && <DateIntlForma date={lotes.inicioContrato} />}</Td>
                     <Td>{ pago?.mes && <DateIntlForma date={pago.mes} />}</Td>
+                    <Td className="flex flex-column">
+                      <Button color="info" className="m-3" onClick={() => handledDetail(lotes, proyecto._id, cliente.nombre)}>Ver Detalle</Button>
+                      <Button className="m-3">WhatsApp</Button>
+                    </Td>
                   </Tr>
                 )
               })
@@ -134,6 +138,10 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
                     <Td>{ lotes?.lote }</Td>
                     <Td>{ lotes?.inicioContrato && <DateIntlForma date={lotes.inicioContrato} />}</Td>
                     <Td>{ pago?.mes && <DateIntlForma date={pago.mes} />}</Td>
+                    <Td className="flex flex-column">
+                      <Button colorScheme="blue" className=" m-3" onClick={() => handledDetail(lotes, proyecto._id, cliente.nombre)}>Ver Detalle</Button>
+                      <Button className="m-3">Llamar</Button>
+                    </Td>
                   </Tr>
                 )
               })

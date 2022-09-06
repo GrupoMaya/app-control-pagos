@@ -62,7 +62,7 @@ const ModalRefPago = ({ visible, onCancel, dataResult }) => {
             <p>Lote: { pago.lote_data[0]?.lote}</p>
             { pago.lote_data[0].manzana !== '' && <p>Manzana: { pago.lote_data[0].manzana }</p> }
             <p>Folio: { pago.folio }</p>
-            <p>Pago: { NumberFormat({ number: pago.mensualidad }) }</p>
+            <p>Pago: { NumberFormat({ number: pago.mensualidad.$numberDecimal || pago.mensualidad }) }</p>
             <p>Tipo de pago: { tipoPago[pago.tipoPago] }</p>
             <p>Banco: { pago.banco }</p>
             <p>Referencia bancaria: { pago.refBanco }</p>

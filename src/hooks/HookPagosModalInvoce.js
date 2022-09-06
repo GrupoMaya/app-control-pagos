@@ -113,7 +113,7 @@ const HookPagosModalInvoce = ({ lote }) => {
       <input placeholder="Referencia de Pago" id="refPago" {...register('refPago')} />
 
       <label>Mensualidad</label>
-      <input type="number" placeholder="cantidad" id="cantidad" {...register('mensualidad')} />
+      <input type="float" placeholder="cantidad" id="cantidad" {...register('mensualidad')} />
 
       <div>
         <button type="submit">Agregar Pago</button>

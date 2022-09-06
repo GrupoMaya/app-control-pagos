@@ -113,7 +113,7 @@ const HookPagosTable = ({ pagoId, lote }) => {
                 </td>
                 <td>{ pago.refPago }</td>
                 <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
-                <td>{ <NumberFormat number={ pago.mensualidad } />}</td>
+                <td>{ <NumberFormat number={ pago.mensualidad.$numberDecimal || pago.mensualidad } />}</td>
                 <td className='estatus__menu'>
                     { userState?.role === 'admin' && <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>}
                     <button disabled={!pago.status} onClick={() => previewURL(pago)}>Vista previa</button>

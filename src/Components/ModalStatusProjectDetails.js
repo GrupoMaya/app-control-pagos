@@ -32,17 +32,17 @@ const ModalStatusProjectDetails = ({ loteid, openModal, handledModal }) => {
     
     const pagoRealizado = payload[0]?.pagos
       .filter(item => item.status === true && item.tipoPago !== 'extra')
-      .map(item => item.mensualidad)
+      .map(item => item.mensualidad.$numberDecimal || item.mensualidad)
       .reduce((acc, val) => +acc + +val, [])
     
     const intereses = payload[0]?.pagos
       .filter(item => item.status === true && item.tipoPago === 'extra')
-      .map(item => item.mensualidad)
+      .map(item => item.mensualidad.$numberDecimal || item.mensualidad)
       .reduce((acc, val) => +acc + +val, [])
             
     const pagoPorRealizar = payload[0]?.pagos
       .filter(item => item.status === false)
-      .map(item => item.mensualidad)
+      .map(item => item.mensualidad.$numberDecimal || item.mensualidad)
       .reduce((acc, val) => +acc + +val, [])
 
     const restante = financiamiento - pagoRealizado
