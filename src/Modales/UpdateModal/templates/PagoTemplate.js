@@ -15,6 +15,7 @@ const PagoTemplate = ({ data }) => {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       ...data,
+      mensualidad: data.mensualidad?.$numberDecimal ? data.mensualidad.$numberDecimal : data.mensualidad,
       mes: data?.mes?.split('T')[0],
       fechaPago: data?.fechaPago?.split('T')[0]
     }
