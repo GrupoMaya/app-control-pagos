@@ -60,7 +60,7 @@ const UpdateModal = ({ id, document, dispatch }) => {
               document === 'Lote' && current.matches('success') && <LoteTemplate data={lote} dispatch={dispatch} />
             }
             {
-              document === 'Pago' && current.matches('success') && <PagoTemplate data={pago} dispatch={dispatch} />
+              document === 'Pago' && current.matches('success') && <PagoTemplate mainModalHandled={handledModal} data={pago} dispatch={dispatch} />
             }
             
           </Modal>

@@ -7,8 +7,9 @@ import DateIntlForma from 'utils/DateIntlFormat'
 import { UserState } from 'context/userContext'
 import { useMayaState } from 'context/MayaMachine'
 import './templates.scss'
+import FolioUpdate from 'Modales/FolioUpdate'
 
-const PagoTemplate = ({ data }) => {
+const PagoTemplate = ({ data, mainModalHandled }) => {
 
   const [current, send] = useMachine(UpdateMachine)
 
@@ -27,6 +28,7 @@ const PagoTemplate = ({ data }) => {
   }
 
   const toast = useToast()
+
   useEffect(() => {
     if (current.matches('success')) {
       toast({
@@ -56,7 +58,7 @@ const PagoTemplate = ({ data }) => {
         </span>
           <section className="form__template">
             <form onSubmit={handleSubmit(sendData)}>
-
+              <FolioUpdate document={data} mainModalHandled={mainModalHandled} />
               <label>
                 <p>Banco</p>
                 <input

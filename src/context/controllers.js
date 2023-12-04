@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export const baseURL = process.env.REACT_APP_URL
 
 class MayaMachineAPI {
@@ -96,6 +97,33 @@ class MayaMachineAPI {
       .then(res => res.message)
     
     return projects
+  }
+
+  static async updateFolio ({ id, fixConsecutive, folio }) {
+
+    const raw = JSON.stringify({
+      id,
+      folio,
+      fixConsecutive
+    })
+    const token = localStorage.getItem('tokenUserSite')
+    const baseURL_v2 = baseURL.replace('v1', 'v2')
+    const requestOptions = {
+      method: 'PATCH',
+      body: raw,
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    }
+
+    const res = await fetch(`${baseURL_v2}/pagos/folio/${id}`, requestOptions)
+      .then(res => res.json())
+      .then(res => res)
+      .catch(error => error)
+    
+    return res
   }
 
 }

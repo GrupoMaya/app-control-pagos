@@ -87,7 +87,7 @@ const TablaPagosClient = ({ pagos: pagosData, lote, clienteInfo }) => {
             </select>
           </th>
           <th>Pago</th>
-          <th>Acciones</th>
+          <th>Accionesasdasd</th>
         </tr>
         </thead>
         <tbody>
