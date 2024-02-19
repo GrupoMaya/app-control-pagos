@@ -85,7 +85,7 @@ const HookPagosModalInvoce = ({ lote }) => {
       <input type="date" required id="mes" {...register('mes', { required: true })} />
 
       <label>Tipo de Pago</label>
-      <select defaultValues="normal" name="tipoPago" {...register('tipoPago')} >
+      <select defaultValue="normal" name="tipoPago" {...register('tipoPago')} >
         <option value="mensualidad">Pago Mensual</option>
         <option value="extra">Pago Extraordinario</option>
         <option value="acreditado">Acreditado</option>

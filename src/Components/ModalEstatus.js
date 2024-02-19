@@ -62,7 +62,7 @@ const ModalEstatus = () => {
         required={errors.refBanco && true }
         id="refBanco"
         type="text"
-        placeHolder="Referencia bancaria"
+        placeholder="Referencia bancaria"
         {...register('refBanco', { required: true })}
         />
       <small>Obligatorio</small>
@@ -73,7 +73,7 @@ const ModalEstatus = () => {
         required={errors.fechaPago && true }
         id="fechaPago"
         type="date"
-        placeHolder="Fecha de depostio"
+        placeholder="Fecha de depostio"
         {...register('fechaPago', { required: true })}
         />
       <small>Obligatorio</small>

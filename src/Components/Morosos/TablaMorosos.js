@@ -8,11 +8,13 @@ import {
   Th,
   Td,
   Button,
-  Box
+  Box,
+  Stack
 } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
 import DateIntlForma from 'utils/DateIntlFormat'
 import eyeIcon from 'assets/icons/eye.svg'
+import * as XLSX from 'xlsx'
 
 const TablaMorosos = ({ data, current, key_data, title }) => {
 
@@ -50,21 +52,50 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
   const handledFiltroProyecto = (e) => {
     const proyecto = e.target.value
     const currentProyects = current.matches('success') &&
-      // eslint-disable-next-line camelcase
-      Object.values(data[key_data]).filter(({ proyecto_data }) => {
-        const { title } = proyecto_data[0]
-        return proyecto === title
-      })
+    // eslint-disable-next-line camelcase
+    Object.values(data[key_data]).filter(({ proyecto_data }) => {
+      const { title } = proyecto_data[0]
+      return proyecto === title
+    })
     setFiltredProjects(currentProyects)
+  }
+    
+  const handledXml = () => {
+    const wb = XLSX.utils.book_new()
+    const dateFrendly = (date) => {
+      const dt = new Date(date)
+      return new Intl.DateTimeFormat('es-MX', { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' }).format(dt)
+    }
+    const dataRows = Object.values(data && data[key_data]).map((pago) => {
+      const lotes = pago.lote_data[0]
+      const proyecto = pago.proyecto_data[0]
+      const cliente = pago.cliente_data[0]
+
+      return {
+        cliente: cliente?.nombre,
+        proyecto: proyecto?.title,
+        lote: lotes?.lote,
+        inicioContrato: lotes?.inicioContrato && dateFrendly(lotes.inicioContrato),
+        ultimoPago: pago?.mes && dateFrendly(pago.mes)
+      }
+    })
+    const ws = XLSX.utils.json_to_sheet([...dataRows])
+    XLSX.utils.book_append_sheet(wb, ws, 'morosos')
+    XLSX.writeFile(wb, 'morosos.xlsx')
   }
 
   return (
     <>
       <Box sx={{ display: 'flex', gap: '10px' }}>
         <h6 className='important_title'>{title}</h6>
-        <Button onClick={() => show()}>
-          <img src={eyeIcon} alt='eye' width={30} />
-        </Button>
+        <Stack direction="row">
+          <Button onClick={() => show()}>
+            <img src={eyeIcon} alt='eye' width={30} />
+          </Button>
+          <Button onClick={() => handledXml()}>
+            Descargar Lista
+          </Button>
+        </Stack>
       </Box>
       <Table variant="striped" colorScheme="teal" className='bg_esmeralda' hidden={!!isOpen}>
         <Thead>

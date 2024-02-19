@@ -58,7 +58,7 @@ const ModalAddUserProject = ({ visible, onCancel }) => {
       
       <label>
         <input
-        placeHolder="Buscar nombre del cliente"
+        placeholder="Buscar nombre del cliente"
         type="search"
         name="keyword"
         { ...register('keyword')}

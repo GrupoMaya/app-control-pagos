@@ -69,7 +69,7 @@ const NuevoPoject = ({ visible, onCancel }) => {
                 </fieldset>
                 <div className="modal__footer">
                   <button type="submit">Guardar</button>
-                  <button tyepe="reset" onClick={() => onCancel(true)}>Cerrar</button>
+                  <button type="reset" onClick={() => onCancel(true)}>Cerrar</button>
                 </div>
               </form>
 
