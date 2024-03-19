@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useCallback } from 'react'
 
 import { AppContext } from 'context/AppContextProvider'
 import ModalPagosClient from 'Components/ModalPagosClient'
@@ -19,8 +19,8 @@ const ClienteFluid = ({ match, location }) => {
     return <Redirect to={'/'}></Redirect>
   }
 
-  const [openExpediente, setOpenExpediente] = useState(false)
-  const toogleExpediente = () => setOpenExpediente(!openExpediente)
+  // const [openExpediente, setOpenExpediente] = useState(false)
+  // const toogleExpediente = () => setOpenExpediente(!openExpediente)
   
   const [state, send] = useMachine(BuscadorMachine)
   const { openModalPago, handleModalPago } = useContext(AppContext)
@@ -41,6 +41,16 @@ const ClienteFluid = ({ match, location }) => {
   const { clienteSlug, projectSlug, idlote } = match.params
   const { pagos } = state.context
   const nombreProyecto = <ValuesByDocument id={ projectSlug } documentType="Proyecto" cbValue='title' />
+
+  const downloadResumenExcel = useCallback(async () => {
+    send('GET_RESUMEN_EXCEL', {
+      query: {
+        idProject: dataQuery[0].proyecto.toString(),
+        clientID: dataQuery[0].cliente.toString()
+      }
+    })
+  }, [])
+  console.log(downloadResumenExcel)
         
   return (
     <div className="cliente__App__container">
@@ -52,11 +62,6 @@ const ClienteFluid = ({ match, location }) => {
       </h4>
       </section>
         <section className="cliente__App__body">
-          <button
-            onClick={() => toogleExpediente()}
-          >
-              Ver Expediente
-          </button>
         <div>
           <section className="proyecto__table">
           <a
@@ -103,7 +108,6 @@ const ClienteFluid = ({ match, location }) => {
           </tbody>
         </table>
       </section>
-              
         </div>
         <section>
           { state.matches('success') &&
@@ -111,16 +115,11 @@ const ClienteFluid = ({ match, location }) => {
               pagos={pagos}
               lote={idlote}
               clienteInfo={{ clienteSlug, proyecto: nombreProyecto, idlote }}
-              />
+              downloadResumenExcel={downloadResumenExcel}
+            />
           }
         </section>
         </section>
-        {/* TODO SE ROMPIO */}
-        {/* <ModalExpediente
-          visible={openExpediente}
-          onCancel={toogleExpediente}
-          cliente={location.state}
-        /> */}
         <ModalPagosClient
           openModalPago={openModalPago}
           handledOpen={handleModalPago}

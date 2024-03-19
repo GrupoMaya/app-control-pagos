@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { createMachine, assign } from 'xstate'
 import { baseURL } from 'context/controllers'
 
@@ -59,6 +60,31 @@ const getPagosByProject = async ({ currentPayloadGetDataInfo }, event) => {
 
   return query
 
+}
+
+const getResumenOnExcel = async ({ currentPayloadGetDataInfo }, event) => {
+  const { idProject, clientID } = currentPayloadGetDataInfo
+  
+  const token = localStorage.getItem('tokenUserSite')
+  try {
+    const url = `${baseURL}/resumen/cliente/${clientID}/projecto/${idProject}`
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        authorization: 'Bearer ' + token
+      }
+    })
+      .then((res) => res.blob())
+    const pdf = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const urld = window.URL.createObjectURL(pdf)
+    const a = document.createElement('a')
+    a.href = urld
+    a.download = 'scheduler.xlsx'
+    a.click()
+
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 const useSearch = async (ctx, { keyword }) => {
@@ -245,6 +271,18 @@ const BuscadorMachine = createMachine({
     removeUserLote: () => {
       
     },
+    getResumenOnExcel: {
+      invoke: {
+        src: getResumenOnExcel,
+        onDone: {
+          target: 'success'
+        },
+        onError: {
+          target: 'error'
+        }
+      }
+
+    },
     userSearchRefPago: {
       invoke: {
         src: userSearchRefPago,
@@ -283,7 +321,13 @@ const BuscadorMachine = createMachine({
     REMOVE_USER_LOTE: 'removeUserLote',
     GET_SETTINGS_APP: 'getSettingsApp',
     PATCH_SETTINGS_DATA: 'patchSettingsData',
-    USER_SEARCH_PAGO: 'userSearchRefPago'
+    USER_SEARCH_PAGO: 'userSearchRefPago',
+    GET_RESUMEN_EXCEL: {
+      target: 'getResumenOnExcel',
+      actions: (ctx, event) => {
+        ctx.currentPayloadGetDataInfo = event.query
+      }
+    }
   }
   
 })
