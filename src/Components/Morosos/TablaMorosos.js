@@ -128,7 +128,7 @@ const TablaMorosos = ({ data, current, key_data, title }) => {
             Object
               .values(data && data[key_data])
               .map((pago) => {
-                const lotes = pago.lote_data[0]
+                const lotes = pago.lote_data
                 const proyecto = pago.proyecto_data[0]
                 const cliente = pago.cliente_data[0]
 

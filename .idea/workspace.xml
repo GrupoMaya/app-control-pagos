@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="69cf4d61-af4d-4d5a-bace-e9292bdab142" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/MenuMaya.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/MenuMaya.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/Morosos/TablaMorosos.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Morosos/TablaMorosos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/PrivetRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/PrivetRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/TablaPagosClient.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/TablaPagosClient.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Modales/FolioUpdate/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Modales/FolioUpdate/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Modales/ModalAddUserProject.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Modales/ModalAddUserProject.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Modales/ModalUserSearch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Modales/ModalUserSearch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Modales/UpdateModal/UpdateMachine.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Modales/UpdateModal/UpdateMachine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Styles/index.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Styles/index.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/BuscadorMachine.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/BuscadorMachine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/ClienteDataMachine.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/ClienteDataMachine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/ClienteDetailContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/ClienteDetailContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/MayaMachine.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/MayaMachine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/userContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/userContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/ClientDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/ClientDetail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/ClienteFluid.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/ClienteFluid.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Proyecto.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Proyecto.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2icGH8t8v4zWTnJLwL3H8matFGm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feat/react",
+    "js.linters.configure.manually.selectedeslint": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "/home/chavez/.nvm/versions/node/v20.15.0/bin/node",
+    "nodejs_package_manager_path": "pnpm",
+    "npm.dev.executor": "Run",
+    "settings.editor.selected.configurable": "settings.nodejs",
+    "ts.external.directory.path": "/home/chavez/.local/share/JetBrains/Toolbox/apps/webstorm/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.18034.50" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="69cf4d61-af4d-4d5a-bace-e9292bdab142" name="Changes" comment="" />
+      <created>1719782363344</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1719782363344</updated>
+      <workItem from="1719782364497" duration="5840000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
