@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react'
 import { useMachine } from '@xstate/react'
 import { createMachine, assign } from 'xstate'
-import { Redirect } from 'react-router'
+import { Redirect } from 'react-router-dom'
 import decode from 'jwt-decode'
 import { baseURL } from './controllers'
 export const UserStateContext = createContext()

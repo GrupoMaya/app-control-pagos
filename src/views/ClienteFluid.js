@@ -32,8 +32,9 @@ const ClienteFluid = ({ match, location }) => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
       clientID: dataQuery[0].cliente.toString(),
-      loteID: dataQuery[0].lote.toString()
+      loteID: dataQuery[0]._id.toString()
     }
+    console.log(dataQuery)
     send('GET_PAGOS_BY_PROJECT', { query })
     // guardamos la query para poder actualizar el estado de la maquina padre
     setXstateQuery({ query, send })

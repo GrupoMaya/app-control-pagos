@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserState, UserDispatch } from 'context/userContext'
-import { Redirect } from 'react-router'
+import { Redirect } from 'react-router-dom'
 import ErrorModal from 'Components/ErrorModal'
 
 const Login = () => {

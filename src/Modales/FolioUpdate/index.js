@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal } from 'antd'
 import '../../Modales/UpdateModal/templates/templates.scss'
 import MayaMachineAPI from 'context/controllers'
-import { toast } from '@chakra-ui/toast'
+import { toast } from '@chakra-ui/react'
 import { useMayaState } from 'context/MayaMachine'
 const FolioUpdate = ({ mainModalHandled, document }) => {
 
