@@ -31,7 +31,8 @@ const ClienteFluid = ({ match, location }) => {
   useEffect(() => {
     const query = {
       idProject: dataQuery[0].proyecto.toString(),
-      clientID: dataQuery[0].cliente.toString()
+      clientID: dataQuery[0].cliente.toString(),
+      loteID: dataQuery[0].lote.toString()
     }
     send('GET_PAGOS_BY_PROJECT', { query })
     // guardamos la query para poder actualizar el estado de la maquina padre

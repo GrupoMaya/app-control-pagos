@@ -14,7 +14,7 @@ const Proyecto = ({ match }) => {
 
   const { state } = useMayaState()
   const { dispatch, setXstateQuery } = useMayaDispatch()
-  
+ 
   const { slug, projectName } = match.params
   
   useEffect(() => {
