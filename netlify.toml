@@ -1,7 +1,0 @@
-[build]
-  # tu comando de build habitual
-  command = "pnpm install && pnpm run build"
-  publish = "dist"
-
-[build.environment]
-  NODE_VERSION = "16"
