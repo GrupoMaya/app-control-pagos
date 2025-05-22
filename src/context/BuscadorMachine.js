@@ -53,7 +53,7 @@ const getPagosByProject = async ({ currentPayloadGetDataInfo }, event) => {
   const { idProject, clientID, loteID } = currentPayloadGetDataInfo
   console.log(idProject, clientID, 'para ser benditos')
     
-  const query = await fetch(`${baseURL}/pagos/${idProject}?idcliente=${clientID}?idlote=${loteID}`)
+  const query = await fetch(`${baseURL}/pagos/${idProject}?idcliente=${clientID}&idlote=${loteID}`)
     .then(res => res.json())
     .then(res => res.message)
     .catch(err => console.log(err))
