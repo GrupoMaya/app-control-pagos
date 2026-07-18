@@ -1,74 +1,72 @@
-import React, { memo, useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-import ClienteDetailContext from 'context/ClienteDetailContext'
-import {
-  Container,
-  Box,
-  Heading,
-  Text,
-  Stack,
-  Divider,
-  Spinner
-} from '@chakra-ui/react'
-import TablaMorosos from 'Components/Morosos/TablaMorosos'
+import { useMemo } from 'react'
+import { useMorosos } from '@/hooks/api/useMorosos'
+import PageHeader from '@/components/layout/PageHeader'
+import TablaMorosos from '@/Components/Morosos/TablaMorosos'
+import { Skeleton } from '@/components/ui/skeleton'
 
-const Morosos = (props) => {
-  
-  const [current, send] = useMachine(ClienteDetailContext)
+export default function Morosos () {
+  const { data: morosos, isLoading } = useMorosos()
 
-  useEffect(() => {
-    send('GET_MOROSOS')
-  }, [props])
-  
-  const { morosos } = current.context
+  const treinta = useMemo(() => morosos?.treinta_dias || {}, [morosos])
+  const sesenta = useMemo(() => morosos?.sesenta_dias || {}, [morosos])
+
+  const totalTreinta = Object.keys(treinta).length
+  const totalSesenta = Object.keys(sesenta).length
 
   return (
-  <>
-    <Container maxW="container.lg">
-      <Box mt={3} mb={3} maxW="100%" minH="10rem">
-        <Heading mb={4}>
-        </Heading>
-        <Text fontSize="xl">
-          Lista de Clientes Morosos, 30 días y más de 60 dias, desde su último pago
-          <Divider orientation="vertical" />
-          <Text>Selecciona una fila para ir a la pantalla de pagos.</Text>
-        </Text>
-      </Box>
-      {/* 30 dias */}
-      {
-          current.matches('loadMorosos') && (
+    <>
+      <PageHeader title="Clientes morosos" subtitle="Seguimiento de pagos atrasados" />
+
+      <main className="flex-1 overflow-y-auto p-7">
+        <div className="max-w-[1180px] mx-auto animate-fade-up space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-[18px]">
+            {isLoading && (
+              <>
+                <Skeleton className="h-[104px] rounded-2xl" />
+                <Skeleton className="h-[104px] rounded-2xl" />
+                <Skeleton className="h-[104px] rounded-2xl" />
+              </>
+            )}
+            {!isLoading && (
+              <>
+                <div className="bg-white border border-[#e6ebea] rounded-2xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+                  <div className="text-[13px] text-[#8a9995]">Total morosos</div>
+                  <div className="font-heading font-extrabold text-[28px] text-[#1a2621] mt-2">
+                    {totalTreinta + totalSesenta}
+                  </div>
+                </div>
+                <div className="bg-white border border-[#f6d9b8] rounded-2xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+                  <div className="text-[13px] text-[#c67c1e]">+30 días</div>
+                  <div className="font-heading font-extrabold text-[28px] text-[#e08e1a] mt-2">
+                    {totalTreinta}
+                  </div>
+                </div>
+                <div className="bg-white border border-[#f3c9c3] rounded-2xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+                  <div className="text-[13px] text-[#c0392b]">+60 días</div>
+                  <div className="font-heading font-extrabold text-[28px] text-[#d94436] mt-2">
+                    {totalSesenta}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {!isLoading && (
             <>
-              <Spinner />
-              <Text sx={{ fontSize: '28px' }}>Cargando listas...</Text>
+              <TablaMorosos
+                data={treinta}
+                title="Clientes con más de 30 días sin pagar"
+                variant="orange"
+              />
+              <TablaMorosos
+                data={sesenta}
+                title="Clientes con más de 60 días sin pagar"
+                variant="red"
+              />
             </>
-          )
-      }
-      {
-        current.matches('success') &&
-        <TablaMorosos
-          data={morosos}
-          current={current}
-          key_data='treinta_dias'
-          title='Clientes con mas de 30 días de su ultimo pago'
-        />
-      }
-      <Stack direction="row" h="100px" p={4}>
-        <Divider orientation="vertical" />
-        {/* <Text>Chakra UI</Text> */}
-      </Stack>
-      {/* 60 dias */}
-            {
-        current.matches('success') &&
-        <TablaMorosos
-          data={morosos}
-          current={current}
-          key_data='sesenta_dias'
-          title='Clientes con mas de 60 días de su ultimo pago'
-        />
-      }
-    </Container>
-  </>
+          )}
+        </div>
+      </main>
+    </>
   )
 }
-
-export default memo(Morosos)

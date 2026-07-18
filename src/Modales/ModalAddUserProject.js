@@ -1,112 +1,100 @@
-import { useEffect, useContext } from 'react'
-import { AppContext } from 'context/AppContextProvider'
-import { Modal } from 'antd'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMachine } from '@xstate/react'
-import BuscadorMachine from 'context/BuscadorMachine'
-import { useLocation, useHistory } from 'react-router-dom'
-import { Button } from '@chakra-ui/react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAppContext } from '@/context/AppContextProvider'
+import { useSearchClients } from '@/hooks/api/useClients'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 
-const ModalAddUserProject = ({ visible, onCancel }) => {
-
-  const { toggleDrawerNewUser } = useContext(AppContext)
-
+export default function ModalAddUserProject ({ visible, onCancel }) {
+  const { toggleDrawerNewUser } = useAppContext()
   const { register, handleSubmit, reset } = useForm()
-
-  const [state, send] = useMachine(BuscadorMachine)
-  const submitUser = (data) => {
-    send('USER_SEARCH', { keyword: data.keyword })
-  }
-
+  const searchMutation = useSearchClients()
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
+
+  const submitUser = (data) => {
+    searchMutation.mutate(data.keyword)
+  }
 
   const goToUser = (user) => {
     const idProject = location.pathname.split('/')[2]
-    
-    history.push({
-      pathname: `/detalle/cliente/${user._id}`,
+    navigate(`/detalle/cliente/${user._id}`, {
       state: { proyecto: idProject, user }
     })
   }
 
-  const setCancel = () => {
-    onCancel(false)
-    reset()
-  }
-
   useEffect(() => {
-    onCancel(false)
-    reset()
-
-    return () => {
+    if (!visible) {
       reset()
-
+      searchMutation.reset()
     }
-  }, [location])
+  }, [visible, reset, searchMutation])
 
-  const { busqueda } = state.context
+  const busqueda = searchMutation.data ? Object.values(searchMutation.data) : []
 
   return (
-    <Modal
-      visible={visible}
-      onCancel={setCancel}
-      title="Añadir Usuario Existente"
-      footer={null}
-    >
-    <form onSubmit={handleSubmit(submitUser)} className="modal__user__existente">
-      
-      <label>
-        <input
-        placeholder="Buscar nombre del cliente"
-        type="search"
-        name="keyword"
-        { ...register('keyword')}
-        />
-        <button></button>
-      </label>
-    </form>
+    <Dialog open={visible} onOpenChange={onCancel}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Añadir Usuario Existente</DialogTitle>
+        </DialogHeader>
 
-    {
-      state.matches('success') &&
-      <table className="modal__search__users">
-      <thead>
-        <th>Nombre Completo</th>
-        <th>Acciones</th>
-      </thead>
-      <tbody>
-        {
-          busqueda.map(user => {
-            return (
-            <tr key={user._id}>
-              <td>
-                { user.nombre }
-              </td>
-              <td>
-                <button
-                  onClick={() => goToUser(user)}>Agregar</button>
-              </td>
-            </tr>
-            )
-          })
-        }
-    </tbody>
-    </table>
-    }
-    <div className='d-flex'>
-      <Button
-        variant="solid"
-        sx={{ width: '120px' }}
-        colorScheme='teal'
-        onClick={() => {
-          toggleDrawerNewUser()
-          return onCancel()
-        }}>
-          Añadir Nuevo
-      </Button>
-    </div>
-  </Modal>
+        <form onSubmit={handleSubmit(submitUser)} className="flex gap-2 mb-4">
+          <Input
+            placeholder="Buscar nombre del cliente"
+            type="search"
+            {...register('keyword')}
+          />
+          <Button type="submit">Buscar</Button>
+        </form>
+
+        {searchMutation.isSuccess && busqueda.length > 0 && (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre Completo</TableHead>
+                <TableHead>Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {busqueda.map(user => (
+                <TableRow key={user._id}>
+                  <TableCell>{user.nombre}</TableCell>
+                  <TableCell>
+                    <Button size="sm" onClick={() => goToUser(user)}>Agregar</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+
+        <div className="mt-4">
+          <Button
+            onClick={() => {
+              toggleDrawerNewUser()
+              onCancel(false)
+            }}
+          >
+            Añadir Nuevo
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalAddUserProject

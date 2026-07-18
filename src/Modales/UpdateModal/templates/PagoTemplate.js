@@ -1,179 +1,130 @@
-import React, { useEffect, useState } from 'react'
-import { useToast } from '@chakra-ui/react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMachine } from '@xstate/react'
-import UpdateMachine from '../UpdateMachine'
-import DateIntlForma from 'utils/DateIntlFormat'
-import { UserState } from 'context/userContext'
-import { useMayaState } from 'context/MayaMachine'
-import './templates.scss'
-import FolioUpdate from 'Modales/FolioUpdate'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import { useUserState } from '@/context/userContext'
+import { usePatchPago } from '@/hooks/api/usePagos'
+import FolioUpdate from '@/Modales/FolioUpdate'
 
-const PagoTemplate = ({ data, mainModalHandled }) => {
+export default function PagoTemplate ({ data, onClose }) {
+  const { user } = useUserState()
+  const patchPago = usePatchPago()
+  const [openMensaje, setOpenMensaje] = useState(false)
 
-  const [current, send] = useMachine(UpdateMachine)
-
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       ...data,
-      mensualidad: data.mensualidad?.$numberDecimal ? data.mensualidad.$numberDecimal : data.mensualidad,
+      mensualidad: data.mensualidad?.$numberDecimal
+        ? data.mensualidad.$numberDecimal
+        : data.mensualidad,
       mes: data?.mes?.split('T')[0],
       fechaPago: data?.fechaPago?.split('T')[0]
     }
   })
 
-  const { xstateQuery } = useMayaState()
-  const sendData = (payload) => {
-    send('PATCH_DATA_PAGO', { payload })
+  const onSubmit = (payload) => {
+    patchPago.mutate(
+      { id: data._id, payload },
+      {
+        onSuccess: () => {
+          toast.success('Pago actualizado correctamente')
+          onClose()
+        },
+        onError: () => {
+          toast.error('No se pudo actualizar el pago')
+        }
+      }
+    )
   }
 
-  const toast = useToast()
-
-  useEffect(() => {
-    if (current.matches('success')) {
-      toast({
-        title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',
-        status: 'success',
-        duration: 4000,
-        isClosable: true
-      })
-
-      xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
-      setTimeout(() => {
-        reset()
-      }, 3000)
-    }
-  }, [current.value])
-
-  const { state } = UserState()
-  const { user: userState } = state.context
-
-  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
-  const handledOpenMensajeRecibo = () => setOpenMensajeRecibo(!openMensajeRecibo)
+  const isAdmin = user?.role === 'admin'
 
   return (
-      <div>
-        <span>
-        </span>
-          <section className="form__template">
-            <form onSubmit={handleSubmit(sendData)}>
-              <FolioUpdate document={data} mainModalHandled={mainModalHandled} />
-              <label>
-                <p>Banco</p>
-                <input
-                  type="text"
-                  name="banco"
-                  {...register('banco')}
-                />
-              </label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <FolioUpdate document={data} onClose={onClose} />
 
-            <label>
-                <p>Cuenta Bancaria</p>
-                <input
-                  type="text"
-                  name="ctaBancaria"
-                  {...register('ctaBancaria')}
-                >
-                </input>
-              </label>
-             
-              <label>
-                <p>Total pago</p>
-                <input
-                  type="text"
-                  name="mensualidad"
-                  {...register('mensualidad')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="banco">Banco</Label>
+        <Input id="banco" {...register('banco')} />
+      </div>
 
-              <label>
-                <p>Referencia de pago</p>
-                <input
-                  type="text"
-                  name="refPago"
-                  {...register('refPago')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="ctaBancaria">Cuenta Bancaria</Label>
+        <Input id="ctaBancaria" {...register('ctaBancaria')} />
+      </div>
 
-              <label>
-                <p>Referencia Bancaria</p>
-                <input
-                  type="text"
-                  name="refBanco"
-                  {...register('refBanco')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="mensualidad">Total pago</Label>
+        <Input id="mensualidad" {...register('mensualidad')} />
+      </div>
 
-              { data.extraSlug &&
-                <label>
-                  <p>Referencia de documento Extra</p>
-                  <input
-                    type="text"
-                    name="extraSlug"
-                    {...register('extraSlug')}
-                  >
-                  </input>
-                </label>
-              }
-              
-            <small>
-                <p>Fecha Guardada </p>
-                { data.fechaPago && <DateIntlForma date={data.fechaPago} /> }
-            </small>
-              <label>
-                <p>Fecha de Deposito</p>
-                <input
-                  type="date"
-                  name="fechaPago"
-                  {...register('fechaPago')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="refPago">Referencia de pago</Label>
+        <Input id="refPago" {...register('refPago')} />
+      </div>
 
-            <small>
-                <p>Fecha actual</p>
-                { data.mes && <DateIntlForma date={data.mes} /> }
-            </small>
-              <label>
-                <p>Fecha de Documento</p>
-                <input
-                  type="date"
-                  name="mes"
-                  {...register('mes')}
-                >
-                </input>
-              </label>
-              <p className='texto-button' onClick={() => handledOpenMensajeRecibo()}>
-                Modificar mensaje de recibo
-              </p>
-              {
-                openMensajeRecibo && (
-                  <>
-                    <small className='mensaje-recibo'>Este campo modificara todo el mensaje</small>
-                    <label>
-                      <p>Mensaje de recibo</p>
-                      <input
-                          type="mensajeRecibo"
-                          placeholder="Modificar mensaje del recibo"
-                          {...register('mensajeRecibo')}
-                        />
-                    </label>
-                    <hr/><br/>
-                  </>
-                )
-              }
+      <div className="grid gap-2">
+        <Label htmlFor="refBanco">Referencia Bancaria</Label>
+        <Input id="refBanco" {...register('refBanco')} />
+      </div>
 
-          <div className="footer__template">
-          { userState?.role === 'admin' && <button type="submit">Modificar</button> }
-          </div>
-            </form>
-          </section>
+      {data.extraSlug && (
+        <div className="grid gap-2">
+          <Label htmlFor="extraSlug">Referencia de documento Extra</Label>
+          <Input id="extraSlug" {...register('extraSlug')} />
         </div>
+      )}
+
+      <div className="grid gap-2">
+        <Label htmlFor="fechaPago">Fecha de Depósito</Label>
+        {data.fechaPago && (
+          <p className="text-sm text-muted-foreground">
+            Fecha guardada: <DateIntlFormat date={data.fechaPago} />
+          </p>
+        )}
+        <Input id="fechaPago" type="date" {...register('fechaPago')} />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="mes">Fecha de Documento</Label>
+        {data.mes && (
+          <p className="text-sm text-muted-foreground">
+            Fecha actual: <DateIntlFormat date={data.mes} />
+          </p>
+        )}
+        <Input id="mes" type="date" {...register('mes')} />
+      </div>
+
+      <button
+        type="button"
+        className="text-sm text-primary underline"
+        onClick={() => setOpenMensaje(prev => !prev)}
+      >
+        Modificar mensaje de recibo
+      </button>
+
+      {openMensaje && (
+        <div className="grid gap-2">
+          <p className="text-sm text-muted-foreground">
+            Este campo modificará todo el mensaje
+          </p>
+          <Label htmlFor="mensajeRecibo">Mensaje de recibo</Label>
+          <Input
+            id="mensajeRecibo"
+            placeholder="Modificar mensaje del recibo"
+            {...register('mensajeRecibo')}
+          />
+        </div>
+      )}
+
+      {isAdmin && (
+        <div className="flex justify-end">
+          <Button type="submit" disabled={patchPago.isPending}>Modificar</Button>
+        </div>
+      )}
+    </form>
   )
 }
-
-export default PagoTemplate

@@ -1,217 +1,81 @@
-import React, { createContext, useContext, useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-import { createMachine, assign } from 'xstate'
-import { Redirect } from 'react-router-dom'
-import decode from 'jwt-decode'
-import { baseURL } from './controllers'
-export const UserStateContext = createContext()
-export const UserDispatchContext = createContext()
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { login as apiLogin, validateToken, decodeToken, logout as apiLogout } from '@/api/auth'
 
-// funciones para el loggin
-const login = async (ctx, event) => {
-  const response = await fetch(baseURL + '/user/login', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(event.data)
-  })
-    .then(res => res.json())
-    .then(res => res)
-    .catch(err => console.log(err))
-  
-  if (response) {
-    localStorage.setItem('tokenUserSite', response.login.token)
-  }
-  return response
-}
+export const UserStateContext = createContext(null)
+export const UserDispatchContext = createContext(null)
 
-const auth = async () => {
-  const token = localStorage.getItem('tokenUserSite')
-
-  const auth = await fetch(baseURL + `/user/${decode(token).id}`, {
-    method: 'get',
-    headers: new Headers({
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`
-    })
-  })
-    .then(res => res.json())
-    .then(res => res)
-    .catch(err => console.log(err))
-
-  if (auth.message === 'authentication error') {
-    throw new Error('Credenciales no validas')
-  }
-
-  return auth
-}
-
-const verifiToken = (ctx) => {
-  const token = localStorage.getItem('tokenUserSite')
-  if (!token) {
-    ctx.token = undefined
-  } else {
-    ctx.token = token
-  }
-}
-
-const register = async (ctx, event) => {
-  // Nuevo usuario
-  const register = await fetch(baseURL + '/user/register/', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(event.data)
-  })
-    .then(res => res.json())
-    .then(res => res)
-    .catch(err => console.log(err))
-
-  return register
-}
-
-const UserContextMachine = createMachine({
-  id: 'userState',
-  initial: 'initial',
-  context: {
-    user: undefined,
-    error: undefined,
-    token: undefined
-  },
-  states: {
-    initial: {},
-    login: {
-      invoke: {
-        id: 'login',
-        src: login,
-        onDone: {
-          target: 'auth',
-          actions: (ctx, event) => event.data
-        },
-        onError: {
-          actions: assign({
-            error: (contex, event) => {
-              return event.data
-            }
-          }),
-          target: 'error'
-        }
-      }
-    },
-    auth: {
-      always: [
-        {
-          target: 'validate',
-          actions: 'verifiToken',
-          cond: (ctx) => {
-            return ctx.token !== null
-          }
-        },
-        {
-          target: 'error'
-        }
-      ]
-    },
-    validate: {
-      invoke: {
-        src: auth,
-        onDone: {
-          target: 'success',
-          actions: assign({
-            user: (ctx, event) => event.data
-          })
-        },
-        onError: {
-          target: 'error',
-          actions: assign({
-            error: (ctx, event) => {
-              return event.data
-            }
-          })
-        }
-      }
-    },
-    error: {
-      after: {
-        3000: 'initial'
-      }
-    },
-    success: {},
-    logout: {
-      invoke: {
-        src: async (ctx) => {
-          localStorage.removeItem('tokenUserSite')
-          ctx.user = undefined
-        },
-        onDone: {
-          target: 'initial'
-        }
-      }
-    },
-    register: {
-      invoke: {
-        src: register,
-        onDone: {
-          target: 'register_done'
-        }
-      }
-    },
-    register_done: {}
-
-  },
-  on: {
-
-    VALIDATE: [
-      {
-        target: 'validate',
-        cond: (ctx) => ctx.user !== undefined
-      },
-      {
-        target: 'auth'
-      }
-    ],
-
-    LOGIN: 'login',
-    LOGOUT: 'logout',
-    REGISTRO: 'register'
-  }
-},
-{
-  actions: {
-    verifiToken: verifiToken
-  }
-}
-)
-
-export const UserContextProvider = ({ children }) => {
-  const [state, dispatch, service] = useMachine(UserContextMachine)
+export function UserContextProvider ({ children }) {
+  const [user, setUser] = useState(undefined)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    dispatch('VALIDATE')
+    const token = localStorage.getItem('tokenUserSite')
+    if (!token) {
+      setUser(null)
+      setLoading(false)
+      return
+    }
+
+    validateToken(token)
+      .then(data => {
+        if (data?.message === 'authentication error') {
+          throw new Error('Credenciales no válidas')
+        }
+        setUser(data)
+      })
+      .catch(() => {
+        apiLogout()
+        setUser(null)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
-  // useEffect(() => {
-  //   if (state.matches('error')) {
-  //     dispatch('LOGOUT')
-  //   }
-  // })
-
-  useEffect(() => {
-    if (!state.context.user) {
-      return <Redirect to="/login"></Redirect>
+  const login = useCallback(async (credentials) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const data = await apiLogin(credentials)
+      const token = data?.login?.token
+      if (!token) throw new Error('Login inválido')
+      const userData = await validateToken(token)
+      setUser(userData)
+      return userData
+    } catch (err) {
+      setError(err)
+      throw err
+    } finally {
+      setLoading(false)
     }
-  }, [state.context.user])
+  }, [])
+
+  const logout = useCallback(() => {
+    apiLogout()
+    setUser(null)
+  }, [])
+
+  const value = {
+    user,
+    loading,
+    error,
+    isAuthenticated: Boolean(user)
+  }
 
   return (
-    <UserStateContext.Provider value={{ state, service }}>
-      <UserDispatchContext.Provider value={dispatch}>
-        { children }
+    <UserStateContext.Provider value={value}>
+      <UserDispatchContext.Provider value={{ login, logout }}>
+        {children}
       </UserDispatchContext.Provider>
     </UserStateContext.Provider>
   )
 }
 
-export const UserState = () => useContext(UserStateContext)
-export const UserDispatch = () => useContext(UserDispatchContext)
+export function useUserState () {
+  return useContext(UserStateContext)
+}
+
+export function useUserDispatch () {
+  return useContext(UserDispatchContext)
+}
+
+export { decodeToken }

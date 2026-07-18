@@ -1,60 +1,51 @@
-import { createContext, useState } from 'react'
-import { baseURL } from 'context/controllers'
+import { createContext, useContext, useState, useCallback } from 'react'
+import { useSettings } from '@/hooks/api/useSettings'
 
-export const AppContext = createContext()
+export const AppContext = createContext(null)
 
-const AppContextProvider = (props) => {
-
+export function AppContextProvider ({ children }) {
   const [modalPago, setModalPago] = useState(false)
   const [idPago, setIdPago] = useState(undefined)
-  
-  const [openModalPago, SetOpenModalPago] = useState(false)
-  const handleModalPago = () => SetOpenModalPago(!openModalPago)
+  const [openDrawerNewUser, setOpenDrawerNewUser] = useState(false)
+  const [openDrawerNewLote, setOpenDrawerNewLote] = useState(false)
 
-  const [plataformName, setPlataformName] = useState(undefined)
-  const GetInfoData = async () => {
-    const promise = new Promise((resolve) => {
-      resolve(fetch(`${baseURL}/settingsapp/get`))
-    })
-      .then(response => response.json())
-      .then(data => {
-        return data.message
-      })
+  const { data: settings, isLoading: settingsLoading } = useSettings()
 
-    return Promise.all([promise])
-      .then(res => {
-        const name = Object.values(res[0])[0]?.razonSocial
-        setPlataformName(name)
-      })
-    
+  const toggleDrawerNewUser = useCallback(() => {
+    setOpenDrawerNewUser(prev => !prev)
+  }, [])
+
+  const toggleDrawerNewLote = useCallback(() => {
+    setOpenDrawerNewLote(prev => !prev)
+  }, [])
+
+  const handleModalPago = useCallback(() => {
+    setModalPago(prev => !prev)
+  }, [])
+
+  const value = {
+    modalPago,
+    setModalPago,
+    idPago,
+    setIdPago,
+    openDrawerNewUser,
+    setOpenDrawerNewUser,
+    toggleDrawerNewUser,
+    openDrawerNewLote,
+    setOpenDrawerNewLote,
+    toggleDrawerNewLote,
+    handleModalPago,
+    plataformName: settings?.razonSocial,
+    settingsLoading
   }
 
-  const [openDrawerNewUser, setOpenDrawerNewUser] = useState(false)
-  const toggleDrawerNewUser = () => setOpenDrawerNewUser(!openDrawerNewUser)
-
-  const [openDrawerNewLote, setOpenDrawerNewLote] = useState(false)
-  const toggleDrawerNewLote = () => setOpenDrawerNewLote(!openDrawerNewLote)
-
   return (
-    <AppContext.Provider value={{
-      modalPago,
-      setModalPago,
-      idPago,
-      setIdPago,
-      openModalPago,
-      handleModalPago,
-      plataformName,
-      setPlataformName,
-      GetInfoData,
-      openDrawerNewUser,
-      toggleDrawerNewUser,
-      openDrawerNewLote,
-      toggleDrawerNewLote
-
-    }}>
-      { props.children }
+    <AppContext.Provider value={value}>
+      {children}
     </AppContext.Provider>
   )
 }
 
-export default AppContextProvider
+export function useAppContext () {
+  return useContext(AppContext)
+}

@@ -1,123 +1,74 @@
-import React, { useEffect } from 'react'
-import { useToast } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { useMachine } from '@xstate/react'
-import UpdateMachine from '../UpdateMachine'
-import DateIntlForma from 'utils/DateIntlFormat'
-import { UserState } from 'context/userContext'
-import { useParams } from 'react-router-dom'
-import './templates.scss'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import { useUserState } from '@/context/userContext'
+import { usePatchLote } from '@/hooks/api/useLotes'
 
-/**
- * Para poder cambiar datos del lote en la vista de proyectos / lotes
- * @param {Function} allLotesParent - xstate function de la vista de proyectos/id/slug
- * @param {Object} data - payload con la informacion del lote
- * @returns Solo cambia los datos del lote no retorna nada
- */
+export default function LoteTemplate ({ data, onClose }) {
+  const { user } = useUserState()
+  const patchLote = usePatchLote()
 
-const LoteTemplate = ({ data, dispatch: allLotesParent }) => {
-
-  const [current, send] = useMachine(UpdateMachine)
-
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      ...data
-    }
+  const { register, handleSubmit } = useForm({
+    defaultValues: { ...data }
   })
 
-  const sendData = (payload) => {
-    send('PATCH_DATA_LOTE', { payload })
+  const onSubmit = (payload) => {
+    patchLote.mutate(
+      { id: data._id, payload },
+      {
+        onSuccess: () => {
+          toast.success('Lote actualizado correctamente')
+          onClose()
+        },
+        onError: () => {
+          toast.error('No se pudo actualizar el lote')
+        }
+      }
+    )
   }
 
-  const match = useParams()
-  const toast = useToast()
-  useEffect(() => {
-    if (current.matches('success')) {
-      toast({
-        title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',
-        status: 'success',
-        duration: 9000,
-        isClosable: true
-      })
-      
-      setTimeout(() => {
-        reset()
-        allLotesParent('GET_DATA', { id: match.slug })
-      }, 2000)
-    }
-  }, [current.value])
-
-  const { state } = UserState()
-  const { user: userState } = state.context
+  const isAdmin = user?.role === 'admin'
 
   return (
-      <div>
-        <span>
-            { current.matches('success') && 'Datos Guardados' }
-        </span>
-          <section className="form__template">
-            <form onSubmit={handleSubmit(sendData)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="grid gap-2">
+        <Label htmlFor="lote">Lote</Label>
+        <Input id="lote" {...register('lote')} />
+      </div>
 
-              <label>
-                <p>Lote</p>
-                <input
-                  type="text"
-                  name="lote"
-                  {...register('lote')}
-                />
-              </label>
-            
-            <small>
-              <p>Fecha Almacenada </p>
-              { data.inicioContrato && <DateIntlForma date={data.inicioContrato} /> }
-            </small>
-            <label>
-                <p>Inicio Contrato</p>
-                <input
-                  type="date"
-                  name="inicioContrato"
-                  {...register('inicioContrato')}
-                >
-                </input>
-              </label>
-             
-              <label>
-                <p>Mensualidad</p>
-                <input
-                  type="text"
-                  name="mensualidad"
-                  {...register('mensualidad')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="inicioContrato">Inicio Contrato</Label>
+        {data.inicioContrato && (
+          <p className="text-sm text-muted-foreground">
+            Fecha almacenada: <DateIntlFormat date={data.inicioContrato} />
+          </p>
+        )}
+        <Input id="inicioContrato" type="date" {...register('inicioContrato')} />
+      </div>
 
-              <label>
-                <p>Plazo</p>
-                <input
-                  type="text"
-                  name="plazo"
-                  {...register('plazo')}
-                >
-                </input>
-              </label>
+      <div className="grid gap-2">
+        <Label htmlFor="mensualidad">Mensualidad</Label>
+        <Input id="mensualidad" {...register('mensualidad')} />
+      </div>
 
-              <label>
-                <p>Precio Total</p>
-                <input
-                  type="text"
-                  name="precioTotal"
-                  {...register('precioTotal')}
-                >
-                </input>
-              </label>
-          <div className="footer__template">
-          { userState?.role === 'admin' && <button type="submit">Modificar</button> }
-          </div>
-            </form>
-          </section>
+      <div className="grid gap-2">
+        <Label htmlFor="plazo">Plazo</Label>
+        <Input id="plazo" {...register('plazo')} />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="precioTotal">Precio Total</Label>
+        <Input id="precioTotal" {...register('precioTotal')} />
+      </div>
+
+      {isAdmin && (
+        <div className="flex justify-end">
+          <Button type="submit" disabled={patchLote.isPending}>Modificar</Button>
         </div>
+      )}
+    </form>
   )
 }
-
-export default LoteTemplate

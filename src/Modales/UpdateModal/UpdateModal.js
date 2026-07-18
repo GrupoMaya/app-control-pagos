@@ -1,72 +1,55 @@
-import { useState, useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-import { Modal } from 'antd'
-import UpdateMachine from './UpdateMachine'
+import { useState } from 'react'
+import { useUserState } from '@/context/userContext'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { useLote } from '@/hooks/api/useLotes'
+import { usePago } from '@/hooks/api/usePagos'
 import LoteTemplate from './templates/LoteTemplate'
 import PagoTemplate from './templates/PagoTemplate'
-import { UserState } from 'context/userContext'
-import './updateStyles.scss'
 
-const UpdateModal = ({ id, document, dispatch }) => {
-  /**
-   * Tipos de documento
-   * Lote
-   * Pago
-   * Cliente
-   */
+export default function UpdateModal ({ id, document }) {
+  const [open, setOpen] = useState(false)
+  const { user } = useUserState()
 
-  const [current, send] = useMachine(UpdateMachine)
-  
-  const getDocumentType = () => {
-    switch (document) {
-      case 'Lote':
-        return send('GET_LOTE_INFO', { id })
-      case 'Pago':
-        return send('GET_PAGO_INFO', { id })
-      case 'Cliente':
-        return 'Cliente'
-      default:
-        return 'Lote'
-    }
-  }
+  const isAdmin = user?.role === 'admin'
+  const isLote = document === 'Lote'
+  const isPago = document === 'Pago'
 
-  const [isModal, setIsModal] = useState(false)
-  const handledModal = () => setIsModal(!isModal)
-    
-  useEffect(() => {
-    if (isModal) return getDocumentType()
-  }, [isModal])
+  const loteQuery = useLote(isLote && open ? id : null)
+  const pagoQuery = usePago(isPago && open ? id : null)
 
-  const { lote, pago } = current.context
+  const data = isLote ? loteQuery.data : isPago ? pagoQuery.data : null
+  const isLoading = isLote ? loteQuery.isLoading : isPago ? pagoQuery.isLoading : false
 
-  const { state } = UserState()
-  const { user: userState } = state.context
-  
   return (
-    <section>
-      <header className="btn__danger">
-        { userState?.role === 'admin' && <button onClick={() => handledModal()}>Modificar</button> }
-      </header>
-      <div hidden={!isModal}>
-          <Modal
-            title={`Editar los datos del ${document}`}
-            visible={isModal}
-            onOk={() => handledModal()}
-            onCancel={() => handledModal()}
-            footer={null}
-                        
-          >
-            {
-              document === 'Lote' && current.matches('success') && <LoteTemplate data={lote} dispatch={dispatch} />
-            }
-            {
-              document === 'Pago' && current.matches('success') && <PagoTemplate mainModalHandled={handledModal} data={pago} dispatch={dispatch} />
-            }
-            
-          </Modal>
-      </div>
-    </section>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {isAdmin && (
+        <DialogTrigger asChild>
+          <Button variant="destructive" size="sm">Modificar</Button>
+        </DialogTrigger>
+      )}
+
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Editar datos del {document}</DialogTitle>
+        </DialogHeader>
+
+        {isLoading && <p className="text-sm text-muted-foreground">Cargando...</p>}
+
+        {!isLoading && data && isLote && (
+          <LoteTemplate data={data} onClose={() => setOpen(false)} />
+        )}
+
+        {!isLoading && data && isPago && (
+          <PagoTemplate data={data} onClose={() => setOpen(false)} />
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default UpdateModal

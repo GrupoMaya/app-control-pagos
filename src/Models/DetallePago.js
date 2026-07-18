@@ -1,31 +1,25 @@
-import React from 'react'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton
-} from '@chakra-ui/react'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 
-function DetallePago ({ visible, onCancel, pdfURL }) {
-  
+export default function DetallePago ({ visible, onCancel, pdfURL }) {
   return (
-    <>
-      <Modal isOpen={visible} onClose={onCancel} size="50%" >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Vista Previa</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-              {/* iframe pdf blob url */}
-            <iframe src={pdfURL} frameBorder="0" height="100%" width="100%" style={{ zoom: '5' }}>
-            </iframe>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+    <Dialog open={visible} onOpenChange={onCancel}>
+      <DialogContent className="max-w-4xl h-[80vh] p-0">
+        <DialogHeader className="px-6 pt-6">
+          <DialogTitle>Vista Previa</DialogTitle>
+        </DialogHeader>
+        <div className="flex-1 h-full px-6 pb-6">
+          <iframe
+            src={pdfURL}
+            className="w-full h-full border-0"
+            title="Vista previa del recibo"
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default DetallePago

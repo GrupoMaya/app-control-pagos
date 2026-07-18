@@ -1,31 +1,41 @@
-import { useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-import BuscadorMachine from 'context/BuscadorMachine'
+import { useParams } from 'react-router-dom'
+import { useClient } from '@/hooks/api/useClients'
+import { useLotesByClient } from '@/hooks/api/useLotes'
+import { usePagosByProject } from '@/hooks/api/usePagos'
+import PageHeader from '@/components/layout/PageHeader'
+import TablaClienteInfo from '@/Components/TablaClienteInfo'
+import { Skeleton } from '@/components/ui/skeleton'
 
-import TablaClienteInfo from 'Components/TablaClienteInfo'
+export default function Cliente () {
+  const { slug } = useParams()
+  const { data: cliente, isLoading: loadingCliente } = useClient(slug)
+  const { data: lotes = [], isLoading: loadingLotes } = useLotesByClient(slug)
 
-const Cliente = ({ match }) => {
+  const firstLote = lotes[0]
+  const { data: pagos = [], isLoading: loadingPagos } = usePagosByProject({
+    idProject: firstLote?.proyecto?.[0],
+    clientID: slug,
+    loteID: firstLote?._id
+  })
 
-  const [state, send] = useMachine(BuscadorMachine)
+  const isLoading = loadingCliente || loadingLotes || loadingPagos
 
-  useEffect(() => {
-    send('CLIENTE_DATA', { id: match.params?.slug })
-  }, [])
-
-  const { cliente, lotes, pagos } = state.context
-  
   return (
-        <div className="cliente__App__container">
-            {
-                state.matches('success') &&
-                    <TablaClienteInfo
-                        cliente={cliente}
-                        lotes={lotes}
-                        pagos={pagos}
-                    />
-            }
+    <>
+      <PageHeader title="Detalle de cliente" subtitle="Lotes contratados e historial de pagos" />
+      <main className="flex-1 overflow-y-auto p-7">
+        <div className="max-w-[1180px] mx-auto animate-fade-up">
+          {isLoading && <Skeleton className="h-64 w-full" />}
+
+          {!isLoading && cliente && (
+            <TablaClienteInfo
+              cliente={cliente}
+              lotes={lotes}
+              pagos={pagos}
+            />
+          )}
         </div>
+      </main>
+    </>
   )
 }
-
-export default Cliente

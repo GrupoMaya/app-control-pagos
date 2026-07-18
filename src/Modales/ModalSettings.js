@@ -1,92 +1,70 @@
-import { useEffect } from 'react'
-import { Modal } from 'antd'
 import { useForm } from 'react-hook-form'
-import { useMachine } from '@xstate/react'
-import BuscadorMachine from 'context/BuscadorMachine'
+import { useSettings, usePatchSettings } from '@/hooks/api/useSettings'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { notifySuccess } from '@/utils/Notify'
 
-const FormCapsule = ({ dataApp, send }) => {
- 
-  const onSubmit = (data) => {
-    send('PATCH_SETTINGS_DATA', { data })
+function FormCapsule ({ dataApp, onSuccess }) {
+  const patchSettings = usePatchSettings()
+  const { register, handleSubmit } = useForm({ defaultValues: dataApp })
+
+  const onSubmit = async (data) => {
+    await patchSettings.mutateAsync(data)
+    notifySuccess('Configuración guardada', 'Los datos de la empresa se actualizaron')
+    onSuccess()
   }
-  
-  const { handleSubmit, register } = useForm({
-    defaultValues: dataApp
-  })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="modal__settings">
-    <label htmlFor="razonSocial">
-      Razón Social
-      <div>
-          <input
-            type="text"
-            id="razonSocial"
-            {...register('razonSocial', { required: true })}
-          />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="razonSocial">Razón Social</Label>
+        <Input id="razonSocial" {...register('razonSocial', { required: true })} />
       </div>
-    </label>
-    <label htmlFor="razonSocial">
-      RFC
-      <div>
-          <input
-            type="text"
-            id="rfc"
-            {...register('rfc', { required: true })}
-          />
+
+      <div className="space-y-2">
+        <Label htmlFor="rfc">RFC</Label>
+        <Input id="rfc" {...register('rfc', { required: true })} />
       </div>
-    </label>
-    <label htmlFor="direccion">
-      Calle, Número y Código Postal
-      <div>
-          <input
-            type="text"
-            id="direccion"
-            {...register('direccion', { required: true })}
-          />
+
+      <div className="space-y-2">
+        <Label htmlFor="direccion">Calle, Número y Código Postal</Label>
+        <Input id="direccion" {...register('direccion', { required: true })} />
       </div>
-    </label>
-    <label htmlFor="ciudad">
-      Ciudad, Estado y Municipio
-      <div>
-          <input
-            type="text"
-            id="ciudad"
-            {...register('ciudad', { required: true })}
-          />
+
+      <div className="space-y-2">
+        <Label htmlFor="ciudad">Ciudad, Estado y Municipio</Label>
+        <Input id="ciudad" {...register('ciudad', { required: true })} />
       </div>
-    </label>
-    <div className="footer__form">
-    <button type="submit">
-      Guardar
-    </button>
-    </div>
-  </form>
+
+      <Button type="submit" disabled={patchSettings.isPending}>Guardar</Button>
+    </form>
   )
 }
 
-const ModalSettings = ({ visible, onCancel }) => {
-
-  const [state, send] = useMachine(BuscadorMachine)
-  useEffect(() => {
-    send('GET_SETTINGS_APP')
-  }, [])
-
-  const { appData } = state.context
+export default function ModalSettings ({ visible, onCancel }) {
+  const { data: appData, isLoading } = useSettings()
 
   return (
-    <Modal
-      title="Configuración de la Empresa"
-      visible={visible}
-      onCancel={onCancel}
-      footer={null}
-      >
-     {
-      state.matches('success') &&
-        <FormCapsule dataApp={appData} send={send} />
-      }
-    </Modal>
+    <Dialog open={visible} onOpenChange={onCancel}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Configuración de la Empresa</DialogTitle>
+        </DialogHeader>
+
+        {isLoading && <Skeleton className="h-48 w-full" />}
+
+        {!isLoading && appData && (
+          <FormCapsule dataApp={appData} onSuccess={() => onCancel(false)} />
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalSettings
