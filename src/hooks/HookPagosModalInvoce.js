@@ -1,22 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Modal } from 'antd'
+import { useAddPagoToLote } from '@/hooks/api/usePagos'
+import { usePagosByProject } from '@/hooks/api/usePagos'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import NumberFormat from '@/utils/NumberFormat'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { notifySuccess } from '@/utils/Notify'
 
-import { useMachine } from '@xstate/react'
-import { ClienteMachine } from 'context/ClienteDataMachine'
-import { useMayaState } from 'context/MayaMachine'
+export default function HookPagosModalInvoce ({ lote, onClose }) {
+  const addPago = useAddPagoToLote()
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [payload, setPayload] = useState(null)
 
-import DateIntlFormat from 'utils/DateIntlFormat'
-import NumberFormat from 'utils/NumberFormat'
-import './StylesModales.scss'
-import { useToast } from '@chakra-ui/react'
+  const idProject = lote.proyecto.toString()
+  const clientID = lote.cliente.toString()
+  const loteID = lote._id.toString()
 
-const HookPagosModalInvoce = ({ lote }) => {
-
-  const [isOpen, setIsOpen] = useState(false)
-  const handelOpenModal = () => setIsOpen(!isOpen)
-
-  const [state, send] = useMachine(ClienteMachine)
+  const { refetch } = usePagosByProject({ idProject, clientID, loteID })
 
   const { register, handleSubmit, reset, watch } = useForm({
     defaultValues: {
@@ -28,30 +36,17 @@ const HookPagosModalInvoce = ({ lote }) => {
   const saldoInicialWatch = watch('tipoPago')
   const tipoPago = watch('tipoPago')
 
-  const [payload, setPayload] = useState({})
-  const sendConfirmData = () => {
-    send('ADD_PAGO_LOTE', { data: payload })
-    handelOpenModal()
-  }
-  
-  const { xstateMutate, xstateQuery } = useMayaState()
-  const toast = useToast()
   useEffect(() => {
-    if (state.matches('success')) {
-      toast({
-        title: 'Pago guardado',
-        description: 'El pago ha sido guardado correctamente',
-        status: 'success',
-        duration: 9000,
-        isClosable: true
-      })
-      xstateMutate('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
+    if (addPago.isSuccess) {
+      notifySuccess('Pago guardado', 'El pago ha sido guardado correctamente')
+      refetch()
+      reset()
+      setConfirmOpen(false)
+      onClose()
     }
-
-  }, [state.value])
+  }, [addPago.isSuccess])
 
   const onSubmit = (data) => {
-           
     const dataLote = {
       cliente: lote.cliente,
       proyecto: lote.proyecto,
@@ -65,93 +60,91 @@ const HookPagosModalInvoce = ({ lote }) => {
       extraSlug: data.extraSlug
     }
     setPayload(dataLote)
-    setIsOpen(true)
+    setConfirmOpen(true)
   }
 
-  useEffect(() => {
-    if (state.matches('success')) {
-      return reset()
+  const sendConfirmData = () => {
+    if (payload) {
+      addPago.mutate(payload)
     }
-  }, [state.value])
+  }
 
   return (
-  <>
-    <form onSubmit={handleSubmit(onSubmit)} className="hook__pagos">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="hook__pagos space-y-4">
+        <div className="space-y-2">
+          <Label>Número de Lote</Label>
+          <Input disabled {...register('lote')} />
+        </div>
 
-      <label>Numero de Lote</label>
-      <input disabled placeholder="lote" id="lote" {...register('lote')} />
+        <div className="space-y-2">
+          <Label>Fecha mes correspondiente</Label>
+          <Input type="date" {...register('mes', { required: true })} />
+        </div>
 
-      <label>Fecha mes correspondiente</label>
-      <input type="date" required id="mes" {...register('mes', { required: true })} />
+        <div className="space-y-2">
+          <Label>Tipo de Pago</Label>
+          <select className="w-full border rounded-md p-2" {...register('tipoPago')}>
+            <option value="mensualidad">Pago Mensual</option>
+            <option value="extra">Pago Extraordinario</option>
+            <option value="acreditado">Acreditado</option>
+            <option value="saldoinicial">Saldo inicial</option>
+          </select>
+        </div>
 
-      <label>Tipo de Pago</label>
-      <select defaultValue="normal" name="tipoPago" {...register('tipoPago')} >
-        <option value="mensualidad">Pago Mensual</option>
-        <option value="extra">Pago Extraordinario</option>
-        <option value="acreditado">Acreditado</option>
-        <option value="saldoinicial">Saldo inicial</option>
-      </select>
-      {
-        saldoInicialWatch === 'saldoinicial' && (
-          <label>
-            Folio Actual
-            <br />
-            <input type="number" placeholder="Ingresar Folio Inicial" id="folioIncial" {...register('folioIncial')} />
-          </label>
-        )
-      }
-      {
-        tipoPago === 'extra' && (
-          <>
-            <label>Descripción para el pago extraordinario</label>
-            <input type="text" name="extraSlug" {...register('extraSlug')} />
-          </>
-        )
-      }
-
-      <label>Referencia de Pago</label>
-      <input placeholder="Referencia de Pago" id="refPago" {...register('refPago')} />
-
-      <label>Mensualidad</label>
-      <input type="float" placeholder="cantidad" id="cantidad" {...register('mensualidad')} />
-
-      <div>
-        <button type="submit">Agregar Pago</button>
-      </div>
-      {/* modal de confirmacion  */}
-    </form>
-      <Modal
-          title="Confirmar pago"
-          visible={isOpen}
-          onCancel={handelOpenModal}
-          footer={[
-            <button className="btn__send-ok" key="send" onClick={() => sendConfirmData()}>
-              Enviar
-            </button>,
-            <button className="btn__outline" key="cancel" onClick={() => handelOpenModal()}>
-              Regresar
-            </button>
-          ]}
-          >
-          <div className="modal__confirm">
-          <h3>Confirma tus datos</h3>
-          <hr/>
-            <span>
-              <small>Mensualidad Correspondiente</small>
-              { payload.mes && <DateIntlFormat date={payload.mes} dateStyle='medium' />}
-            </span>
-            <span>
-              <small>Referencia de Pago</small>
-              {payload.refPago || <h4>¿Te falto la referencia?</h4> }
-            </span>
-            <span>
-              <small>Mensualidad</small>
-              <NumberFormat number={payload?.mensualidad} />
-            </span>
+        {saldoInicialWatch === 'saldoinicial' && (
+          <div className="space-y-2">
+            <Label>Folio Inicial</Label>
+            <Input type="number" placeholder="Ingresar Folio Inicial" {...register('folioIncial')} />
           </div>
-      </Modal>
+        )}
+
+        {tipoPago === 'extra' && (
+          <div className="space-y-2">
+            <Label>Descripción para el pago extraordinario</Label>
+            <Input type="text" {...register('extraSlug')} />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label>Referencia de Pago</Label>
+          <Input {...register('refPago')} />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Mensualidad</Label>
+          <Input type="number" step="0.01" {...register('mensualidad')} />
+        </div>
+
+        <Button type="submit" className="w-full">Agregar Pago</Button>
+      </form>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar pago</DialogTitle>
+          </DialogHeader>
+          <div className="modal__confirm space-y-4 py-4">
+            <h3>Confirma tus datos</h3>
+            <div>
+              <small>Mensualidad Correspondiente</small>
+              <p>{payload?.mes && <DateIntlFormat date={payload.mes} />}</p>
+            </div>
+            <div>
+              <small>Referencia de Pago</small>
+              <p>{payload?.refPago || '¿Te faltó la referencia?'}</p>
+            </div>
+            <div>
+              <small>Mensualidad</small>
+              <p><NumberFormat number={payload?.mensualidad} /></p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={sendConfirmData} disabled={addPago.isPending}>Enviar</Button>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Regresar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
-
-export default HookPagosModalInvoce

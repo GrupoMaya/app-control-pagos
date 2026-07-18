@@ -1,277 +1,146 @@
 import './sytles.scss'
-import { useContext, useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useLocation } from 'react-router-dom'
-import { useMachine } from '@xstate/react'
-import { ClienteMachine } from 'context/ClienteDataMachine'
+import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import API from 'context/controllers'
-
+import { useAssignLoteToNewUser } from '@/hooks/api/useLotes'
+import { useLotes } from '@/hooks/api/useLotes'
+import { useAppContext } from '@/context/AppContextProvider'
 import {
-  Drawer,
-  DrawerBody,
-  Box,
-  Stack,
-  Divider,
-  DrawerFooter,
-  Button,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useToast
-} from '@chakra-ui/react'
-import { AppContext } from 'context/AppContextProvider'
-import { useMayaState } from 'context/MayaMachine'
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter
+} from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { notifySuccess } from '@/utils/Notify'
 
-export default function DrawerAddUser () {
-
-  const location = useLocation()
-  const idProyecto = location.pathname.split('/')[2]
+export default function DrawerAddUser ({ visible, onCancel }) {
+  const { slug } = useParams()
+  const idProyecto = slug
   const uuid = uuidv4()
 
-  const [state, send] = useMachine(ClienteMachine)
+  const addUser = useAssignLoteToNewUser()
+  const { toggleDrawerNewUser } = useAppContext()
 
-  const { openDrawerNewUser, toggleDrawerNewUser } = useContext(AppContext)
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
-    defaultValues: {
-      email: uuid
-    }
+    defaultValues: { email: uuid }
   })
-
-  const { xstateMutate, xstateQuery } = useMayaState()
-  const onSubmitData = (data) => {
-    send('ASSIGN_LOTE_TO_NEW_USER', { idProyecto, payload: data })
-  }
 
   const loteSelected = watch('lote')
   const manzanaSelected = watch('manzana')
-  const [getUsers, setGetUsers] = useState([])
-  useEffect(() => {
-    API.getLotes({ _id: idProyecto })
-      .then(res => {
-        return setGetUsers(res)
-      })
-    
-  }, [loteSelected])
+
+  const { data: getUsers = [] } = useLotes(idProyecto)
 
   const isMatchLote = useMemo(() => {
-    if (Array.isArray(getUsers)) {
-      return getUsers.length > 0 &&
-      Boolean(Object
-        .values(getUsers)
-        .find(({ lote, manzana }) => lote === loteSelected && manzana === manzanaSelected))
-    }
+    if (!Array.isArray(getUsers) || !loteSelected || !manzanaSelected) return false
+    return getUsers.some(({ lote, manzana }) => lote === loteSelected && manzana === manzanaSelected)
   }, [loteSelected, manzanaSelected, getUsers])
 
-  const toast = useToast()
-  useEffect(() => {
-    if (state.matches('documentSave')) {
-      reset()
-      toast({
-        title: 'Cliente guardado',
-        description: 'El cliente ha sido guardado correctamente',
-        status: 'success',
-        duration: 9000,
-        isClosable: true
-      })
-      toggleDrawerNewUser()
-      xstateMutate('GET_DATA', { payload: xstateQuery.payload })
-    }
-  }, [state.value])
+  const onSubmit = async (data) => {
+    await addUser.mutateAsync({ projectId: idProyecto, payload: data })
+    notifySuccess('Cliente guardado', 'El cliente ha sido guardado correctamente')
+    toggleDrawerNewUser()
+    onCancel(false)
+    reset()
+  }
 
   useEffect(() => {
     return () => reset()
-  }, [])
+  }, [reset])
 
   return (
-      <Drawer
-        isOpen={openDrawerNewUser}
-        placement='right'
-        onClose={toggleDrawerNewUser}
-        // finalFocusRef={btnRef}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Crear nuevo cliente</DrawerHeader>
+    <Sheet open={visible} onOpenChange={onCancel}>
+      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Crear nuevo cliente</SheetTitle>
+        </SheetHeader>
 
-          <DrawerBody className='form_box'>
-            {
-              isMatchLote ? <span className='alert__lote'>{`Ya existe el lote: ${loteSelected} `}</span> : null
-            }
-            <form onSubmit={handleSubmit(onSubmitData)}>
-              <Box>
-              <label htmlFor="nombre">
-                Nombre Completo
-                <input
-                  type="text"
-                  id="nombre"
-                  placeholder='Ingrese el nombre completo'
-                  aria-invalid={errors.title ? 'true' : 'false'}
-                  { ...register('nombre', { required: true })}
-                  />
-                  {errors.nombre ? <p>Campo Obligatorio</p> : null }
-              </label>
-              <label htmlFor="address">
-                Dirección
-                <input
-                  type="text"
-                  id="text"
-                  placeholder='Dirección del cliente'
-                  aria-invalid={errors.address ? 'true' : 'false'}
-                  { ...register('address', { required: true })}
-                />
-                  {errors.address ? <p>Campo Obligatorio</p> : null }
-              </label>
-              <label htmlFor="phone">
-                Teléfono
-                <input
-                  type="text"
-                  id="phone"
-                  aria-invalid={errors.address ? 'true' : 'false'}
-                  { ...register('phone', { required: true })}
-                />
-                  {errors.phone ? <p>Campo Obligatorio</p> : null }
-              </label>
-              <label htmlFor="email">
-                ID Cliente
-                <input
-                  disabled
-                  type="text"
-                  id="email"
-                  placeholder='Ingrese el email'
-                  aria-invalid={errors.email ? 'true' : 'false'}
-                  { ...register('email', { required: true })}
-                />
-                  {errors.email ? <p>Campo Obligatorio</p> : null }
-              </label>
-              </Box>
-                <Stack direction="row" h="50px" p={4}>
-                  <Divider orientation="vertical" />
-                  <h6>Datos del lote del cliente</h6>
-                </Stack>
+        <div className="py-4">
+          {isMatchLote && (
+            <span className="alert__lote text-destructive text-sm">
+              {`Ya existe el lote: ${loteSelected}`}
+            </span>
+          )}
 
-              <Box>
-              <label htmlFor="inicioContrato">
-                Inicio de Contrato
-                <input
-                  id="inicioContrato"
-                  name='inicioContrato'
-                  type="date"
-                  { ...register('inicioContrato', { required: true })}
-                  />
-                </label>
-                
-                <label htmlFor="lote">
-                  Número de Lote
-                  <input
-                    id="lote"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.lote ? 'true' : 'false' }
-                    { ...register('lote', { required: true, min: 1 })}
-                    />
-                    {errors.lote ? <p>Ingrese un número valido</p> : null }
-                </label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nombre Completo</Label>
+              <Input {...register('nombre', { required: true })} />
+              {errors.nombre && <span className="text-xs text-destructive">Campo obligatorio</span>}
+            </div>
 
-                <label htmlFor="manzana">
-                  Número de Manzana
-                  <input
-                    id="manzana"
-                    type="text"
-                    min={0}
-                    aria-invalid={errors.manzana ? 'true' : 'false' }
-                    { ...register('manzana')}
-                    />
-                    {errors.manzana ? <p>Ingrese un número valido</p> : null }
-                </label>
+            <div className="space-y-2">
+              <Label>Dirección</Label>
+              <Input {...register('address', { required: true })} />
+            </div>
 
-                <label htmlFor="precioTotal">
-                  Precio Total
-                  <input
-                    id="precioTotal"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.precioTotal ? 'true' : 'false' }
-                    { ...register('precioTotal', { required: true })}
-                    />
-                    {errors.precioTotal ? <p>Campo Obligatorio</p> : null }
-                </label>
+            <div className="space-y-2">
+              <Label>Teléfono</Label>
+              <Input {...register('phone', { required: true })} />
+            </div>
 
-                <label htmlFor="enganche">
-                  Enganche
-                  <input
-                    id="enganche"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.enganche ? 'true' : 'false' }
-                    { ...register('enganche', { required: true })}
-                    />
-                    {errors.enganche ? <p>Campo Obligatorio</p> : null }
-                </label>
+            <div className="space-y-2">
+              <Label>ID Cliente</Label>
+              <Input disabled {...register('email', { required: true })} />
+            </div>
 
-                <label htmlFor="financiamiento">
-                  Monto financiamiento
-                  <input
-                    id="financiamiento"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.financiamiento ? 'true' : 'false' }
-                    { ...register('financiamiento', { required: true })}
-                    />
-                    {errors.financiamiento ? <p>Campo Obligatorio</p> : null }
-                </label>
+            <Separator />
+            <h6>Datos del lote del cliente</h6>
 
-                <label htmlFor="plazo">
-                  Plazo  &#40; Total de Meses &#41;
-                  <input
-                    id="plazo"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.plazo ? 'true' : 'false' }
-                    { ...register('plazo', { required: true, min: 1 })}
-                    />
-                    {errors.plazo ? <p>Ingrese un numero valido</p> : null }
-                </label>
+            <div className="space-y-2">
+              <Label>Inicio de Contrato</Label>
+              <Input type="date" {...register('inicioContrato', { required: true })} />
+            </div>
 
-                <label htmlFor="mensualidad">
-                  Mensualidad
-                  <input
-                    id="mensualidad"
-                    type="number"
-                    min={0}
-                    aria-invalid={errors.mensualidad ? 'true' : 'false' }
-                    { ...register('mensualidad', { required: true })}
-                    />
-                    {errors.mensualidad ? <p>Campo Obligatorio</p> : null }
-                </label>
-              </Box>
+            <div className="space-y-2">
+              <Label>Número de Lote</Label>
+              <Input type="number" min={0} {...register('lote', { required: true, min: 1 })} />
+            </div>
 
-          <DrawerFooter sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              onClick={toggleDrawerNewUser}
-              type="button"
-              colorScheme='teal'
-              sx={{ width: '100%', marginRight: '10px' }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              colorScheme='teal'
-              sx={{ width: '100%' }}
-              variant="outline"
-              type="submit"
-              disabled={!!isMatchLote}
-              isLoading={state.matches('assignLoteToNewUser')}
-            >
-              Guardar
-            </Button>
-          </DrawerFooter>
+            <div className="space-y-2">
+              <Label>Número de Manzana</Label>
+              <Input type="text" {...register('manzana')} />
+            </div>
 
-            </form>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+            <div className="space-y-2">
+              <Label>Precio Total</Label>
+              <Input type="number" min={0} {...register('precioTotal', { required: true })} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Enganche</Label>
+              <Input type="number" min={0} {...register('enganche', { required: true })} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Monto financiamiento</Label>
+              <Input type="number" min={0} {...register('financiamiento', { required: true })} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Plazo (Total de Meses)</Label>
+              <Input type="number" min={0} {...register('plazo', { required: true, min: 1 })} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Mensualidad</Label>
+              <Input type="number" min={0} {...register('mensualidad', { required: true })} />
+            </div>
+
+            <SheetFooter className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => onCancel(false)}>Cancelar</Button>
+              <Button type="submit" disabled={!!isMatchLote || addUser.isPending}>
+                {addUser.isPending ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </SheetFooter>
+          </form>
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }

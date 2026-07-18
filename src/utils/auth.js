@@ -1,9 +1,9 @@
-export const getUser = () => {
+export function getUser () {
   const user = window.localStorage.getItem('token_maya')
-  return JSON.parse(user)
+  return user ? JSON.parse(user) : null
 }
 
-export const isLogin = () => {
+export function isLogin () {
   const user = getUser()
   return Boolean(user?.email)
 }

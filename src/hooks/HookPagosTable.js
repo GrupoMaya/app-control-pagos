@@ -1,136 +1,112 @@
-
-import { useEffect, useContext, useState } from 'react'
-import { useMachine } from '@xstate/react'
-import { AppContext } from 'context/AppContextProvider'
-
-import BuscadorMachine from 'context/BuscadorMachine'
-import NumberFormat from 'utils/NumberFormat'
-import DateIntlFormat from 'utils/DateIntlFormat'
-
+import { useState, useCallback } from 'react'
+import { useAppContext } from '@/context/AppContextProvider'
+import { usePagoInfo, useGeneratePdf } from '@/hooks/api/usePagos'
+import { useUserState } from '@/context/userContext'
+import NumberFormat from '@/utils/NumberFormat'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import DetallePago from '@/Models/DetallePago'
+import UpdateModal from '@/Modales/UpdateModal/UpdateModal'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { saveAs } from 'file-saver'
-import { baseURL } from 'context/controllers'
 
-import DetallePago from 'Models/DetallePago'
-import UpdateModal from 'Modales/UpdateModal/UpdateModal'
-
-import { UserState } from 'context/userContext'
-
-const HookPagosTable = ({ pagoId, lote }) => {
-  
-  const [state, send] = useMachine(BuscadorMachine)
-  useEffect(() => {
-    send('GET_INFO_PAGO', { id: pagoId })
-  }, [pagoId])
+export default function HookPagosTable ({ pagoId, lote }) {
+  const { data: pagoList = [], isLoading } = usePagoInfo(pagoId)
+  const { setModalPago, setIdPago } = useAppContext()
+  const { user } = useUserState()
+  const isAdmin = user?.role === 'admin'
+  const generatePdf = useGeneratePdf()
 
   const [openDetalle, setOpenDetalle] = useState(false)
+  const [pdfPreview, setPdfPreview] = useState(null)
+
   const handledDetalle = () => setOpenDetalle(!openDetalle)
 
-  const { setModalPago, setIdPago } = useContext(AppContext)
-  const handlePagador = (idPago) => {
+  const handlePagador = (id) => {
     setModalPago(true)
-    setIdPago(idPago)
+    setIdPago(id)
   }
 
-  const pdfCreator = ({ data } = {}) => {
-    // preview pdf blob data
-    fetch(`${baseURL}/pdf?folio=${data._id}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-      body: JSON.stringify(data)
-    }).then(res => {
-      return res
-        .arrayBuffer()
-        .then(res => {
-          const blob = new Blob([res], { type: 'application/pdf' })
-          saveAs(blob, `${data.dataClient[0].nombre}_Folio_${data.folio}.pdf`)
-        })
-        .catch(error => console.log(error))
-    })
-  }
+  const downloadPdf = useCallback(async (data) => {
+    const blob = await generatePdf.mutateAsync({ folio: data._id, data })
+    saveAs(blob, `${data.dataClient[0].nombre}_Folio_${data.folio}.pdf`)
+  }, [generatePdf])
 
-  const { pago } = state.context
+  const previewURL = useCallback(async (data) => {
+    const blob = await generatePdf.mutateAsync({ folio: data._id, data })
+    const URLpreview = URL.createObjectURL(blob)
+    setPdfPreview(URLpreview)
+    handledDetalle()
+  }, [generatePdf])
 
-  const [pdfPreview, setPdfPreview] = useState(null)
-  const previewURL = async (data) => {
-    return new Promise((resolve, reject) => {
-      // pdf blob preview url react pdf viewer
-      fetch(`${baseURL}/pdf?folio=${data._id}`, {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(data)
-      })
-        .then((res) => {
-          res.arrayBuffer()
-            .then(res => {
-              const blob = new Blob([res], { type: 'application/pdf' })
-              const URLpreview = URL.createObjectURL(blob)
-              setPdfPreview(URLpreview)
-            })
-        })
-        .finally(() => handledDetalle())
-    })
-    
-  }
-
-  const { state: contextUser } = UserState()
-  const { user: userState } = contextUser.context
+  if (isLoading) return null
 
   return (
-    state.matches('success') && pago
-      .filter((pago) => {
-        return pago.dataLote[0]?.lote === lote
-      })
-      .map((pago) => {
-        
-        const idPago = pago._id
+    <>
+      {pagoList
+        .filter(pago => pago.dataLote[0]?.lote === lote)
+        .map(pago => {
+          let variant = 'default'
+          switch (pago.tipoPago) {
+            case 'extra':
+              variant = 'secondary'
+              break
+            case 'acreditado':
+              variant = 'outline'
+              break
+            case 'saldoinicial':
+              variant = 'destructive'
+              break
+            default:
+              variant = 'default'
+          }
 
-        let tipoPagoClass = 'tag__normal'
-        switch (pago.tipoPago) {
-          case 'extra':
-            tipoPagoClass = 'tag__extra'
-            break
-          case 'acreditado':
-            tipoPagoClass = 'tag__acreditado'
-            break
-          case 'saldoinicial':
-            tipoPagoClass = 'tag__saldoinicial'
-            break
-        }
+          return (
+            <TableRow key={pago._id} id="row_info_pago" className="tabla__data">
+              <TableCell>{pago.folio}</TableCell>
+              <TableCell><DateIntlFormat date={pago.mes} type="numeric" /></TableCell>
+              <TableCell className={pago.status ? 'text-green-600' : 'text-yellow-600'}>
+                {pago.status ? 'Pagado' : 'Pendiente'}
+              </TableCell>
+              <TableCell>{pago.refPago}</TableCell>
+              <TableCell>
+                <Badge variant={variant}>{pago.tipoPago}</Badge>
+              </TableCell>
+              <TableCell>
+                <NumberFormat number={pago.mensualidad?.$numberDecimal || pago.mensualidad} />
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-wrap gap-2">
+                  {isAdmin && (
+                    <Button size="sm" disabled={pago.status} onClick={() => handlePagador(pago._id)}>
+                      PAGAR
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" disabled={!pago.status} onClick={() => previewURL(pago)}>
+                    Vista previa
+                  </Button>
+                  <Button
+                    size="sm"
+                    style={{ backgroundColor: '#0C4C7D' }}
+                    disabled={!pago.status}
+                    onClick={() => downloadPdf(pago)}
+                  >
+                    Descargar
+                  </Button>
+                  <UpdateModal id={pago._id} document="Pago" />
+                </div>
+                <small className="text-muted-foreground">{pago._id}</small>
+              </TableCell>
+            </TableRow>
+          )
+        })}
 
-        return (
-          <>
-            <tr
-              key={pago._id}
-              id='row_info_pago'
-              className='tabla__data'
-              >
-                <td>{pago.folio}</td>
-                <td><DateIntlFormat date={pago.mes} type='numeric'/></td>
-                <td
-                  className={ pago.status ? 'tabla__data__pagado' : 'tabla__data__pendding' }
-                >
-                  { pago.status ? 'Pagado' : 'Pendiente' }
-                </td>
-                <td>{ pago.refPago }</td>
-                <td><span className={tipoPagoClass}>{ pago.tipoPago }</span></td>
-                <td>{ <NumberFormat number={ pago.mensualidad.$numberDecimal || pago.mensualidad } />}</td>
-                <td className='estatus__menu'>
-                    { userState?.role === 'admin' && <button disabled={pago.status} onClick={() => handlePagador(pago._id)}>PAGAR</button>}
-                    <button disabled={!pago.status} onClick={() => previewURL(pago)}>Vista previa</button>
-                    <button style={{ backgroundColor: '#0C4C7D' }} disabled={!pago.status} onClick={() => pdfCreator({ data: pago })}>Descargar</button>
-                   <UpdateModal id={idPago} document="Pago"/>
-                  </td>
-                <small style={{ color: '#bdc3c7' }}>{pago._id}</small>
-              </tr>
-              <DetallePago
-                visible={openDetalle}
-                onCancel={handledDetalle}
-                pdfURL={pdfPreview}
-              />
-          </>
-        )
-      })
+      <DetallePago
+        visible={openDetalle}
+        onCancel={handledDetalle}
+        pdfURL={pdfPreview}
+      />
+    </>
   )
 }
-
-export default HookPagosTable

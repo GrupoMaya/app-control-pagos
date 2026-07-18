@@ -1,74 +1,45 @@
-import React, { memo, useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-import ClienteDetailContext from 'context/ClienteDetailContext'
-import {
-  Container,
-  Box,
-  Heading,
-  Text,
-  Stack,
-  Divider,
-  Spinner
-} from '@chakra-ui/react'
-import TablaMorosos from 'Components/Morosos/TablaMorosos'
+import { useMemo } from 'react'
+import { useMorosos } from '@/hooks/api/useMorosos'
+import TablaMorosos from '@/Components/Morosos/TablaMorosos'
+import { Skeleton } from '@/components/ui/skeleton'
 
-const Morosos = (props) => {
-  
-  const [current, send] = useMachine(ClienteDetailContext)
+export default function Morosos () {
+  const { data: morosos, isLoading } = useMorosos()
 
-  useEffect(() => {
-    send('GET_MOROSOS')
-  }, [props])
-  
-  const { morosos } = current.context
+  const treinta = useMemo(() => morosos?.treinta_dias || {}, [morosos])
+  const sesenta = useMemo(() => morosos?.sesenta_dias || {}, [morosos])
 
   return (
-  <>
-    <Container maxW="container.lg">
-      <Box mt={3} mb={3} maxW="100%" minH="10rem">
-        <Heading mb={4}>
-        </Heading>
-        <Text fontSize="xl">
-          Lista de Clientes Morosos, 30 días y más de 60 dias, desde su último pago
-          <Divider orientation="vertical" />
-          <Text>Selecciona una fila para ir a la pantalla de pagos.</Text>
-        </Text>
-      </Box>
-      {/* 30 dias */}
-      {
-          current.matches('loadMorosos') && (
-            <>
-              <Spinner />
-              <Text sx={{ fontSize: '28px' }}>Cargando listas...</Text>
-            </>
-          )
-      }
-      {
-        current.matches('success') &&
-        <TablaMorosos
-          data={morosos}
-          current={current}
-          key_data='treinta_dias'
-          title='Clientes con mas de 30 días de su ultimo pago'
-        />
-      }
-      <Stack direction="row" h="100px" p={4}>
-        <Divider orientation="vertical" />
-        {/* <Text>Chakra UI</Text> */}
-      </Stack>
-      {/* 60 dias */}
-            {
-        current.matches('success') &&
-        <TablaMorosos
-          data={morosos}
-          current={current}
-          key_data='sesenta_dias'
-          title='Clientes con mas de 60 días de su ultimo pago'
-        />
-      }
-    </Container>
-  </>
+    <div className="container mx-auto py-6 space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">Clientes Morosos</h1>
+        <p className="text-muted-foreground">
+          Lista de clientes con 30 días y más de 60 días desde su último pago.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Selecciona una fila para ir a la pantalla de pagos.
+        </p>
+      </div>
+
+      {isLoading && (
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      )}
+
+      {!isLoading && (
+        <>
+          <TablaMorosos
+            data={treinta}
+            title="Clientes con más de 30 días de su último pago"
+          />
+          <TablaMorosos
+            data={sesenta}
+            title="Clientes con más de 60 días de su último pago"
+          />
+        </>
+      )}
+    </div>
   )
 }
-
-export default memo(Morosos)

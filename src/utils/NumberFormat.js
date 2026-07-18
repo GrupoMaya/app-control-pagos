@@ -1,11 +1,11 @@
+export default function NumberFormat ({ number }) {
+  if (number == null) return null
+  const value = typeof number === 'object' && number?.$numberDecimal
+    ? Number(number.$numberDecimal)
+    : Number(number)
 
-const NumberFormat = ({ number } = {}) => {
-  const precioStyled = new Intl.NumberFormat('es-MX', {
+  return new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'MXN'
-  }).format(number)
-
-  return precioStyled
+  }).format(value)
 }
-
-export default NumberFormat

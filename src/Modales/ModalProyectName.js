@@ -1,80 +1,59 @@
-import React, { useEffect, useState } from 'react'
-import { Modal } from 'antd'
-import { useToast } from '@chakra-ui/react'
-const API = process.env.REACT_APP_URL
+import { useState } from 'react'
+import { useUpdateProject } from '@/hooks/api/useProjects'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { notifyInfo, notifySuccess } from '@/utils/Notify'
 
-const ModalProyectName = ({ open, handleCloseModal, proyectName, id }) => {
-
-  const toast = useToast()
+export default function ModalProyectName ({ open, handleCloseModal, proyectName, id }) {
+  const updateProject = useUpdateProject()
   const [currentName, setCurrentName] = useState(proyectName)
-  const [loading, setLoading] = useState(false)
-
-  let timer = null
 
   const handledFormEdit = async (e) => {
     e.preventDefault()
-    
+
     if (currentName === proyectName) {
-      toast({
-        title: 'No hay cambios',
-        description: 'No se ha detectado ningún cambio',
-        status: 'info',
-        duration: 9000
-      })
-
-      timer = setTimeout(() => {
-        setLoading(false)
-      }, [1000 * 3])
-
+      notifyInfo('No hay cambios', 'No se ha detectado ningún cambio')
       return
     }
 
-    setLoading(true)
-    const response = await fetch(`${API}/update/proyecto/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ title: currentName })
-    })
-      .then(res => res.json())
-
-    if (response.message.isActive === true) {
-      window.location.reload()
+    try {
+      const res = await updateProject.mutateAsync({ id, payload: { title: currentName } })
+      if (res.message?.isActive === true) {
+        window.location.reload()
+      } else {
+        notifySuccess('Nombre actualizado', 'El nombre del proyecto se actualizó correctamente')
+        handleCloseModal()
+      }
+    } catch {
+      notifyInfo('Error', 'No se pudo actualizar el nombre')
     }
   }
 
-  useEffect(() => {
-    return () => {
-      setLoading(false)
-      clearTimeout(timer)
-    }
-  }, [])
-
   return (
-    <Modal
-      centered
-      visible={open}
-      onCancel={handleCloseModal}
-      footer={null}
-      width={'fit-content'}
-    >
-    <form onSubmit={handledFormEdit} className="form__types">
-      <p>Editar Nombre del proyecto</p>
-      <input
-        id="proyectName"
-        placeholder="Nombre del proyecto"
-        type="text"
-        defaultValue={currentName}
-        onChange={(e) => setCurrentName(e.target.value)}
-      />
-      <button disabled={!!loading}>
-        Guardar
-      </button>
-    </form>
-
-    </Modal>
+    <Dialog open={open} onOpenChange={handleCloseModal}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Editar Nombre del proyecto</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handledFormEdit} className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Label htmlFor="proyectName">Nombre del proyecto</Label>
+            <Input
+              id="proyectName"
+              value={currentName}
+              onChange={(e) => setCurrentName(e.target.value)}
+            />
+          </div>
+          <Button type="submit" disabled={updateProject.isPending}>Guardar</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalProyectName

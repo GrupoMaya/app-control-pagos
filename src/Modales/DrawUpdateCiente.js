@@ -1,74 +1,63 @@
 import { useState } from 'react'
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Input,
-  Button
-} from '@chakra-ui/react'
 import { useForm, Controller } from 'react-hook-form'
-import API from 'context/controllers'
 import { useParams } from 'react-router-dom'
+import { usePatchClient } from '@/hooks/api/useClients'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-const DrawUpdateCiente = ({ isOpen, setIsOpen, data, send }) => {
+export default function DrawUpdateCiente ({ dataClient, isOpen, setIsOpen }) {
+  const { id } = useParams()
+  const patchClient = usePatchClient()
+  const [loading, setLoading] = useState(false)
 
-  const onClose = () => setIsOpen(false)
   const { handleSubmit, control, watch } = useForm({
-    defaultValues: {
-      nombre: data.nombre
-    }
+    defaultValues: { nombre: dataClient?.nombre || '' }
   })
 
   const nombreWatch = watch('nombre')
 
-  const match = useParams()
-  const hanldedPatch = () => {
-    setIsloading(false)
-    onClose()
-    send('LOAD_CLIENTE', { id: match.id })
+  const onSubmit = async (body) => {
+    setLoading(true)
+    await patchClient.mutateAsync({ id: dataClient?._id || id, body })
+    setLoading(false)
+    setIsOpen(false)
   }
 
-  const [isLoading, setIsloading] = useState(false)
-  const onSubmit = (body) => {
-    setIsloading(true)
-    API.patchCliente({ id: data._id, body })
-      .finally(() => hanldedPatch())
-
-  }
-  
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Cambiar nombre</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-        <form onSubmit={handleSubmit(onSubmit)} className='d-flex'>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cambiar nombre</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2 mt-4">
+          <div className="flex-1">
+            <Label htmlFor="nombre">Nombre</Label>
             <Controller
               control={control}
-              name='nombre'
-              render={({ field }) => {
-                return <Input {...field}></Input>
-              }}
+              name="nombre"
+              render={({ field }) => <Input {...field} />}
             />
-            <Button
-              type='submit'
-              disabled={Boolean(data.nombre === nombreWatch)}
-              isLoading={isLoading}
-              marginLeft={2}
-              colorScheme='teal'
-              variant='solid'
-            >
+          </div>
+          <Button
+            type="submit"
+            disabled={dataClient?.nombre === nombreWatch || loading}
+            loading={loading}
+          >
             Guardar
           </Button>
-          </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">Cancelar</Button>
+          </DialogClose>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default DrawUpdateCiente

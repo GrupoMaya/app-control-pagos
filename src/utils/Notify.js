@@ -1,17 +1,13 @@
-const Notify = ({ errorType, msg } = {}) => {
+import { toast } from 'sonner'
 
-  let classError
-  if (errorType === 'error') {
-    classError = 'ntf__error'
-  } else if (errorType === 'success') {
-    classError = 'ntf__success'
-  }
-
-  return (
-    <div className='notify'>
-      <span className={classError}>{ msg }</span>
-    </div>
-  )
+export function notifySuccess (message, description) {
+  toast.success(message, { description })
 }
 
-export default Notify
+export function notifyError (message, description) {
+  toast.error(message, { description })
+}
+
+export function notifyInfo (message, description) {
+  toast.info(message, { description })
+}

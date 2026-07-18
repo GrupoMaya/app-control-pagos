@@ -1,59 +1,151 @@
-import { useState, useEffect } from 'react'
-import { useMachine } from '@xstate/react'
-
-import BuscadorMachine from 'context/BuscadorMachine'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { useSearchClients, useClientDetail } from '@/hooks/api/useClients'
+import { usePatchLote } from '@/hooks/api/useLotes'
 
-import { Modal } from 'antd'
+export default function ModalRemoveClient ({ visible, onCancel }) {
+  const { register, handleSubmit, reset } = useForm()
+  const [selectedClient, setSelectedClient] = useState(null)
+  const searchMutation = useSearchClients()
+  const patchLote = usePatchLote()
+  const { data: detail } = useClientDetail(selectedClient?._id)
 
-const ModalRemoveClient = ({ visible, onCancel }) => {
-
-  const [state, send] = useMachine(BuscadorMachine)
-  const { handleSubmit, register } = useForm()
-  
-  const onSubmitForm = (data) => {
-    send('USER_SEARCH', { keyword: data.keyword })
+  const submitSearch = (data) => {
+    searchMutation.mutate(data.keyword)
+    setSelectedClient(null)
   }
 
-  const [openResults, setOpenResult] = useState(false)
-  const toogleResult = () => setOpenResult(!openResults)
-  console.log(toogleResult)
+  const handleRemove = (lote) => {
+    patchLote.mutate(
+      { id: lote._id, payload: { isActive: false, proyecto: lote.proyecto } },
+      {
+        onSuccess: () => {
+          toast.success('Cliente removido del lote')
+        },
+        onError: () => {
+          toast.error('No se pudo remover el cliente del lote')
+        }
+      }
+    )
+  }
 
   useEffect(() => {
-    if (state.matches('success') && openResults === false) {
-      return setOpenResult(true)
+    if (!visible) {
+      reset()
+      setSelectedClient(null)
+      searchMutation.reset()
     }
-  }, [state])
+  }, [visible, reset, searchMutation])
+
+  const results = searchMutation.isSuccess
+    ? Object.values(searchMutation.data)
+    : []
 
   return (
-  <>
-    <Modal
-      visible={visible}
-      onCancel={onCancel}
-      footer={null}
-      title="¡Remover Ciente de lote!"
-      style={{ background: 'red' }}
-      >
-    { state.matches('error') && <p className="error__message">No hay usuario que coincidan con tu búsqueda</p>}
-    <form
-      className="modal__remove__user"
-      onSubmit={handleSubmit(onSubmitForm)}>
-      <input
-        id="input__search__proyecto"
-        placeholder="Buscar por nombre"
-        { ...register('keyword') }
-      />
-      <button
-        htmlFor="input__search__proyecto">
-          Buscar
-      </button>
-    </form>
-      {
-        state.matches('success') && JSON.stringify(state.context)
-      }
-    </Modal>
-  </>
+    <Dialog open={visible} onOpenChange={onCancel}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Remover cliente de lote</DialogTitle>
+        </DialogHeader>
+
+        {searchMutation.isError && (
+          <p className="text-sm text-red-500">
+            No hay usuarios que coincidan con tu búsqueda
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit(submitSearch)} className="flex gap-2">
+          <Input
+            placeholder="Buscar por nombre"
+            {...register('keyword')}
+          />
+          <Button type="submit">Buscar</Button>
+        </form>
+
+        {results.length > 0 && (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {results.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell>{user.nombre}</TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      onClick={() => setSelectedClient(user)}
+                    >
+                      Seleccionar
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+
+        {selectedClient && detail && (
+          <div className="mt-4">
+            <h4 className="font-medium mb-2">
+              Lotes activos de {selectedClient.nombre}
+            </h4>
+            {detail.lotes?.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Lote</TableHead>
+                    <TableHead>Proyecto</TableHead>
+                    <TableHead>Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detail.lotes.map((lote) => (
+                    <TableRow key={lote._id}>
+                      <TableCell>{lote.lote}</TableCell>
+                      <TableCell>{lote.proyecto?.title || lote.proyecto}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          disabled={patchLote.isPending}
+                          onClick={() => handleRemove(lote)}
+                        >
+                          Remover
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Este cliente no tiene lotes activos.
+              </p>
+            )}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalRemoveClient

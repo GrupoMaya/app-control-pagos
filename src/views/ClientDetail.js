@@ -1,163 +1,123 @@
-import React, { useEffect, useState } from 'react'
-import { useMachine } from '@xstate/react'
-import ClienteDetailContext from 'context/ClienteDetailContext'
-import { useHistory } from 'react-router-dom'
+import { useState } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useClientDetail } from '@/hooks/api/useClients'
+import { useUserState } from '@/context/userContext'
+import NumberFormat from '@/utils/NumberFormat'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import ValuesByDocument from '@/hooks/ValuesByDocument'
+import DrawerAddLote from '@/Components/DrawerAddLote'
+import DrawUpdateCiente from '@/Modales/DrawUpdateCiente'
 import {
   Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  Container,
-  Box,
-  Heading,
-  Text,
-  Stack,
-  Divider,
-  Spinner,
-  Button
-} from '@chakra-ui/react'
-import NumberFormat from 'utils/NumberFormat'
-import DateIntlForma from 'utils/DateIntlFormat'
-import ValuesByDocument from 'hooks/ValuesByDocument'
-import edit from 'assets/icons/edit.svg'
-import DrawerAddLote from 'Components/DrawerAddLote'
-import DrawUpdateCiente from 'Modales/DrawUpdateCiente'
-import { UserState } from 'context/userContext'
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Pencil } from 'lucide-react'
 
-const ClientDetail = (props) => {
+export default function ClientDetail () {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useUserState()
+  const isAdmin = user?.role === 'admin'
 
-  // modal de datos del cliente
+  const { data: cliente, isLoading } = useClientDetail(id)
+
   const [isOpen, setIsOpen] = useState(false)
   const [newLote, setNewLote] = useState(false)
-  
-  const [current, send] = useMachine(ClienteDetailContext)
-  useEffect(() => {
-    send('LOAD_CLIENTE', { id: props.match.params.id })
-  }, [props])
-  
-  const { cliente } = current.context
 
-  const history = useHistory()
-  const handledDetail = (lote, idProject) => {
-    history.push({
-      pathname: `/detalle/lote/${lote.lote}/cliente/${cliente.nombre}/projecto/${idProject}`,
+  const handleDetail = (lote, idProject) => {
+    navigate(`/detalle/lote/${lote.lote}/cliente/${cliente.nombre}/projecto/${idProject}`, {
       state: [lote]
     })
   }
 
-  const { state: contextUser } = UserState()
-  const { user: userState } = contextUser.context
-
   return (
-  <>
-    <Container maxW="container.lg">
-      <Box mt={5} mb={3} maxW="100%" minH="10rem">
-        <Heading mb={4}>
-          { current.matches('success') && cliente.nombre }
-          { current.matches('loadCliente') && <Spinner /> }
-          {
-            userState?.role === 'admin' && (
-              <Button
-                colorScheme="teal"
-                variant="link"
-                style={{ marginLeft: '30px', width: '40px' }}
-                onClick={() => setIsOpen(true)}
-                >
-                <img src={edit} style={{ width: '30px' }} />
-              </Button>
-            )
-          }
-        </Heading>
-        <Text fontSize="xl">
-          Selecciona alguno de los lotes para ver sus detalles
-        </Text>
-        <small>
-          { current.matches('success') && `ID interno: ${cliente.email}` }
-        </small>
-      </Box>
-      <Table variant="striped" colorScheme="teal" className='bg_esmeralda'>
-        <TableCaption></TableCaption>
-        <Thead>
-          <Tr>
-            <Th>Proyecto</Th>
-            <Th>Lote</Th>
-            <Th>Manzana</Th>
-            <Th>Inicio de Contrato</Th>
-            <Th>Mensualidad</Th>
-            <Th>Plazo</Th>
-            <Th>Precio Total</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {
-            current.matches('success') && Object
-              .values(cliente.lotes)
-              .map((lote) => {
-                const [idProject] = lote?.proyecto
-                const proyectName = <ValuesByDocument id={ idProject } documentType="Proyecto" cbValue='title' />
+    <div className="container mx-auto p-6">
+      {isLoading && <Skeleton className="h-64 w-full" />}
+
+      {!isLoading && cliente && (
+        <>
+          <div className="mb-6">
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl font-bold">{cliente.nombre}</h1>
+              {isAdmin && (
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)}>
+                  <Pencil className="w-5 h-5" />
+                </Button>
+              )}
+            </div>
+            <p className="text-muted-foreground">Selecciona alguno de los lotes para ver sus detalles</p>
+            <small>ID interno: {cliente.email}</small>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Proyecto</TableHead>
+                <TableHead>Lote</TableHead>
+                <TableHead>Manzana</TableHead>
+                <TableHead>Inicio de Contrato</TableHead>
+                <TableHead>Mensualidad</TableHead>
+                <TableHead>Plazo</TableHead>
+                <TableHead>Precio Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {cliente.lotes?.map(lote => {
+                const [idProject] = lote?.proyecto || []
                 return (
-                  <Tr style={{ pointer: 'cursor' }} key={lote?._id} onClick={() => handledDetail(lote, idProject)}>
-                    <Td>{ proyectName }</Td>
-                    <Td>{ lote?.lote }</Td>
-                    <Td>{ lote?.manzana }</Td>
-                    <Td>{ lote?.inicioContrato && <DateIntlForma date={lote?.inicioContrato } />}</Td>
-                    <Td><NumberFormat number={ lote?.mensualidad} /></Td>
-                    <Td>{ lote?.plazo}</Td>
-                    <Td><NumberFormat number={ lote?.precioTotal} /></Td>
-                  </Tr>
+                  <TableRow
+                    key={lote?._id}
+                    className="cursor-pointer"
+                    onClick={() => handleDetail(lote, idProject)}
+                  >
+                    <TableCell>
+                      <ValuesByDocument id={idProject} documentType="Proyecto" cbValue="title" />
+                    </TableCell>
+                    <TableCell>{lote?.lote}</TableCell>
+                    <TableCell>{lote?.manzana}</TableCell>
+                    <TableCell>
+                      {lote?.inicioContrato && <DateIntlFormat date={lote?.inicioContrato} />}
+                    </TableCell>
+                    <TableCell><NumberFormat number={lote?.mensualidad} /></TableCell>
+                    <TableCell>{lote?.plazo}</TableCell>
+                    <TableCell><NumberFormat number={lote?.precioTotal} /></TableCell>
+                  </TableRow>
                 )
-              })
-          }
-          {
-             current.matches('loadCliente') && <Spinner />
-          }
-          {
-            current.matches('success') &&
-              Object.values(cliente.lotes).length === 0 &&
-              <Text fontSize="xl">No hay lotes registrados</Text>
-          }
-        </Tbody>
-      </Table>
-      
-      <Stack direction="row" h="100px" p={4}>
-        <Divider orientation="vertical" />
-        {
-          userState?.role === 'admin' && (
-            <Button
-              onClick={() => setNewLote(true)}
-              variantColor="teal"
-              variant="outline"
-              sx={{ width: '180px' }}>
-              Añadir Lote
-            </Button>
-          )
-        }
-      </Stack>
-    </Container>
-    {
-      current.matches('success') &&
-      <DrawerAddLote
-        dataClient={cliente}
-        isOpen={newLote}
-        setIsOpen={setNewLote}
-        data={cliente}
-      />
-    }
-    {
-      current.matches('success') &&
-      <DrawUpdateCiente
-        send={send}
-        dataClient={cliente}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        data={cliente}
-      />
-    }
-  </>
+              })}
+              {cliente.lotes?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center">No hay lotes registrados</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+
+          <div className="mt-6">
+            {isAdmin && (
+              <Button onClick={() => setNewLote(true)}>Añadir Lote</Button>
+            )}
+          </div>
+
+          <DrawerAddLote
+            dataClient={cliente}
+            isOpen={newLote}
+            setIsOpen={setNewLote}
+          />
+
+          <DrawUpdateCiente
+            send={() => {}}
+            dataClient={cliente}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
+        </>
+      )}
+    </div>
   )
 }
-
-export default ClientDetail
