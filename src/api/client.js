@@ -1,6 +1,11 @@
 const API_URL = import.meta.env.VITE_API_URL
 
-export const baseURL = API_URL
+if (!API_URL) {
+  // eslint-disable-next-line no-console
+  console.error('VITE_API_URL no está definida. Configura la variable de entorno en Netlify o en un archivo .env')
+}
+
+export const baseURL = API_URL || ''
 
 function getToken () {
   return localStorage.getItem('tokenUserSite')
