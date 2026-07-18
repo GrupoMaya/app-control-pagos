@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UserContextProvider, useUserState } from '@/context/userContext'
 import { AppContextProvider } from '@/context/AppContextProvider'
@@ -14,12 +14,15 @@ import ClientDetail from '@/views/ClientDetail'
 import Morosos from '@/views/Morosos'
 
 function RootLayout () {
+  const { pathname } = useLocation()
+  const isLogin = pathname === '/login'
+
   return (
     <QueryProvider>
       <UserContextProvider>
         <AppContextProvider>
           <div className="App">
-            <MenuMaya />
+            {!isLogin && <MenuMaya />}
             <div className="App-container">
               <Outlet />
             </div>
