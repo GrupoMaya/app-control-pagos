@@ -1,127 +1,99 @@
-import { useContext, useEffect, useState } from 'react'
-import { AppContext } from 'context/AppContextProvider'
-import { useMachine } from '@xstate/react'
-import { ClienteMachine } from 'context/ClienteDataMachine'
-import { Modal } from 'antd'
-import { useToast } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { useAppContext } from '@/context/AppContextProvider'
+import { usePostPago } from '@/hooks/api/usePagos'
+import SelectorBanco from '@/utils/SelectorBanco'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { notifySuccess } from '@/utils/Notify'
 
-import { useForm } from 'react-hook-form'
-import SelectorBanco from 'utils/SelectorBanco'
-import { useMayaState } from 'context/MayaMachine'
+export default function ModalEstatus ({ openModal, handledStatusPago }) {
+  const { idPago } = useAppContext()
+  const postPago = usePostPago()
+  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
 
-const ModalEstatus = () => {
-  
-  const [state, send] = useMachine(ClienteMachine)
-  const { idPago, modalPago, setModalPago } = useContext(AppContext)
-  
-  const { register, formState: { errors }, handleSubmit, reset } = useForm()
-  const { xstateMutate, xstateQuery } = useMayaState()
-  const toast = useToast()
+  const { register, control, formState: { errors }, handleSubmit, reset } = useForm()
 
-  const resetModal = () => {
+  const closeModal = () => {
     reset()
-    setModalPago(false)
+    handledStatusPago(false)
   }
 
   useEffect(() => {
-    if (state.matches('success')) {
-      toast({
-        title: 'Pago actualizado',
-        description: 'El pago se ha actualizado correctamente',
-        status: 'success',
-        duration: 9000,
-        isClosable: true
-      })
-      
-      setTimeout(() => {
-        xstateMutate('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
-        resetModal()
-      }, 1000)
+    if (postPago.isSuccess) {
+      notifySuccess('Pago actualizado', 'El pago se ha actualizado correctamente')
+      setTimeout(() => closeModal(), 1000)
     }
-  }, [state.value])
+  }, [postPago.isSuccess])
 
   const pagar = (data) => {
-    const payload = {
-      ...data, status: true
-    }
-    send('POST__PAGAR', { idPago, payload })
+    postPago.mutate({ id: idPago, payload: { ...data, status: true } })
   }
 
-  const [openMensajeRecibo, setOpenMensajeRecibo] = useState(false)
-  const handledOpenMensajeRecibo = () => setOpenMensajeRecibo(!openMensajeRecibo)
-  
   return (
-    <Modal
-    visible={modalPago}
-    footer={null}
-    onCancel={resetModal}
-    >
-      <form onSubmit={handleSubmit(pagar)} className="form__liquid__pago">
-      <label>Referencia Bancaria
-      <input
-        required={errors.refBanco && true }
-        id="refBanco"
-        type="text"
-        placeholder="Referencia bancaria"
-        {...register('refBanco', { required: true })}
-        />
-      <small>Obligatorio</small>
-      </label>
+    <Dialog open={openModal} onOpenChange={handledStatusPago}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Liquidar Pago</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(pagar)} className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Label>Referencia Bancaria</Label>
+            <Input {...register('refBanco', { required: true })} />
+            {errors.refBanco && <span className="text-xs text-destructive">Obligatorio</span>}
+          </div>
 
-      <label>Fecha de Deposito
-      <input
-        required={errors.fechaPago && true }
-        id="fechaPago"
-        type="date"
-        placeholder="Fecha de depostio"
-        {...register('fechaPago', { required: true })}
-        />
-      <small>Obligatorio</small>
-      </label>
+          <div className="space-y-2">
+            <Label>Fecha de Depósito</Label>
+            <Input type="date" {...register('fechaPago', { required: true })} />
+            {errors.fechaPago && <span className="text-xs text-destructive">Obligatorio</span>}
+          </div>
 
-      <label>
-        Cuenta Bancaria
-      <input
-        required={errors.ctaBancaria && true }
-        type="text"
-        placeholder="CTA o CABLE" {...register('ctaBancaria', { required: true })}
-        />
-        <small>Obligatorio</small>
-      </label>
+          <div className="space-y-2">
+            <Label>Cuenta Bancaria</Label>
+            <Input {...register('ctaBancaria', { required: true })} />
+            {errors.ctaBancaria && <span className="text-xs text-destructive">Obligatorio</span>}
+          </div>
 
-      <label>
-        Banco
-      <SelectorBanco register={register} />
-        <small>Obligatorio</small>
-      </label>
+          <div className="space-y-2">
+            <Label>Banco</Label>
+            <Controller
+              control={control}
+              name="banco"
+              rules={{ required: true }}
+              render={({ field }) => <SelectorBanco value={field.value} onChange={field.onChange} />}
+            />
+            {errors.banco && <span className="text-xs text-destructive">Obligatorio</span>}
+          </div>
 
-      <label>
-        <input type="text" placeholder="Observaciones del documento" {...register('textoObservaciones')} />
-        <small>Obligatorio</small>
-      </label>
-      <p className='texto-button' onClick={() => handledOpenMensajeRecibo()}>
-        Modificar mensaje de recibo
-      </p>
-      {
-        openMensajeRecibo && (
-          <>
-          <label>
-            <input
-                type="mensajeRecibo"
-                placeholder="Modificar mensaje del recibo"
-                {...register('mensajeRecibo')}
-              />
-              <small className='mensaje-recibo'>Este campo modificara el mensaje completo, predeterminado del recibo</small>
-          </label>
-          </>
-        )
-      }
-      <button type="submit">
-        Liquidar Pago
-      </button>
-      </form>
-    </Modal>
+          <div className="space-y-2">
+            <Label>Observaciones</Label>
+            <Input {...register('textoObservaciones')} />
+          </div>
+
+          <p className="texto-button cursor-pointer" onClick={() => setOpenMensajeRecibo(!openMensajeRecibo)}>
+            Modificar mensaje de recibo
+          </p>
+
+          {openMensajeRecibo && (
+            <div className="space-y-2">
+              <Input type="text" {...register('mensajeRecibo')} placeholder="Modificar mensaje del recibo" />
+              <small className="mensaje-recibo">Este campo modificará el mensaje completo predeterminado del recibo</small>
+            </div>
+          )}
+
+          <Button type="submit" className="w-full" disabled={postPago.isPending}>
+            {postPago.isPending ? 'Guardando...' : 'Liquidar Pago'}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalEstatus

@@ -1,21 +1,20 @@
-import { Modal } from 'antd'
-import HookPagosModalInvoce from 'hooks/HookPagosModalInvoce'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import HookPagosModalInvoce from '@/hooks/HookPagosModalInvoce'
 
-const ModalPagosClient = ({ openModalPago, handledOpen, lotes }) => {
-  
-  const closeModal = () => {
-    handledOpen()
-  }
-
+export default function ModalPagosClient ({ openModalPago, handledOpen, lotes }) {
   return (
-    <Modal
-    visible={openModalPago}
-    onCancel={closeModal}
-    footer={null}
-    >
-    <HookPagosModalInvoce lote={lotes[0]}/>
-    </Modal>
+    <Dialog open={openModalPago} onOpenChange={handledOpen}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Agregar Pago</DialogTitle>
+        </DialogHeader>
+        <HookPagosModalInvoce lote={lotes[0]} onClose={() => handledOpen(false)} />
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalPagosClient

@@ -1,31 +1,11 @@
-import { useEffect, memo } from 'react'
-import ClienteDetailContext from 'context/ClienteDetailContext'
-import { useMachine } from '@xstate/react'
-import { Spinner } from '@chakra-ui/react'
+import { useDocumentValues } from '@/hooks/api/useClients'
+import { Skeleton } from '@/components/ui/skeleton'
 
-const ValuesByDocument = ({ id, documentType, cbValue }) => {
+export default function ValuesByDocument ({ id, documentType, cbValue }) {
+  const { data: documentValues, isLoading } = useDocumentValues(documentType, id)
 
-  const [current, send] = useMachine(ClienteDetailContext)
+  if (isLoading) return <Skeleton className="h-4 w-24 inline-block" />
+  if (!documentValues) return null
 
-  /**
-   * @constructor
-   * @params { string } id - Object id del documento
-   * @params { string } documentType - Proyecto, Lotes, Clientes, Pagos
-   * @params { string } cbValue - Valor del documentos (mongo) que queremos ver
-   */
-
-  useEffect(() => {
-    send('GET_DOCUMENT_VALUES', { id, documentType, cbValue })
-  }, [id])
-
-  const { documentValues } = current.context
-
-  const returnValue = current.matches('success') && Object
-    .entries(documentValues)
-    .map(([key]) => key === cbValue && documentValues[key])
-
-  return current.matches('success') ? returnValue : <Spinner />
-
+  return documentValues[cbValue]
 }
-
-export default memo(ValuesByDocument)

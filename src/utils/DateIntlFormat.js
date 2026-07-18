@@ -1,45 +1,21 @@
-const DateIntlForma = ({ date, locale = 'es-MX', type = 'all' }) => {
+export default function DateIntlFormat ({ date, locale = 'es-MX', type = 'all' }) {
+  if (!date) return null
 
-  /**
- * Hook de formato de fecha
- * @constructor
- * @param {string} type - numeric, month, day, hour,
- * @param {string} date - fecha en formato string
- */
-
-  const dataInteOptions = () => {
+  const options = (() => {
     switch (type) {
       case 'numeric':
-        return {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric'
-        }
+        return { year: 'numeric', month: 'numeric', day: 'numeric' }
       case 'month':
-        return {
-          month: 'long'
-        } // 'numeric',
+        return { month: 'long' }
       case 'day':
-        return {
-          day: 'numeric'
-        }
+        return { day: 'numeric' }
       case 'hour':
-        return {
-          hour: 'numeric',
-          minute: 'numeric'
-        }
+        return { hour: 'numeric', minute: 'numeric' }
       default:
-        return {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }
+        return { year: 'numeric', month: 'long', day: 'numeric' }
     }
-  }
+  })()
 
   const dateIntl = new Date(date)
-  return new Intl.DateTimeFormat(locale, { ...dataInteOptions(), timeZone: 'UTC' }).format(dateIntl)
-
+  return new Intl.DateTimeFormat(locale, { ...options, timeZone: 'UTC' }).format(dateIntl)
 }
-
-export default DateIntlForma

@@ -1,47 +1,55 @@
-import { Modal } from 'antd'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 
-const ModalUserSearch = ({ visible, onCancel, dataResult }) => {
-  const { busqueda } = dataResult?.context
-  const history = useHistory()
+export default function ModalUserSearch ({ visible, onCancel, dataResult }) {
+  const navigate = useNavigate()
+  const busqueda = dataResult?.context?.busqueda || []
+
   const goToUser = (_id) => {
-    history.push(`/detalle/cliente/${_id}`)
+    navigate(`/detalle/cliente/${_id}`)
     onCancel()
   }
 
   return (
-    <Modal
-      visible={visible}
-      onCancel={onCancel}
-      title="Resultados de la busqueda"
-      footer={null}
-    >
-      
-      <table className="modal__search__users">
-        <thead>
-          <th>Nombre Completo</th>
-          <th>Acciones</th>
-        </thead>
-        <tbody>
-          {
-            busqueda.map(user => {
-              return (
-              <tr key={user._id}>
-                <td>
-                  { user.nombre }
-                </td>
-                <td>
-                  <button
-                    onClick={() => goToUser(user._id)}>Ir</button>
-                </td>
-              </tr>
-              )
-            })
-          }
-      </tbody>
-      </table>
-    </Modal>
+    <Dialog open={visible} onOpenChange={onCancel}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Resultados de la búsqueda</DialogTitle>
+        </DialogHeader>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nombre Completo</TableHead>
+              <TableHead>Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {busqueda.map(user => (
+              <TableRow key={user._id}>
+                <TableCell>{user.nombre}</TableCell>
+                <TableCell>
+                  <Button size="sm" onClick={() => goToUser(user._id)}>Ir</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ModalUserSearch

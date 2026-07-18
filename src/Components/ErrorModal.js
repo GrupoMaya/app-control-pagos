@@ -1,19 +1,23 @@
-import { Modal } from 'antd'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
-const ErrorModal = ({ message, open, handleCloseModal }) => {
-
+export default function ErrorModal ({ message, open, handleCloseModal }) {
   return (
-    <Modal
-      centered
-      visible={open}
-      onCancel={handleCloseModal}
-      footer={null}
-    >
-      <span className="modal__error">
-        { message }
-      </span>
-    </Modal>
+    <Dialog open={open} onOpenChange={handleCloseModal}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Error</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-red-500 whitespace-pre-wrap">{message}</p>
+        <div className="flex justify-end">
+          <Button onClick={() => handleCloseModal(false)}>Cerrar</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default ErrorModal

@@ -1,221 +1,181 @@
 import { useEffect, useState } from 'react'
-import { Box, Select } from '@chakra-ui/react'
-import NumberFormat from 'utils/NumberFormat'
-import { Link, useHistory } from 'react-router-dom'
-import DateIntlFormat from 'utils/DateIntlFormat'
-import UpdateModal from 'Modales/UpdateModal/UpdateModal'
-import { useMayaDispatch, useMayaState } from 'context/MayaMachine'
-import SearchClientProyecto from 'utils/SearchClientProyecto'
-import XLSX from 'xlsx'
-import { UserState } from 'context/userContext'
-import ModalProyectName from 'Modales/ModalProyectName'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { useProject } from '@/hooks/api/useProjects'
+import { useLotesByProject } from '@/hooks/api/useLotes'
+import { useUserState } from '@/context/userContext'
+import SearchClientProyecto from '@/utils/SearchClientProyecto'
+import NumberFormat from '@/utils/NumberFormat'
+import DateIntlFormat from '@/utils/DateIntlFormat'
+import UpdateModal from '@/Modales/UpdateModal/UpdateModal'
+import ModalProyectName from '@/Modales/ModalProyectName'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import * as XLSX from 'xlsx'
 
-const Proyecto = ({ match }) => {
+export default function Proyecto () {
+  const { slug, projectName } = useParams()
+  const navigate = useNavigate()
+  const { user } = useUserState()
+  const isAdmin = user?.role === 'admin'
 
-  const { state } = useMayaState()
-  const { dispatch, setXstateQuery } = useMayaDispatch()
- 
-  const { slug, projectName } = match.params
-  
-  useEffect(() => {
-    dispatch('GET_DATA', { payload: slug })
-  }, [match])
+  const { data: proyecto, isLoading: loadingProject } = useProject(slug)
+  const { data: lotesData = [], isLoading: loadingLotes } = useLotesByProject(slug)
 
-  useEffect(() => {
-    setXstateQuery({ payload: slug, send: dispatch })
-  }, [])
-
-  const { proyecto } = state.context
   const [currentClientes, setCurrentClientes] = useState([])
-  
-  const history = useHistory()
+  const [editName, setEditName] = useState(false)
 
-  const handleSelectLoteFilter = (e) => {
-    const keyTargetValue = e.target.value
-    const keyParse = JSON.parse(keyTargetValue)
+  useEffect(() => {
+    setCurrentClientes(lotesData)
+  }, [lotesData])
+
+  const handleSelectLote = (value) => {
+    const keyParse = JSON.parse(value)
     const loteNumber = keyParse.lote
     const [nombreCliente] = keyParse.clienteData.map(item => item.nombre)
     const clientURL = nombreCliente.replace(/\//g, '-')
     const projectObjectID = keyParse.proyecto.toString()
 
-    history.push({
-      pathname: `/detalle/lote/${loteNumber}/cliente/${clientURL}/projecto/${projectObjectID}`,
+    navigate(`/detalle/lote/${loteNumber}/cliente/${clientURL}/projecto/${projectObjectID}`, {
       state: [keyParse]
     })
   }
 
   const exportExcel = () => {
-
-    if (proyecto.length === 0) {
-      return
-    }
+    if (!proyecto || proyecto.length === 0) return
     const payloadToExport = proyecto.map(lote => {
-      const nombreCliente = lote.clienteData[0].nombre
-      const { __v, _id, cliente, proyecto, isActive, clienteData, ...restOfLote } = lote
-      return {
-        cliente: nombreCliente,
-        ...restOfLote
-      }
+      const nombreCliente = lote.clienteData[0]?.nombre
+      const { __v, _id, cliente, proyecto: p, isActive, clienteData, ...restOfLote } = lote
+      return { cliente: nombreCliente, ...restOfLote }
     })
-    
+
     const wb = XLSX.utils.book_new()
     const ws = XLSX.utils.json_to_sheet(payloadToExport)
     XLSX.utils.book_append_sheet(wb, ws, 'Lotes')
     XLSX.writeFile(wb, `lotes_${projectName}.xlsx`)
   }
 
-  const { state: userState } = UserState()
-  const { user } = userState.context
-  const [editName, setEditName] = useState(false)
+  const isLoading = loadingProject || loadingLotes
 
   return (
-    // @params proyecto css
-    <div className="proyecto__container">
-    <section className="proyecto__header">
-    <ModalProyectName
-      open={editName}
-      handleCloseModal={() => setEditName(false)}
-      proyectName={projectName}
-      id={slug}
-    />
-      {
-        user?.role === 'admin' && <a onClick={() => setEditName(true)}>Cambiar nombre de proyecto</a>
-      }
-      <div className="proyecto__header__title">
-        <h3>{ projectName }</h3>
-      </div>
-  
-        <section className="proyecto__data__info">
-        {/* INFORMACION "ESTADISTICO" DEL PROYECTO */}
-        </section>
-    <div className="ntf__results">
-      {
-        state.matches('getProyectoByID') && <span className="logo__loader__await" />
-      }
-      {
-        state.matches('success') && Object.values(proyecto).length === 0 && <span>No hay Elementos para mostrar</span>
-      }
-  </div>
-  {/* buscador web */}
-      {
-        state.matches('success') &&
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '1rem',
-            justifyContent: 'space-between'
+    <div className="proyecto__container container mx-auto p-6">
+      <section className="proyecto__header mb-6">
+        <ModalProyectName
+          open={editName}
+          handleCloseModal={() => setEditName(false)}
+          proyectName={projectName}
+          id={slug}
+        />
 
-          }}>
-            <SearchClientProyecto
-            data={proyecto}
-            setCurrentClientes={setCurrentClientes}
-          />
-          <Select placeholder='Todos los lotes' size="md" onChange={handleSelectLoteFilter}>
-            {
-              proyecto
-                .sort((a, b) => +a.lote - +b.lote)
-                .map((item) => {
-                  return (
-                    <option
-                      key={item._id}
-                      value={JSON.stringify(item)}>
-                        {`Lote ${item.lote} - Manzana ${item.manzana}`}
-                    </option>
-                  )
-                })
-            }
-          </Select>
-          </Box>
-      }
-    </section>
-    <section className="proyecto__table">
-    <nav className='botonera'>
-        <ul className='linkExcel'>
-          <li>
-            <button
-              onClick={() => exportExcel()}
-            >
-              Exportar Lista
-            </button>
-          </li>
-        </ul>
-      </nav>
-      <table>
-        <tr className="head__data__table">
-          <th>Lote</th>
-          <th>Manzana</th>
-          <th>Precio Total</th>
-          <th>Incio de contrato</th>
-          <th>Cliente</th>
-          <th>Acciones</th>
-        </tr>
-        {
-           state.matches('success') &&
-           currentClientes.length === 0 &&
-           <p style={{ fontSize: '24px' }}>No se encontraron lotes &#128577;</p>
-        }
-        {
-          state.matches('success') &&
-          Object.values(currentClientes)
-            .filter(item => item.clienteData.length > 0)
-            .map((item, index) => {
-              const parentLoteId = item._id
-              const loteInfo = [item]
-              const loteid = item.lote
-              const [idProyecto] = item.proyecto
-              return (
-                <tr
-                  key={index}
-                  className="tabla__data"
-                  >
-                  <td>{ item.lote }</td>
-                  <td>{ item.manzana }</td>
-                  <td>{ <NumberFormat number={item.precioTotal}/> }</td>
-                  <td>
-                    {
-                      item.inicioContrato && <DateIntlFormat date={item.inicioContrato} />
-                    }
-                  </td>
-                  {
-                    Object.values(item.clienteData)
-                      .map(item => {
-                        const clientURL = item.nombre.replace(/\//g, '-')
-                        return (
-                        <>
-                        <td key={item._id}>
-                            { item.nombre }
-                        </td>
-                        <td>
-                          <span className="d-flex center">
-                            <Link
-                              to={{
-                                pathname: `/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${(idProyecto)}`,
-                                state: loteInfo
-                              }}>
-                              <button>Ver</button>
-                            </Link>
-                            <UpdateModal
-                              id={parentLoteId}
-                              document="Lote"
-                              dispatch={dispatch}
-                            />
-                          </span>
-                        <small className='id__inform'>
-                          {item._id}
-                        </small>
-                        </td>
-                        </>
-                        )
-                      })
-                  }
-                </tr>
-              )
-            })
-        }
-      </table>
-    </section>
+        {isAdmin && (
+          <Button variant="link" onClick={() => setEditName(true)}>
+            Cambiar nombre de proyecto
+          </Button>
+        )}
+
+        <div className="proyecto__header__title mb-4">
+          <h3 className="text-2xl font-bold">{projectName}</h3>
+        </div>
+
+        {!isLoading && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+            <SearchClientProyecto data={lotesData} setCurrentClientes={setCurrentClientes} />
+            <Select onValueChange={handleSelectLote}>
+              <SelectTrigger className="w-[260px]">
+                <SelectValue placeholder="Todos los lotes" />
+              </SelectTrigger>
+              <SelectContent>
+                {lotesData
+                  .slice()
+                  .sort((a, b) => +a.lote - +b.lote)
+                  .map(item => (
+                    <SelectItem key={item._id} value={JSON.stringify(item)}>
+                      {`Lote ${item.lote} - Manzana ${item.manzana}`}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </section>
+
+      <section className="proyecto__table">
+        <div className="mb-4">
+          <Button variant="outline" onClick={exportExcel}>Exportar Lista</Button>
+        </div>
+
+        {isLoading && <Skeleton className="h-64 w-full" />}
+
+        {!isLoading && (
+          <>
+            {currentClientes.length === 0 && (
+              <p className="text-xl text-muted-foreground">No se encontraron lotes 😕</p>
+            )}
+
+            {currentClientes.length > 0 && (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Lote</TableHead>
+                    <TableHead>Manzana</TableHead>
+                    <TableHead>Precio Total</TableHead>
+                    <TableHead>Inicio de contrato</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentClientes
+                    .filter(item => item.clienteData?.length > 0)
+                    .map((item) => {
+                      const parentLoteId = item._id
+                      const loteid = item.lote
+                      const [idProyecto] = item.proyecto
+                      return (
+                        <TableRow key={item._id} className="tabla__data">
+                          <TableCell>{item.lote}</TableCell>
+                          <TableCell>{item.manzana}</TableCell>
+                          <TableCell><NumberFormat number={item.precioTotal} /></TableCell>
+                          <TableCell>
+                            {item.inicioContrato && <DateIntlFormat date={item.inicioContrato} />}
+                          </TableCell>
+                          {item.clienteData.map(cliente => {
+                            const clientURL = cliente.nombre.replace(/\//g, '-')
+                            return (
+                              <>
+                                <TableCell key={cliente._id}>{cliente.nombre}</TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <Link
+                                      to={`/detalle/lote/${loteid}/cliente/${clientURL}/projecto/${idProyecto}`}
+                                      state={[item]}
+                                    >
+                                      <Button size="sm">Ver</Button>
+                                    </Link>
+                                    <UpdateModal id={parentLoteId} document="Lote" />
+                                  </div>
+                                  <small className="text-muted-foreground">{cliente._id}</small>
+                                </TableCell>
+                              </>
+                            )
+                          })}
+                        </TableRow>
+                      )
+                    })}
+                </TableBody>
+              </Table>
+            )}
+          </>
+        )}
+      </section>
     </div>
   )
 }
-
-export default Proyecto

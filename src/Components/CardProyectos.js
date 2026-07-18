@@ -1,25 +1,19 @@
+import { Link } from 'react-router-dom'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-const CardProyectos = ({ name, clientes }) => {
-
+export default function CardProyectos ({ id, name, clientes }) {
   return (
-    <>
-        <div className="card__proyectos__container">
-            <div className="card__proyectos__header">
-                <p>{ name }</p>
-            </div>
-            <section className="card__proyectos__body">
-                {/* <img
-                    src="https://grupotierramaya.com/wp-content/uploads/2020/08/EDIFICIO1_1-1.jpg"
-                    alt="muestra de edificio en venta o renta"
-                    /> */}
-            </section>
-            <div className="card__proyectos__footer">
-                <p>Lotes Activos:</p>
-                <p>{clientes.length}</p>
-            </div>
-        </div>
-    </>
+    <Link to={`/proyecto/${id}/${name}`}>
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <CardTitle>{name}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {Array.isArray(clientes) ? clientes.length : clientes ?? 0} clientes activos
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
-
-export default CardProyectos

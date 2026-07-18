@@ -1,140 +1,92 @@
-import React, { useState } from 'react'
-import { Modal } from 'antd'
-import '../../Modales/UpdateModal/templates/templates.scss'
-import MayaMachineAPI from 'context/controllers'
-import { toast } from '@chakra-ui/react'
-import { useMayaState } from 'context/MayaMachine'
-const FolioUpdate = ({ mainModalHandled, document }) => {
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { useUpdateFolio } from '@/hooks/api/usePagos'
 
-  console.log(document)
-  
-  const [isModal, setIsModal] = useState(false)
+export default function FolioUpdate ({ document, onClose }) {
+  const [open, setOpen] = useState(false)
+  const [newFolio, setNewFolio] = useState(document?.folio || '')
   const [consecutivo, setConsecutivo] = useState(false)
-  const [newFolio, setNewFolio] = useState(0)
-  const { xstateQuery } = useMayaState()
+  const updateFolio = useUpdateFolio()
 
-  const handledModal = () => setIsModal(!isModal)
-  
-  const handleUpdate = async () => {
-    console.log(newFolio)
-    console.log(consecutivo)
+  const handleUpdate = () => {
+    if (newFolio === '') {
+      toast.error('El folio no puede estar vacío')
+      return
+    }
 
-    if (newFolio === '') return alert('El folio no puede estar vacio')
-
-    await MayaMachineAPI
-      .updateFolio({ folio: Number(newFolio), fixConsecutive: consecutivo, id: document._id })
-      .then(res => {
-        if (res.error) return alert('No se pudo actualizar el folio')
-        xstateQuery.send('GET_PAGOS_BY_PROJECT', { query: xstateQuery.query })
-        toast({
-          title: 'Folio actualizado',
-          description: 'El folio se ha actualizado correctamente',
-          status: 'success',
-          duration: 4000,
-          isClosable: true
-        })
-      })
-      .catch(err => console.log(err))
-      .finally(() => {
-        setIsModal(!isModal)
-        mainModalHandled()
-      })
-
+    updateFolio.mutate(
+      { id: document._id, folio: Number(newFolio), fixConsecutive: consecutivo },
+      {
+        onSuccess: (res) => {
+          if (res?.error) {
+            toast.error('No se pudo actualizar el folio')
+            return
+          }
+          toast.success('Folio actualizado correctamente')
+          setOpen(false)
+          onClose()
+        },
+        onError: () => {
+          toast.error('No se pudo actualizar el folio')
+        }
+      }
+    )
   }
-  
-  return (
-    <section>
-      <div hidden={!isModal}>
-          <Modal
-            title={'Modificar Folio'}
-            visible={isModal}
-            onCancel={() => handledModal()}
-            footer={null}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              <label style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
-                <p style={{
-                  fontSize: '1.5rem',
-                  marginRight: '1rem'
-                }}>Folio</p>
-                <input
-                  style={{
-                    border: '1px solid #000',
-                    borderRadius: '5px',
-                    padding: '5px'
-                  }}
-                  type="text"
-                  name="folio"
-                  defaultValue={document.folio}
-                  onChange={(e) => setNewFolio(e.target.value)}
-                >
-                </input>
-              </label>
 
-              <label style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: '1rem'
-              }}>
-                  <p style={{
-                    fontSize: '1rem',
-                    marginRight: '1rem'
-                  }}>
-                    ¿El siguiente folio sera consecutivo?
-                  </p>
-                <input
-                  onChange={() => setConsecutivo(!consecutivo)}
-                  style={{
-                    border: '1px solid #000',
-                    padding: '5px'
-                  }}
-                  type="checkbox"
-                  name="status"
-                >
-                </input>
-              </label>
-              <button
-                style={{
-                  backgroundColor: '#0C4C7D',
-                  color: '#fff',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  marginTop: '1rem'
-                }}
-              onClick={() => handleUpdate()} >
-                Modificar
-              </button>
-            </div>
-          </Modal>
-      </div>
-      <button
-      type='button'
-      style={{
-        backgroundColor: '#f44336',
-        color: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-        margin: '0 auto',
-        border: 'none',
-        cursor: 'pointer'
-      }} onClick={() => handledModal()}
-      >
-        Modificar Folio
-      </button>
-    </section>
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button type="button" variant="destructive" className="w-full">
+          Modificar Folio
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Modificar Folio</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4 items-center">
+          <div className="grid gap-2 w-full">
+            <Label htmlFor="folio">Folio</Label>
+            <Input
+              id="folio"
+              type="text"
+              defaultValue={document?.folio}
+              onChange={(e) => setNewFolio(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="consecutivo"
+              checked={consecutivo}
+              onCheckedChange={(checked) => setConsecutivo(Boolean(checked))}
+            />
+            <Label htmlFor="consecutivo">¿El siguiente folio será consecutivo?</Label>
+          </div>
+
+          <Button
+            type="button"
+            onClick={handleUpdate}
+            disabled={updateFolio.isPending}
+            className="w-full"
+          >
+            Modificar
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default FolioUpdate

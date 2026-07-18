@@ -1,130 +1,104 @@
-
-import { useState, useContext } from 'react'
-import { Modal } from 'antd'
-
-import { AppContext } from 'context/AppContextProvider'
-import HookNameProjectById from 'hooks/HookNameProjectById'
-import ModalPagosClient from './ModalPagosClient'
-import TablaPagosClient from './TablaPagosClient'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import ValuesByDocument from '@/hooks/ValuesByDocument'
+import NumberFormat from '@/utils/NumberFormat'
 import ModalStatusProjectDetails from './ModalStatusProjectDetails'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 
-import NumberFormat from 'utils/NumberFormat'
-
-const TablaClienteInfo = ({ cliente, lotes, pagos }) => {
-
+export default function TablaClienteInfo ({ cliente, lotes, pagos }) {
   const [expediente, setExpediente] = useState(false)
-  const handleModal = () => setExpediente(!expediente)
+  const [projectStatus, setProjectStatus] = useState(false)
+  const [loteId, setLoteId] = useState(null)
 
-  const [projectStatus, SetprojectStatus] = useState(false)
-  const [loteId, setLoteId] = useState()
-  const handledProjectStatus = () => SetprojectStatus(!projectStatus)
-
-  const handleLoteModal = (loteId) => {
-    setLoteId(loteId)
-    handledProjectStatus()
+  const handledProjectStatus = (selectedLoteId) => {
+    setLoteId(selectedLoteId)
+    setProjectStatus(!projectStatus)
   }
-  
-  const { openModalPago, handleModalPago } = useContext(AppContext)
 
   return (
     <>
-      {/* Modal para añadir pago */}
-      <ModalPagosClient
-        openModalPago={openModalPago}
-        handledOpen={handleModalPago}
-        lotes={lotes}
-        pagos={pagos}
-        />
+      <ModalStatusProjectDetails
+        openModal={projectStatus}
+        handledModal={() => setProjectStatus(!projectStatus)}
+        loteid={loteId ? [loteId] : []}
+      />
 
-        {/* expediente de cliente */}
-        <Modal
-          title="Expediente del Cliente"
-          visible={expediente}
-          onCancel={handleModal}
-          footer={null}
-        >
-          <div className="expediente__data">
-              <section>
-                  <p>Nombre:</p>
-                  {cliente && cliente.nombre}
-              </section>
-              <section>
-                  <p>DIRRECCIÓN</p>
-                  {cliente && cliente.address}
-              </section>
-              <section>
-                  <p>Teléfono</p>
-                  {cliente && cliente.phone}
-              </section>
-              <section>
-                  <p>Email</p>
-                  {cliente && cliente.email}
-              </section>
+      <Dialog open={expediente} onOpenChange={setExpediente}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Expediente del Cliente</DialogTitle>
+          </DialogHeader>
+          <div className="expediente__data space-y-2 py-4">
+            <section><p>Nombre:</p>{cliente?.nombre}</section>
+            <section><p>DIRECCIÓN</p>{cliente?.address}</section>
+            <section><p>Teléfono</p>{cliente?.phone}</section>
+            <section><p>Email</p>{cliente?.email}</section>
           </div>
-        </Modal>
+        </DialogContent>
+      </Dialog>
 
-        <ModalStatusProjectDetails
-          openModal={ projectStatus }
-          handledModal={ handledProjectStatus }
-          loteid={loteId}
-        />
-
-      <section className="cliente__App__header">
-      <h4>{ cliente && cliente.nombre }</h4>
+      <section className="cliente__App__header mb-4">
+        <h4 className="text-2xl font-bold">{cliente?.nombre}</h4>
       </section>
-      <section className="cliente__App__body">
-              <button onClick={handleModal}>
-                  Ver Expediente
-              </button>
-          <div>
-            {
-              <section className="proyecto__table">
-                <h3>Proyectos</h3>
-              <table>
-                <thead>
-                <tr className="head__data__table">
-                  <th>Proyecto</th>
-                  <th>Lote</th>
-                  <th>Manzana</th>
-                  <th>Plazo</th>
-                  <th>Mensualidad</th>
-                  <th>Enganche</th>
-                  <th>Financiamiento</th>
-                  <th>Precio Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                  {
-                  lotes
-                    .map((lote) => {
-                      const { project, loading } = HookNameProjectById({ id: lote.proyecto })
-                      return (
-                        <tr
-                          key={lote._id}
-                          className="tabla__data"
-                          onClick={() => handleLoteModal(lote._id)}
-                          >
-                            <td>{ loading && project?.title }</td>
-                            <td>{ lote.lote }</td>
-                            <td>{ lote.manzana }</td>
-                            <td>{ lote.plazo }</td>
-                            <td>{ <NumberFormat number={lote.mensualidad} /> }</td>
-                            <td>{ <NumberFormat number={lote.enganche} /> }</td>
-                            <td>{ <NumberFormat number={lote.financiamiento} /> }</td>
-                            <td>{ <NumberFormat number={lote.precioTotal} /> }</td>
-                          </tr>
-                      )
-                    })
-                  }
-                </tbody>
-              </table>
-            </section>
-            }
-          </div>
-            <TablaPagosClient pagos={pagos} />
+
+      <section className="cliente__App__body space-y-6">
+        <Button onClick={() => setExpediente(true)}>Ver Expediente</Button>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Proyectos</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Proyecto</TableHead>
+                <TableHead>Lote</TableHead>
+                <TableHead>Manzana</TableHead>
+                <TableHead>Plazo</TableHead>
+                <TableHead>Mensualidad</TableHead>
+                <TableHead>Enganche</TableHead>
+                <TableHead>Financiamiento</TableHead>
+                <TableHead>Precio Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {lotes.map((lote) => {
+                const [idProyecto] = lote.proyecto || []
+                return (
+                  <TableRow
+                    key={lote._id}
+                    className="tabla__data cursor-pointer"
+                    onClick={() => handledProjectStatus(lote)}
+                  >
+                    <TableCell>
+                      <ValuesByDocument id={idProyecto} documentType="Proyecto" cbValue="title" />
+                    </TableCell>
+                    <TableCell>{lote.lote}</TableCell>
+                    <TableCell>{lote.manzana}</TableCell>
+                    <TableCell>{lote.plazo}</TableCell>
+                    <TableCell><NumberFormat number={lote.mensualidad} /></TableCell>
+                    <TableCell><NumberFormat number={lote.enganche} /></TableCell>
+                    <TableCell><NumberFormat number={lote.financiamiento} /></TableCell>
+                    <TableCell><NumberFormat number={lote.precioTotal} /></TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </section>
     </>
   )
 }
-
-export default TablaClienteInfo

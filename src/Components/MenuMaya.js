@@ -1,181 +1,157 @@
-import { useState, useContext } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
-import DrawerAddUser from './DrawerAddUser'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useUserState, useUserDispatch } from '@/context/userContext'
+import { useAppContext } from '@/context/AppContextProvider'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
+import { useSearchClients } from '@/hooks/api/useClients'
+import NuevoProject from '@/Modales/NuevoProject'
+import ModalAddUserProject from '@/Modales/ModalAddUserProject'
+import ModalSettings from '@/Modales/ModalSettings'
+import DrawerAddUser from '@/Components/DrawerAddUser'
 
-import NuevoPoject from 'Modales/NuevoProject'
-import Buscador from './Buscador'
-
-// contexto
-import { AppContext } from 'context/AppContextProvider'
-import ModalAddUserProject from 'Modales/ModalAddUserProject'
-import ModalSettings from 'Modales/ModalSettings'
-import { UserState, UserDispatch } from 'context/userContext'
-
-const MenuMaya = () => {
-
-  const { handleModalPago, openDrawerNewUser, setOpenDrawerNewUser } = useContext(AppContext)
-
+export default function MenuMaya () {
   const location = useLocation()
-  const history = useHistory()
-  const params = location.pathname.split('/')
-  
-  const [openHamburger, setOpenHAmburger] = useState(true)
-  const toggleHaburger = () => setOpenHAmburger(!openHamburger)
-  
+  const navigate = useNavigate()
+  const { user } = useUserState()
+  const { logout } = useUserDispatch()
+  const {
+    handleModalPago,
+    openDrawerNewUser,
+    setOpenDrawerNewUser,
+    toggleDrawerNewUser,
+    plataformName
+  } = useAppContext()
+
+  const [open, setOpen] = useState(false)
   const [openProject, setOpenProject] = useState(false)
-  const handleProjectModal = () => {
-    setOpenProject(!openProject)
-    toggleHaburger()
-  }
-  
-  const [handleAddUser, setHandledAddUser] = useState(false)
-  const toogleHandledUser = () => {
-    setHandledAddUser(!handleAddUser)
-    toggleHaburger()
+  const [openAddUser, setOpenAddUser] = useState(false)
+  const [openSettings, setOpenSettings] = useState(false)
+
+  const searchMutation = useSearchClients()
+
+  const handleSearch = async (e) => {
+    e.preventDefault()
+    const keyword = e.target.keyword.value
+    if (!keyword) return
+    try {
+      const results = await searchMutation.mutateAsync(keyword)
+      const first = Object.values(results)[0]
+      if (first) {
+        navigate(`/cliente/${first._id}`)
+        setOpen(false)
+      }
+    } catch {
+      // handled by mutation error
+    }
   }
 
-  const modalPagoBurger = () => {
-    handleModalPago()
-    toggleHaburger()
-  }
-  
-  const handleRemoveUser = () => {
-    history.push('/morosos')
-    toggleHaburger()
-  }
+  if (!user) return null
 
-  const [settingsModal, setSettingsModal] = useState(false)
-  const toogleSettingsModal = () => {
-    setSettingsModal(!settingsModal)
-    toggleHaburger()
-  }
-
-  const { state } = UserState()
-  const { user } = state.context
-
-  const dispatch = UserDispatch()
-  
-  const handleLogoutBtn = () => {
-    dispatch('LOGOUT')
-    toggleHaburger()
-  }
+  const isAdmin = user?.role === 'admin'
 
   return (
     <>
-      {
-        user && (
-          <div
-            id='hamburgerBtn'
-            onClick={toggleHaburger}
-            className={ openHamburger ? 'hamburger_btn' : 'hamburger_btn hamburger_btn_open'}>
-            <div/>
-            <div/>
-            <div/>
-          </div>
-        )
-      }
-    <div hidden={openHamburger} className="menu__hiden__hamburger">
+      <header className="App-header flex items-center justify-between px-4 py-2 bg-card border-b">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="hamburger_btn">
+              <span className="sr-only">Menú</span>
+              <div className="space-y-1">
+                <div className="w-6 h-0.5 bg-foreground" />
+                <div className="w-6 h-0.5 bg-foreground" />
+                <div className="w-6 h-0.5 bg-foreground" />
+              </div>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80">
+            <SheetHeader>
+              <SheetTitle>Bienvenido, {user?.name}</SheetTitle>
+            </SheetHeader>
 
-      <nav className="menu__hamburger">
-        <p style={{
-          color: '#ffff',
-          fontSize: '18px'
-        }}>
-          { user?.name ? `Bienvenido, ${user?.name}` : null }
-        </p>
-        <div className="separacion__menu" />
-        <Buscador></Buscador>
-        <hr/>
-        { location.pathname === '/' &&
-        <>
-          
-          {
-            user?.role === 'admin' && (
-              <button
-                className="bg__blue"
-                onClick={() => toogleSettingsModal()}
+            <div className="py-4">
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <Input name="keyword" placeholder="Buscar cliente..." />
+                <Button type="submit" size="sm">Buscar</Button>
+              </form>
+            </div>
+
+            <Separator className="my-4" />
+
+            <nav className="space-y-2">
+              {location.pathname === '/' && (
+                <>
+                  {isAdmin && (
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => { setOpenSettings(true); setOpen(false) }}
+                    >
+                      Configuración
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => { navigate('/morosos'); setOpen(false) }}
+                  >
+                    Usuarios Morosos
+                  </Button>
+                  <Separator className="my-2" />
+                  {isAdmin && (
+                    <Button
+                      className="w-full justify-start"
+                      onClick={() => { setOpenProject(true); setOpen(false) }}
+                    >
+                      Añadir Proyecto
+                    </Button>
+                  )}
+                </>
+              )}
+
+              {location.pathname.startsWith('/proyecto/') && isAdmin && (
+                <Button
+                  className="w-full justify-start"
+                  onClick={() => { setOpenAddUser(true); setOpen(false) }}
                 >
-                <div className="ico__settings"></div>
-                Configuración
-              </button>
-            )
-          }
+                  Agregar Cliente
+                </Button>
+              )}
 
-          <button
-            onClick={() => handleRemoveUser()}
-            className="menu__hamburger__btn__red"
-          >
-          <div className="ico__user__morosos"></div>
-            Usuarios Morosos
-          </button>
+              {location.pathname.includes('/detalle/lote/') && isAdmin && (
+                <Button
+                  className="w-full justify-start"
+                  onClick={() => { handleModalPago(); setOpen(false) }}
+                >
+                  Generar Pago
+                </Button>
+              )}
 
-          <div className="separacion__menu" />
+              <Separator className="my-4" />
+              <Button
+                variant="destructive"
+                className="w-full justify-start"
+                onClick={() => { logout(); setOpen(false) }}
+              >
+                Salir
+              </Button>
+            </nav>
+          </SheetContent>
+        </Sheet>
 
-         {
-           user?.role === 'admin' && (
-             <button
-             className="btn__esmeralda"
-             onClick={() => handleProjectModal()}>
-                <div className="ico__proyecto" ></div>
-                Añadir Proyecto
-            </button>
-           )
-         }
-        </>
-        }
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-semibold">{plataformName || 'Grupo Maya'}</h1>
+        </div>
 
-        { params.includes('proyecto') && !params.includes('cliente') &&
-          user?.role === 'admin' && (
-        <>
-          {/* <button
-          onClick={() => nuevoLoteClient()}
-          className="btn__esmeralda"
-          >
-          <div className="ico__user"></div>
-            Nuevo Cliente
-          </button> */}
+        <a href="/" className="invisible">Inicio</a>
+      </header>
 
-          <button
-            onClick={toogleHandledUser}
-            className="btn__esmeralda"
-            >
-            <div className="ico__user__normal"></div>
-              Agregar Cliente
-          </button>
-        </>)
-        }
-
-        {
-          params.includes('lote') && params.includes('cliente') && params.includes('projecto') &&
-          user?.role === 'admin' && (
-            <>
-          <button
-            className="btn__esmeralda"
-            onClick={() => modalPagoBurger()}
-            >
-            <div className="invoice__ico"></div>
-            Generar Pago
-          </button>
-
-          <div className="separacion__menu" />
-        </>)
-        }
-      <div className="separacion__menu" />
-      <button
-        onClick={() => handleLogoutBtn()}
-        className="bg-magenta">
-      <div className="ico__salir"></div>
-        Salir
-      </button>
-
-      </nav>
-    </div>
-    <NuevoPoject visible={openProject} onCancel={handleProjectModal} />
-    <ModalAddUserProject visible={handleAddUser} onCancel={setHandledAddUser} />
-    <ModalSettings visible={settingsModal} onCancel={toogleSettingsModal} />
-    <DrawerAddUser visible={openDrawerNewUser} onCancel={setOpenDrawerNewUser} />
-  </>
+      <NuevoProject visible={openProject} onCancel={setOpenProject} />
+      <ModalAddUserProject visible={openAddUser} onCancel={setOpenAddUser} />
+      <ModalSettings visible={openSettings} onCancel={setOpenSettings} />
+      <DrawerAddUser visible={openDrawerNewUser} onCancel={setOpenDrawerNewUser} />
+    </>
   )
 }
-
-export default MenuMaya
