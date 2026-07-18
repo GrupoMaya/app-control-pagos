@@ -12,7 +12,6 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -55,25 +54,50 @@ export default function TablaPagosClient ({
   }
 
   return (
-    <section className="cliente__App__pagos">
-      <h3 className="text-xl font-bold mb-4">PAGOS</h3>
-      <div className="flex flex-wrap gap-2 mb-4">
-        <Button variant="outline" onClick={exportExcel}>🗒️ Exportar Lista de pagos</Button>
-        <Button variant="outline" onClick={downloadResumenExcel}>💾 ESTADO DE CUENTA</Button>
+    <section className="bg-white border border-[#e6ebea] rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(16,24,40,0.04)] p-5 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={exportExcel}
+            className="border-[#e6ebea] text-[#5a6b66] hover:bg-[#f1f5f4] rounded-lg text-[13px]"
+          >
+            🗒️ Exportar Lista de pagos
+          </Button>
+          <Button
+            variant="outline"
+            onClick={downloadResumenExcel}
+            className="border-[#e6ebea] text-[#5a6b66] hover:bg-[#f1f5f4] rounded-lg text-[13px]"
+          >
+            💾 ESTADO DE CUENTA
+          </Button>
+        </div>
+
+        <Select value={pagosSelected} onValueChange={setPagosSelected}>
+          <SelectTrigger className="w-[140px] border-[#e6ebea] rounded-lg text-[13px]">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="mensualidad">Mensualidad</SelectItem>
+            <SelectItem value="extra">Extra</SelectItem>
+            <SelectItem value="saldoinicial">Saldo Inicial</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <ModalEstatus openModal={modalPago} handledStatusPago={setModalPago} />
 
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Folio</TableHead>
-            <TableHead>Fecha</TableHead>
-            <TableHead>Estatus</TableHead>
-            <TableHead>Referencia</TableHead>
-            <TableHead>
+          <TableRow className="bg-[#f7faf9] border-b border-[#eef2f1] hover:bg-[#f7faf9]">
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-[18px]">Folio</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-3">Fecha</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-3">Estatus</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-3">Referencia</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-3">
               <Select value={pagosSelected} onValueChange={setPagosSelected}>
-                <SelectTrigger className="w-[140px] select_gde">
+                <SelectTrigger className="w-[120px] border-0 bg-transparent p-0 h-auto text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold focus:ring-0">
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,8 +108,8 @@ export default function TablaPagosClient ({
                 </SelectContent>
               </Select>
             </TableHead>
-            <TableHead>Pago</TableHead>
-            <TableHead>Acciones</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-3 text-right">Pago</TableHead>
+            <TableHead className="text-[11px] uppercase tracking-widest text-[#8a9995] font-semibold py-3 px-[18px] text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,7 +118,9 @@ export default function TablaPagosClient ({
           ))}
           {pagos.length === 0 && (
             <TableRow>
-              <TableCell colSpan={7} className="text-center">No hay pagos registrados</TableCell>
+              <TableCell colSpan={7} className="text-center py-6 text-[#8a9995]">
+                No hay pagos registrados
+              </TableCell>
             </TableRow>
           )}
         </TableBody>

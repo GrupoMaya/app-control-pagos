@@ -3,7 +3,7 @@ import { QueryProvider } from '@/providers/QueryProvider'
 import { UserContextProvider, useUserState } from '@/context/userContext'
 import { AppContextProvider } from '@/context/AppContextProvider'
 import { Toaster } from '@/components/ui/sonner'
-import MenuMaya from '@/Components/MenuMaya'
+import Sidebar from '@/components/layout/Sidebar'
 import Login from '@/views/Login'
 import Dashboard from '@/views/Dashboard'
 import Proyecto from '@/views/Proyecto'
@@ -21,9 +21,9 @@ function RootLayout () {
     <QueryProvider>
       <UserContextProvider>
         <AppContextProvider>
-          <div className="App">
-            {!isLogin && <MenuMaya />}
-            <div className="App-container">
+          <div className="flex h-screen w-full overflow-hidden bg-background">
+            {!isLogin && <Sidebar />}
+            <div className="flex-1 flex flex-col min-w-0">
               <Outlet />
             </div>
             <Toaster position="top-right" richColors />

@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import * as XLSX from 'xlsx'
 import { Eye, EyeOff, FileSpreadsheet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import AvatarInitials from '@/components/ui-custom/AvatarInitials'
 import {
   Table,
   TableBody,
@@ -30,28 +24,19 @@ function formatDateMX (date) {
   }).format(new Date(date))
 }
 
-export default function TablaMorosos ({ data, title }) {
+function daysSince (date) {
+  if (!date) return 0
+  const then = new Date(date)
+  const now = new Date()
+  const diff = now - then
+  return Math.floor(diff / (1000 * 60 * 60 * 24))
+}
+
+export default function TablaMorosos ({ data, title, variant = 'orange' }) {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(true)
-  const [projectFilter, setProjectFilter] = useState('all')
 
-  const rows = useMemo(() => {
-    const values = Object.values(data || {})
-    if (projectFilter === 'all') return values
-    return values.filter((pago) => {
-      const proyecto = pago.proyecto_data?.[0]
-      return proyecto?.title === projectFilter
-    })
-  }, [data, projectFilter])
-
-  const projects = useMemo(() => {
-    const set = new Set()
-    Object.values(data || {}).forEach((pago) => {
-      const proyecto = pago.proyecto_data?.[0]
-      if (proyecto?.title) set.add(proyecto.title)
-    })
-    return Array.from(set)
-  }, [data])
+  const rows = useMemo(() => Object.values(data || {}), [data])
 
   const handledDetail = (lote, idProject, clienteNombre) => {
     navigate(`/detalle/lote/${lote.lote}/cliente/${clienteNombre}/projecto/${idProject}`, {
@@ -80,15 +65,39 @@ export default function TablaMorosos ({ data, title }) {
     XLSX.writeFile(wb, 'morosos.xlsx')
   }
 
+  const headerBg = variant === 'red' ? 'bg-[#fdf2f0] border-b border-[#f6dcd7]' : 'bg-[#fff9f0] border-b border-[#f6ecdb]'
+  const headerText = variant === 'red' ? 'text-[#c0564a]' : 'text-[#b98a3e]'
+  const rowHover = variant === 'red' ? 'hover:bg-[#fdf6f5]' : 'hover:bg-[#fffbf5]'
+  const daysColor = variant === 'red' ? 'text-[#d94436] bg-[#fbe3df]' : 'text-[#e08e1a] bg-[#fdf0dc]'
+  const actionClass = variant === 'red'
+    ? 'bg-[#e74c3c] hover:bg-[#d33] text-white border-0'
+    : 'bg-white border border-[#e6ebea] text-[#157a71] hover:bg-[#e9f6f4]'
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h2 className="text-lg font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setIsOpen(prev => !prev)}>
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: variant === 'red' ? '#e74c3c' : '#f39c12' }}
+          />
+          <h3 className="font-heading font-bold text-base text-[#1a2621]">{title}</h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsOpen(prev => !prev)}
+            className="border-[#e6ebea] text-[#5a6b66] hover:bg-[#f1f5f4] rounded-lg"
+          >
             {isOpen ? <EyeOff size={18} /> : <Eye size={18} />}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownload}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownload}
+            className="border-[#e6ebea] text-[#5a6b66] hover:bg-[#f1f5f4] rounded-lg"
+          >
             <FileSpreadsheet size={18} className="mr-1" />
             Descargar Lista
           </Button>
@@ -96,34 +105,22 @@ export default function TablaMorosos ({ data, title }) {
       </div>
 
       {!isOpen && (
-        <div className="border rounded-md">
+        <div className="bg-white border border-[#e6ebea] rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Cliente</TableHead>
-                <TableHead>
-                  <Select value={projectFilter} onValueChange={setProjectFilter}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Proyecto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Proyecto</SelectItem>
-                      {projects.map((item) => (
-                        <SelectItem key={item} value={item}>{item}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </TableHead>
-                <TableHead>Lote</TableHead>
-                <TableHead>Inicio de Contrato</TableHead>
-                <TableHead>Último Pago</TableHead>
-                <TableHead>Acciones</TableHead>
+              <TableRow className={headerBg}>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-5`}>Cliente</TableHead>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-4`}>Proyecto / Lote</TableHead>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-4`}>Último pago</TableHead>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-4 text-center`}>Días</TableHead>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-4 text-right`}>Adeudo</TableHead>
+                <TableHead className={`text-[11px] uppercase tracking-widest ${headerText} font-semibold py-3 px-5 text-right`}></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center py-6 text-[#8a9995]">
                     No hay registros
                   </TableCell>
                 </TableRow>
@@ -132,33 +129,48 @@ export default function TablaMorosos ({ data, title }) {
                 const lote = pago.lote_data?.[0]
                 const proyecto = pago.proyecto_data?.[0]
                 const cliente = pago.cliente_data?.[0]
+                const dias = daysSince(pago?.mes)
 
                 return (
                   <TableRow
                     key={pago?._id}
-                    className="cursor-pointer"
-                    onClick={() => handledDetail(lote, proyecto?._id, cliente?.nombre)}
+                    className={`border-b border-[#f1f5f4] ${rowHover}`}
                   >
-                    <TableCell>{cliente?.nombre}</TableCell>
-                    <TableCell>{proyecto?.title}</TableCell>
-                    <TableCell>{lote?.lote}</TableCell>
-                    <TableCell>
-                      {lote?.inicioContrato && (
-                        <DateIntlFormat date={lote.inicioContrato} />
-                      )}
+                    <TableCell className="py-4 px-5">
+                      <div className="flex items-center gap-2.5">
+                        <AvatarInitials
+                          name={cliente?.nombre}
+                          bg={variant === 'red' ? '#fbe3df' : '#fdf0dc'}
+                          color={variant === 'red' ? '#c0392b' : '#c67c1e'}
+                          size="sm"
+                        />
+                        <span className="text-[13.5px] font-medium text-[#1a2621]">{cliente?.nombre}</span>
+                      </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-4 px-4 text-[13.5px] text-[#5a6b66]">
+                      {proyecto?.title} · Lote {lote?.lote}
+                    </TableCell>
+                    <TableCell className="py-4 px-4 text-[13.5px] text-[#5a6b66]">
                       {pago?.mes && <DateIntlFormat date={pago.mes} />}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-4 px-4 text-center">
+                      <span className={`text-[12.5px] font-bold px-2.5 py-[3px] rounded-full ${daysColor}`}>
+                        {dias} días
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-4 px-4 text-[13.5px] font-semibold text-[#1a2621] text-right">
+                      $—
+                    </TableCell>
+                    <TableCell className="py-4 px-5 text-right">
                       <Button
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation()
                           handledDetail(lote, proyecto?._id, cliente?.nombre)
                         }}
+                        className={`rounded-lg px-3 py-1.5 text-[12.5px] font-semibold ${actionClass}`}
                       >
-                        Ver Detalle
+                        Ver pagos
                       </Button>
                     </TableCell>
                   </TableRow>
