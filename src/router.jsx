@@ -1,9 +1,9 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { UserContextProvider, useUserState } from '@/context/userContext'
 import { AppContextProvider } from '@/context/AppContextProvider'
 import { Toaster } from '@/components/ui/sonner'
-import MenuMaya from '@/Components/MenuMaya'
+import Sidebar from '@/components/layout/Sidebar'
 import Login from '@/views/Login'
 import Dashboard from '@/views/Dashboard'
 import Proyecto from '@/views/Proyecto'
@@ -14,13 +14,16 @@ import ClientDetail from '@/views/ClientDetail'
 import Morosos from '@/views/Morosos'
 
 function RootLayout () {
+  const { pathname } = useLocation()
+  const isLogin = pathname === '/login'
+
   return (
     <QueryProvider>
       <UserContextProvider>
         <AppContextProvider>
-          <div className="App">
-            <MenuMaya />
-            <div className="App-container">
+          <div className="flex h-screen w-full overflow-hidden bg-background">
+            {!isLogin && <Sidebar />}
+            <div className="flex-1 flex flex-col min-w-0">
               <Outlet />
             </div>
             <Toaster position="top-right" richColors />
